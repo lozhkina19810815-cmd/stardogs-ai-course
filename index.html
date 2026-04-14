@@ -387,7 +387,7 @@
   }
   .date-badge {
     display: inline-block;
-    background: var(--accent);
+    background: #C8332A;
     color: var(--white);
     padding: 2px 10px;
     border-radius: 12px;
@@ -398,7 +398,10 @@
     text-transform: uppercase;
     letter-spacing: 0.3px;
   }
-  .date-badge.soon { background: #7DA832; }
+  .date-badge.done { background: #7DA832; }
+  .date-badge.soon { background: #E8B800; color: #3A2E00; }
+  .date-badge.later { background: #C8332A; }
+  .date-badge.new { background: #1E3A5F; }
   .col-single { grid-column: 1 / -1; }
 
   .block-output {
@@ -721,6 +724,12 @@
     <div class="section-title">
       <h2>Программа — 3 блока</h2>
       <p>Сначала техника, потом понимание, потом работа. Именно в таком порядке.</p>
+      <div style="margin-top:24px; display:inline-flex; gap:14px; flex-wrap:wrap; justify-content:center; font-size:13px; color:var(--gray);">
+        <span><span class="date-badge done">готово</span> уже выложено</span>
+        <span><span class="date-badge soon">скоро</span> ближайшее</span>
+        <span><span class="date-badge later">позже</span> в плане</span>
+        <span><span class="date-badge new">новое</span> только добавлено</span>
+      </div>
     </div>
 
     <!-- BLOCK 1 -->
@@ -765,7 +774,7 @@
         <div class="block-title">
           <div class="label">ШАГ 2 • ПОНИМАНИЕ</div>
           <h3>Базовые правила и архитектура</h3>
-          <div class="meta">⏱ 2 недели • 6 уроков × 60 мин теории + практика</div>
+          <div class="meta">⏱ 2–3 недели • 9 уроков × 60 мин теории + практика</div>
         </div>
       </div>
 
@@ -775,26 +784,31 @@
 
       <div class="block-body">
         <div class="col">
-          <h4><span class="icon">6</span> Уроки (по 60 мин)</h4>
+          <h4><span class="icon">9</span> Уроки (по 60 мин)</h4>
           <ul class="item-list">
-            <li><strong>Урок 1. Агент vs чат-бот. CLAUDE.md</strong><span class="date-badge soon">17 апр пт</span><span class="sub">Разница с ChatGPT. Почему CLAUDE.md главнее инструкций в чате</span></li>
-            <li><strong>Урок 2. Память + skills, playbooks, rules</strong><span class="date-badge">21 апр вт</span><span class="sub">3 типа артефактов памяти — чем отличаются, когда какой создавать</span></li>
-            <li><strong>Урок 3. Хуки — автоматические проверки</strong><span class="date-badge">24 апр пт</span><span class="sub">Что такое hooks, когда срабатывают. Чем отличаются от rules. Зачем нужны</span></li>
-            <li><strong>Урок 4. Постановка задач. Guards</strong><span class="date-badge">28 апр вт</span><span class="sub">4 элемента задачи (Крол). Как учить агента «не делать»</span></li>
-            <li><strong>Урок 5. Автономность. Стадии. Ошибки</strong><span class="date-badge">30 апр чт</span><span class="sub">5 уровней автономии. Стадии S1–S7. Ошибки как топливо</span></li>
-            <li><strong>Урок 6. Агент в команде. Финальный разбор</strong><span class="date-badge">6 мая ср</span><span class="sub">Сверки, объединения, shadow AI. Разбор своей задачи</span></li>
+            <li><strong>Урок 1. Агент vs чат-бот. CLAUDE.md</strong><span class="date-badge done">17 апр пт</span><span class="sub">Разница с ChatGPT. Почему CLAUDE.md главнее инструкций в чате</span></li>
+            <li><strong>Урок 2. Безопасность данных</strong><span class="date-badge new">новое</span><span class="sub">Что можно/нельзя отдавать агенту: персональные данные клиентов, финансы, договоры. Как настроить правила в CLAUDE.md, чтобы агент сам отказывался от чувствительного. Один инцидент = весь проект под вопросом</span></li>
+            <li><strong>Урок 3. Память + skills, playbooks, rules</strong><span class="date-badge soon">21 апр вт</span><span class="sub">3 типа артефактов памяти — чем отличаются, когда какой создавать</span></li>
+            <li><strong>Урок 4. MCP-серверы и базовые интеграции</strong><span class="date-badge new">новое</span><span class="sub">Агент без интеграций — это умный текстовый помощник. С MCP — рабочий инструмент: Google Calendar, CRM, файловые системы, БД. Какие MCP-серверы бывают и как подключить первый</span></li>
+            <li><strong>Урок 5. Хуки — автоматические проверки</strong><span class="date-badge soon">24 апр пт</span><span class="sub">Что такое hooks, когда срабатывают. Чем отличаются от rules. Зачем нужны</span></li>
+            <li><strong>Урок 6. Постановка задач. Guards</strong><span class="date-badge later">28 апр вт</span><span class="sub">4 элемента задачи (Крол). Как учить агента «не делать»</span></li>
+            <li><strong>Урок 7. Контекст, компакт, handoff</strong><span class="date-badge new">новое</span><span class="sub">Самая частая причина ошибок — потеря контекста после компакта. Что такое компакт и почему агент «забывает». Как писать handoff для передачи между сессиями. Как структурировать CLAUDE.md, чтобы критичное не терялось</span></li>
+            <li><strong>Урок 8. Автономность. Стадии. Ошибки</strong><span class="date-badge later">30 апр чт</span><span class="sub">5 уровней автономии. Стадии S1–S7. Ошибки как топливо</span></li>
+            <li><strong>Урок 9. Агент в команде. Финальный разбор</strong><span class="date-badge later">6 мая ср</span><span class="sub">Сверки, объединения, shadow AI. Разбор своей задачи</span></li>
           </ul>
         </div>
 
         <div class="col">
           <h4><span class="icon">✓</span> Практические чек-листы</h4>
           <ul class="item-list">
-            <li><strong>2.1 Мой минимальный CLAUDE.md</strong><span class="date-badge soon">17 апр пт</span><span class="sub">Шаблон + примеры. Заполнить за 20 минут</span></li>
-            <li><strong>2.2 Задача по 4 элементам</strong><span class="date-badge soon">17 апр пт</span><span class="sub">Как описать любую задачу так, чтобы агент понял</span></li>
-            <li><strong>2.3 Прогон задачи по S1–S7</strong><span class="date-badge soon">17 апр пт</span><span class="sub">Пошаговая карта: от классификации до архивации</span></li>
-            <li><strong>2.4 Ошибка → правило</strong><span class="date-badge soon">17 апр пт</span><span class="sub">Как превратить провал в постоянную защиту агента</span></li>
-            <li><strong>2.5 Стартовый комплект</strong><span class="date-badge soon">17 апр пт</span><span class="sub">Готовый архив: базовые CLAUDE.md, rules, skills, hooks. Распаковать, поднять у себя, проверить что работает</span></li>
-            <li><strong>2.6 TG-оповещения о лимите сессии</strong><span class="date-badge soon">17 апр пт</span><span class="sub">Настроить уведомления в Telegram о подходе к лимиту контекста сессии — чтобы не терять работу при переполнении</span></li>
+            <li><strong>2.1 Мой минимальный CLAUDE.md</strong><span class="date-badge done">17 апр пт</span><span class="sub">Шаблон + примеры. Заполнить за 20 минут</span></li>
+            <li><strong>2.2 Задача по 4 элементам</strong><span class="date-badge done">17 апр пт</span><span class="sub">Как описать любую задачу так, чтобы агент понял</span></li>
+            <li><strong>2.3 Прогон задачи по S1–S7</strong><span class="date-badge done">17 апр пт</span><span class="sub">Пошаговая карта: от классификации до архивации</span></li>
+            <li><strong>2.4 Ошибка → правило</strong><span class="date-badge done">17 апр пт</span><span class="sub">Как превратить провал в постоянную защиту агента. Описать ошибку → найти причину → создать правило в CLAUDE.md → проверить что не повторяется</span></li>
+            <li><strong>2.5 Стартовый комплект</strong><span class="date-badge done">17 апр пт</span><span class="sub">Готовый архив: базовые CLAUDE.md, rules, skills, hooks. Распаковать, поднять у себя, проверить что работает</span></li>
+            <li><strong>2.6 TG-оповещения о лимите сессии</strong><span class="date-badge done">17 апр пт</span><span class="sub">Настроить уведомления в Telegram о подходе к лимиту контекста сессии — чтобы не терять работу при переполнении</span></li>
+            <li><strong>2.7 Безопасность перед отправкой</strong><span class="date-badge new">новое</span><span class="sub">Перед каждой передачей данных агенту: нет PII? нет паролей и токенов? нет конфиденциальных данных клиентов? нет коммерческой тайны?</span></li>
+            <li><strong>2.8 Мой первый рабочий день с агентом</strong><span class="date-badge new">новое</span><span class="sub">Сквозной чек-лист от настройки до первого результата. Что открыть, что проверить, какую первую задачу дать, как принять</span></li>
           </ul>
         </div>
       </div>
@@ -821,22 +835,24 @@
 
       <div class="block-body">
         <div class="col">
-          <h4><span class="icon">3</span> Уроки</h4>
+          <h4><span class="icon">4</span> Уроки</h4>
           <ul class="item-list">
-            <li><strong>Работа с задачами</strong><span class="date-badge">8 мая пт</span><span class="sub">Постановка, приёмка, разбор провалов</span></li>
-            <li><strong>Еженедельная рефлексия как гигиена</strong><span class="date-badge">12 мая вт</span><span class="sub">Что анализировать в пятницу: что работает, что нет, куда эволюционирует агент</span></li>
-            <li><strong>Подготовка к командной сверке</strong><span class="date-badge">14 мая чт</span><span class="sub">Как рассказать за 5 минут: что отдал, что получилось, где ошибка</span></li>
+            <li><strong>Работа с задачами</strong><span class="date-badge later">8 мая пт</span><span class="sub">Постановка, приёмка, разбор провалов</span></li>
+            <li><strong>Верификация и «галлюцинации»</strong><span class="date-badge new">новое</span><span class="sub">Агент уверенно выдаёт неправильные факты. Как поймать галлюцинацию. Как настроить guards («не утверждай без источника»). Какие задачи требуют обязательной верификации</span></li>
+            <li><strong>Еженедельная рефлексия как гигиена</strong><span class="date-badge later">12 мая вт</span><span class="sub">Что анализировать в пятницу: что работает, что нет, куда эволюционирует агент</span></li>
+            <li><strong>Подготовка к командной сверке</strong><span class="date-badge later">14 мая чт</span><span class="sub">Как рассказать за 5 минут: что отдал, что получилось, где ошибка</span></li>
           </ul>
         </div>
 
         <div class="col">
           <h4><span class="icon">✓</span> Ритуальные чек-листы</h4>
           <ul class="item-list">
-            <li><strong>3.1 Ежедневный ритуал</strong><span class="date-badge soon">7 мая чт</span><span class="sub">Что делать с агентом в начале и в конце дня</span></li>
-            <li><strong>3.2 Еженедельная рефлексия (пятница)</strong><span class="date-badge soon">7 мая чт</span><span class="sub">Главный чек-лист — вопросы для анализа работы системы</span></li>
-            <li><strong>3.3 Приёмка задачи у агента</strong><span class="date-badge soon">7 мая чт</span><span class="sub">Как проверить прежде чем сказать «готово»</span></li>
-            <li><strong>3.4 Подготовка к ежемесячному объединению</strong><span class="date-badge soon">7 мая чт</span><span class="sub">Что передавать в общий CLAUDE.md компании</span></li>
-            <li><strong>3.5 Когда playbook / rule / skill</strong><span class="date-badge soon">7 мая чт</span><span class="sub">Дерево решений: что создавать в каких случаях</span></li>
+            <li><strong>3.1 Ежедневный ритуал</strong><span class="date-badge later">7 мая чт</span><span class="sub">Что делать с агентом в начале и в конце дня</span></li>
+            <li><strong>3.2 Еженедельная рефлексия (пятница)</strong><span class="date-badge later">7 мая чт</span><span class="sub">Главный чек-лист — вопросы для анализа работы системы</span></li>
+            <li><strong>3.3 Приёмка длинной задачи у агента</strong><span class="date-badge later">7 мая чт</span><span class="sub">Как проверить прежде чем сказать «готово». Пошаговая проверка результата: на что смотреть, что сверять с источником, как ловить пропуски и галлюцинации</span></li>
+            <li><strong>3.4 Подготовка к ежемесячному объединению</strong><span class="date-badge later">7 мая чт</span><span class="sub">Что передавать в общий CLAUDE.md компании</span></li>
+            <li><strong>3.5 Когда playbook / rule / skill</strong><span class="date-badge later">7 мая чт</span><span class="sub">Дерево решений: что создавать в каких случаях</span></li>
+            <li><strong>3.6 Когда обновлять CLAUDE.md</strong><span class="date-badge new">новое</span><span class="sub">Триггеры обновления: после инцидента, после нового правила, еженедельный аудит. Что добавлять, что выносить в rules/skills</span></li>
           </ul>
         </div>
       </div>
@@ -957,6 +973,14 @@
       <h3>А если у меня уже есть опыт с ChatGPT?</h3>
       <p>Отлично, но курс всё равно нужен. ChatGPT и Claude Code — это разные продукты. Урок 1 объяснит разницу.</p>
     </div>
+    <div class="faq-item">
+      <h3>Что делать если агент зациклился?</h3>
+      <p>Две неудачи подряд тем же способом — СТОП. Не повторять третий раз. Останови сессию (Esc или закрой), переформулируй задачу: «какая конечная цель?», «есть ли другой путь к ней?». Если и это не помогает — записывай в bugs-log и неси на еженедельную сверку.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Как понять что CLAUDE.md пора обновить?</h3>
+      <p>Три триггера: (1) случился инцидент — агент сделал не то, обнови правила; (2) появилось новое устойчивое правило в твоей работе — внеси его; (3) раз в неделю на пятничной рефлексии пробегись глазами — что устарело, что добавить. Подробности в чек-листе 3.6.</p>
+    </div>
   </div>
 </section>
 
@@ -972,7 +996,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="container">
-    Внедрение ИИ в Стардогс • Учебный курс • Версия 0.2 (черновик) • Апрель 2026
+    Внедрение ИИ в Стардогс • Учебный курс • Версия 0.3 (черновик) • Апрель 2026
   </div>
 </footer>
 
