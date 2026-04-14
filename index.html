@@ -474,6 +474,13 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  a.res-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(30, 58, 95, 0.12);
   }
   .res-item .ic {
     width: 44px;
@@ -781,10 +788,10 @@
         <div class="col">
           <h4><span class="icon">✓</span> Практические чек-листы</h4>
           <ul class="item-list">
-            <li><strong>2.1 Мой минимальный CLAUDE.md</strong><span class="sub">Шаблон + примеры. Заполнить за 20 минут</span></li>
-            <li><strong>2.2 Задача по 4 элементам</strong><span class="sub">Как описать любую задачу так, чтобы агент понял</span></li>
-            <li><strong>2.3 Прогон задачи по S1–S7</strong><span class="sub">Пошаговая карта: от классификации до архивации</span></li>
-            <li><strong>2.4 Ошибка → правило</strong><span class="sub">Как превратить провал в постоянную защиту агента</span></li>
+            <li><strong>2.1 Мой минимальный CLAUDE.md</strong><span class="date-badge soon">17 апр пт</span><span class="sub">Шаблон + примеры. Заполнить за 20 минут</span></li>
+            <li><strong>2.2 Задача по 4 элементам</strong><span class="date-badge">24 апр пт</span><span class="sub">Как описать любую задачу так, чтобы агент понял</span></li>
+            <li><strong>2.3 Прогон задачи по S1–S7</strong><span class="date-badge">28 апр вт</span><span class="sub">Пошаговая карта: от классификации до архивации</span></li>
+            <li><strong>2.4 Ошибка → правило</strong><span class="date-badge">6 мая ср</span><span class="sub">Как превратить провал в постоянную защиту агента</span></li>
           </ul>
         </div>
       </div>
@@ -813,20 +820,20 @@
         <div class="col">
           <h4><span class="icon">3</span> Уроки</h4>
           <ul class="item-list">
-            <li><strong>Работа с задачами</strong><span class="sub">Постановка, приёмка, разбор провалов</span></li>
-            <li><strong>Еженедельная рефлексия как гигиена</strong><span class="sub">Что анализировать в пятницу: что работает, что нет, куда эволюционирует агент</span></li>
-            <li><strong>Подготовка к командной сверке</strong><span class="sub">Как рассказать за 5 минут: что отдал, что получилось, где ошибка</span></li>
+            <li><strong>Работа с задачами</strong><span class="date-badge">8 мая пт</span><span class="sub">Постановка, приёмка, разбор провалов</span></li>
+            <li><strong>Еженедельная рефлексия как гигиена</strong><span class="date-badge">12 мая вт</span><span class="sub">Что анализировать в пятницу: что работает, что нет, куда эволюционирует агент</span></li>
+            <li><strong>Подготовка к командной сверке</strong><span class="date-badge">14 мая чт</span><span class="sub">Как рассказать за 5 минут: что отдал, что получилось, где ошибка</span></li>
           </ul>
         </div>
 
         <div class="col">
           <h4><span class="icon">✓</span> Ритуальные чек-листы</h4>
           <ul class="item-list">
-            <li><strong>3.1 Ежедневный ритуал</strong><span class="sub">Что делать с агентом в начале и в конце дня</span></li>
-            <li><strong>3.2 Еженедельная рефлексия (пятница)</strong><span class="sub">Главный чек-лист — вопросы для анализа работы системы</span></li>
-            <li><strong>3.3 Приёмка задачи у агента</strong><span class="sub">Как проверить прежде чем сказать «готово»</span></li>
-            <li><strong>3.4 Подготовка к ежемесячному объединению</strong><span class="sub">Что передавать в общий CLAUDE.md компании</span></li>
-            <li><strong>3.5 Когда playbook / rule / skill</strong><span class="sub">Дерево решений: что создавать в каких случаях</span></li>
+            <li><strong>3.1 Ежедневный ритуал</strong><span class="date-badge">7 мая чт</span><span class="sub">Что делать с агентом в начале и в конце дня</span></li>
+            <li><strong>3.2 Еженедельная рефлексия (пятница)</strong><span class="date-badge">8 мая пт</span><span class="sub">Главный чек-лист — вопросы для анализа работы системы</span></li>
+            <li><strong>3.3 Приёмка задачи у агента</strong><span class="date-badge">7 мая чт</span><span class="sub">Как проверить прежде чем сказать «готово»</span></li>
+            <li><strong>3.4 Подготовка к ежемесячному объединению</strong><span class="date-badge">22 мая пт</span><span class="sub">Что передавать в общий CLAUDE.md компании</span></li>
+            <li><strong>3.5 Когда playbook / rule / skill</strong><span class="date-badge">15 мая пт</span><span class="sub">Дерево решений: что создавать в каких случаях</span></li>
           </ul>
         </div>
       </div>
@@ -891,13 +898,13 @@
   <div class="container">
     <h2 style="text-align:center; margin-bottom:50px;">Ресурсы</h2>
     <div class="res-grid">
-      <div class="res-item">
+      <a href="krol.html" class="res-item">
         <div class="ic">К</div>
         <div>
-          <h4>Книга Крола по Claude Code</h4>
-          <p>Первоисточник наших правил и структур</p>
+          <h4>Книга Крола по Claude Code →</h4>
+          <p>Наш конспект: топ-5 к внедрению + приёмы + общий вывод</p>
         </div>
-      </div>
+      </a>
       <div class="res-item">
         <div class="ic">AW</div>
         <div>

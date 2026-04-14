@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Книга Крола по Claude Code — конспект</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 0;
+  }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.85;
+  }
+  header .back:hover { opacity: 1; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+  .hero .label {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    max-width: 720px;
+    margin: 0 auto 16px;
+    line-height: 1.15;
+  }
+  .hero .meta {
+    opacity: 0.85;
+    font-size: 14px;
+  }
+
+  main { padding: 60px 0 100px; }
+
+  h2 {
+    font-size: 28px;
+    color: var(--navy);
+    font-weight: 800;
+    margin: 48px 0 20px;
+  }
+  h2:first-child { margin-top: 0; }
+  h3 {
+    font-size: 20px;
+    color: var(--navy);
+    font-weight: 700;
+    margin: 32px 0 12px;
+  }
+
+  p { margin-bottom: 16px; color: var(--text); }
+  p.lead {
+    font-size: 18px;
+    color: var(--gray);
+    padding: 20px 24px;
+    background: var(--navy-bg);
+    border-left: 4px solid var(--navy);
+    border-radius: 8px;
+    margin-bottom: 32px;
+  }
+
+  ul { padding-left: 24px; margin-bottom: 16px; }
+  ul li { margin-bottom: 8px; color: var(--text); }
+
+  .card {
+    background: var(--navy-bg);
+    padding: 24px 28px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--accent);
+  }
+  .card .num {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 32px;
+    font-weight: 800;
+    margin-right: 12px;
+  }
+  .card h3 { display: inline; color: var(--navy); font-size: 18px; }
+  .card p { margin: 14px 0 0; font-size: 15px; color: var(--text); }
+  .card .action {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: var(--white);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--gray);
+  }
+  .card .action strong { color: var(--navy); }
+
+  blockquote {
+    border-left: 4px solid var(--accent);
+    padding: 16px 20px;
+    background: #FFF9EC;
+    margin: 24px 0;
+    font-size: 15px;
+    color: #6B5300;
+    border-radius: 0 8px 8px 0;
+  }
+  blockquote strong { color: #8B6F00; }
+
+  footer {
+    background: #152B47;
+    color: rgba(255,255,255,0.6);
+    padding: 32px 0;
+    text-align: center;
+    font-size: 13px;
+  }
+  footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 30px; }
+    h2 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Ресурс 1 / Конспект</div>
+    <h1>Книга Крола<br>по Claude Code</h1>
+    <div class="meta">Наша выжимка ключевых находок • Применимо к Стардогс</div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">Алексей Крол — автор подхода «Теория каст и ролей». Его книга про Claude Code стала одним из источников нашей архитектуры. Здесь — ключевые находки, которые мы применяем или собираемся применять.</p>
+
+    <h2>Топ-5 к внедрению</h2>
+
+    <div class="card">
+      <h3><span class="num">1</span>CLAUDE.md — сократить до ядра</h3>
+      <p>Крол пишет: ~200 строк, только ядро (миссия, ключевые ограничения, структура сессии). Не превращать в регламент — остальное через @import из модулей.</p>
+      <div class="action"><strong>Для нас:</strong> ядро в CLAUDE.md, детали в rules/. Модульность через `@path` для разных зон проекта.</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">2</span>Playbooks → нативные skills</h3>
+      <p>Playbook = текст, который агент читает и интерпретирует. Skill = пакет, который Claude Code исполняет нативно, с принудительным чек-листом и CONTRACT.</p>
+      <div class="action"><strong>Для нас:</strong> зрелые playbooks (ценообразование, отзывы, рутины) переводить в skills. Skill = исполняемое, playbook = справочное.</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">3</span>Жёсткие запреты — в settings.json</h3>
+      <p>CLAUDE.md — это рекомендация, её можно обойти в моменте. settings.json — архитектурный запрет, обойти нельзя.</p>
+      <div class="action"><strong>Для нас:</strong> опасные операции (удаление файлов Ирины, перезапись таблиц) — в permissions deny. Не надеемся на дисциплину, делаем невозможным.</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">4</span>Субагент-ревьюер</h3>
+      <p>Исполнитель делает, ревьюер проверяет — это разные роли. Перед финализацией важного результата запускается отдельная проверка.</p>
+      <div class="action"><strong>Для нас:</strong> для таблиц и отправок во внешние чаты — субагент-ревьюер перед финализацией. Снижает процент ошибок, видимых получателю.</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">5</span>Hook на завершение сессии</h3>
+      <p>Автопроверка при выходе: состояние обновлено? Handoff записан? Журнал заполнен? Не полагаемся на память.</p>
+      <div class="action"><strong>Для нас:</strong> автоматический hook закрытия сессии, который блокирует выход без записанного контекста. Без этого — забывается раз в неделю.</div>
+    </div>
+
+    <h2>Мелкие, но полезные приёмы</h2>
+
+    <ul>
+      <li><strong>Техника интервью:</strong> при размытой задаче — 3–5 уточняющих вопросов, не додумывать. «Что должно получиться? Кто получатель? Есть ли эталон? Что точно НЕ нужно? Когда нужно?»</li>
+      <li><strong>Diff-отчёт:</strong> после правок в таблицах обязательно «было X → стало Y». Без этого человек не понимает что изменилось.</li>
+      <li><strong>Колонка iterations:</strong> в трекинге задач считаем сколько переделок до «готово». Метрика качества постановки задачи, а не усилий агента.</li>
+      <li><strong>Path-scoped rules:</strong> разные правила для разных зон проекта (telegram-bot/ ≠ memory/ ≠ scripts/). Не грузить агенту всё сразу.</li>
+      <li><strong>Шаблон делегирования:</strong> цель + границы + формат результата + правило эскалации. Без этого агент додумывает.</li>
+      <li><strong>Разделение «разговор» vs «задача»:</strong> если нет 4 элементов (что / материал / ограничения / критерий готовности) — это разговор, переспросить.</li>
+    </ul>
+
+    <h2>Workflow: где мы не согласны с Кролом</h2>
+
+    <p>Крол предлагает «голый чек-лист» — чистую последовательность шагов. Наша практика показала, что этого недостаточно.</p>
+
+    <blockquote>
+      <strong>Наш workflow = playbook (с контекстом и камнями) + принудительный чек-лист (skill/hook).</strong><br><br>
+      Чек-лист без объяснения «почему» приводит к повторению тех же ошибок. Playbook с описанием камней — это память, которую нельзя потерять.<br><br>
+      Крол пишет для человека с памятью. Мы строим для агента без памяти. Это разный формат.
+    </blockquote>
+
+    <h2>Общий вывод</h2>
+
+    <p>По шкале зрелости Крола — мы на уровне 4–5 из 5. Пробелы не в архитектуре, а в <strong>использовании нативных механизмов Claude Code</strong> (skills, path-scoped rules, permissions deny) и в <strong>формализации ревью-фазы</strong> перед отправкой результата человеку.</p>
+
+    <p>То есть большая часть внедряемого не требует переписывания системы — это настройка существующих инструментов Claude Code, которые мы раньше обходили стороной.</p>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <a href="index.html">← Вернуться к курсу</a>
+  </div>
+</footer>
+
+</body>
+</html>
