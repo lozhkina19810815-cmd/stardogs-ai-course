@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Внедрение ИИ в Стардогс — учебный курс</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* HEADER */
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  header .container { display: flex; justify-content: space-between; align-items: center; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header nav a {
+    color: var(--white);
+    text-decoration: none;
+    margin-left: 28px;
+    font-size: 14px;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+  header nav a:hover { opacity: 1; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 100px 0 120px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 52px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+  .hero .subtitle {
+    font-size: 22px;
+    font-weight: 300;
+    margin-bottom: 40px;
+    opacity: 0.9;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero .meta {
+    display: inline-flex;
+    gap: 32px;
+    margin-bottom: 40px;
+    font-size: 14px;
+    opacity: 0.85;
+  }
+  .cta {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--white);
+    padding: 18px 40px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 17px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(232, 139, 0, 0.35);
+  }
+  .cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232, 139, 0, 0.45); }
+
+  /* INTRO */
+  .intro { background: var(--navy-bg); padding: 80px 0; }
+  .intro h2 {
+    font-size: 36px;
+    color: var(--navy);
+    text-align: center;
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .intro .section-sub {
+    text-align: center;
+    color: var(--gray);
+    margin-bottom: 50px;
+    font-size: 16px;
+  }
+  .intro-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-bottom: 80px;
+  }
+  .intro-card {
+    background: var(--white);
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(30, 58, 95, 0.06);
+  }
+  .intro-card h3 {
+    color: var(--navy);
+    font-size: 18px;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .intro-card p { color: var(--gray); font-size: 14px; }
+
+  /* ROADMAP TIMELINE */
+  .roadmap {
+    background: var(--white);
+    padding: 40px 32px 32px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(30, 58, 95, 0.08);
+  }
+  .roadmap h3 {
+    text-align: center;
+    color: var(--navy);
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 40px;
+  }
+  .timeline {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: 5%;
+    right: 5%;
+    height: 3px;
+    background: linear-gradient(to right, #7DA832 0%, #7DA832 35%, var(--accent) 35%, var(--accent) 55%, var(--border) 55%);
+    z-index: 0;
+  }
+  .tl-point {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 6px;
+  }
+  .tl-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 4px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--gray);
+    margin-bottom: 14px;
+  }
+  .tl-point.done .tl-dot {
+    background: #7DA832;
+    border-color: #7DA832;
+    color: var(--white);
+  }
+  .tl-point.now .tl-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--white);
+    box-shadow: 0 0 0 6px rgba(232, 139, 0, 0.25);
+  }
+  .tl-date {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .tl-label {
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.3;
+  }
+  .tl-point.now .tl-date { color: var(--accent); }
+
+  /* ORG STEPS */
+  .org-steps {
+    padding: 100px 0;
+    background: var(--white);
+  }
+  .org-steps .section-title h2 { color: var(--navy); }
+  .steps-flow {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+    position: relative;
+  }
+  .step-item {
+    background: var(--navy-bg);
+    border-top: 4px solid var(--navy);
+    padding: 24px 18px;
+    border-radius: 10px;
+    position: relative;
+    text-align: center;
+  }
+  .step-num {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    border: 3px solid var(--white);
+  }
+  .step-item h4 {
+    color: var(--navy);
+    font-size: 14px;
+    font-weight: 700;
+    margin: 16px 0 8px;
+    min-height: 36px;
+  }
+  .step-item p {
+    color: var(--gray);
+    font-size: 11px;
+    line-height: 1.4;
+  }
+  .steps-note {
+    text-align: center;
+    margin-top: 32px;
+    color: var(--gray);
+    font-size: 14px;
+  }
+  .steps-note strong { color: var(--navy); }
+
+  /* BLOCKS */
+  .blocks { padding: 100px 0; }
+  .section-title { text-align: center; margin-bottom: 60px; }
+  .section-title h2 {
+    font-size: 42px;
+    color: var(--navy);
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .section-title p { color: var(--gray); font-size: 17px; }
+
+  .block-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px;
+    margin-bottom: 32px;
+    transition: box-shadow 0.2s;
+  }
+  .block-card:hover { box-shadow: 0 8px 32px rgba(30, 58, 95, 0.1); }
+
+  .block-header {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--navy-bg);
+  }
+  .block-number {
+    flex-shrink: 0;
+    width: 100px;
+    height: 100px;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 800;
+  }
+  .block-title { flex: 1; }
+  .block-title .label {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .block-title h3 {
+    color: var(--navy);
+    font-size: 30px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  .block-title .meta {
+    color: var(--gray);
+    font-size: 14px;
+  }
+  .block-description {
+    color: var(--text);
+    font-size: 16px;
+    margin-bottom: 32px;
+    padding: 20px 24px;
+    background: var(--navy-bg);
+    border-radius: 10px;
+    border-left: 4px solid var(--navy);
+  }
+
+  .block-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .col h4 {
+    color: var(--navy);
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .col h4 .icon {
+    width: 32px;
+    height: 32px;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .item-list { list-style: none; }
+  .item-list li {
+    padding: 12px 0 12px 28px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 14px;
+    position: relative;
+  }
+  .item-list li:last-child { border-bottom: none; }
+  .item-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .item-list li .sub {
+    display: block;
+    color: var(--gray);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .col-single { grid-column: 1 / -1; }
+
+  .block-output {
+    margin-top: 28px;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #F4F8E6 0%, #E8F2C8 100%);
+    border-left: 4px solid #7DA832;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #3C5010;
+  }
+  .block-output strong { color: #2A3B07; }
+
+  .placeholder {
+    display: inline-block;
+    background: #FFF3D6;
+    color: #9E6B00;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    margin-top: 14px;
+  }
+
+  /* LAIFHACKS */
+  .lifehacks { background: var(--navy-bg); padding: 100px 0; }
+  .lifehacks .section-title h2 { color: var(--navy); }
+  .lifehacks-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .lh-card {
+    background: var(--white);
+    padding: 24px 28px;
+    border-radius: 10px;
+    border-top: 3px solid var(--accent);
+    box-shadow: 0 2px 8px rgba(30, 58, 95, 0.05);
+  }
+  .lh-card .category {
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .lh-card h4 {
+    color: var(--navy);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .lh-card p { color: var(--gray); font-size: 13px; }
+
+  /* RESOURCES */
+  .resources { padding: 80px 0; }
+  .resources h2 {
+    font-size: 36px;
+    color: var(--navy);
+    text-align: center;
+    margin-bottom: 50px;
+    font-weight: 700;
+  }
+  .res-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .res-item {
+    background: var(--navy-bg);
+    padding: 24px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .res-item .ic {
+    width: 44px;
+    height: 44px;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+  .res-item h4 { color: var(--navy); font-size: 15px; margin-bottom: 4px; }
+  .res-item p { color: var(--gray); font-size: 13px; }
+
+  /* FAQ */
+  .faq { padding: 100px 0; background: var(--navy-bg); }
+  .faq h2 {
+    font-size: 36px;
+    color: var(--navy);
+    text-align: center;
+    margin-bottom: 50px;
+    font-weight: 700;
+  }
+  .faq-item {
+    background: var(--white);
+    padding: 24px 28px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .faq-item h3 {
+    color: var(--navy);
+    font-size: 17px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .faq-item p { color: var(--gray); font-size: 14px; }
+
+  /* CONTACT */
+  .contact {
+    background: var(--navy);
+    color: var(--white);
+    padding: 80px 0;
+    text-align: center;
+  }
+  .contact h2 {
+    font-size: 36px;
+    margin-bottom: 16px;
+    font-weight: 800;
+  }
+  .contact p {
+    font-size: 17px;
+    opacity: 0.85;
+    margin-bottom: 32px;
+  }
+
+  /* FOOTER */
+  footer {
+    background: #152B47;
+    color: rgba(255,255,255,0.6);
+    padding: 32px 0;
+    text-align: center;
+    font-size: 13px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 36px; }
+    .hero .subtitle { font-size: 18px; }
+    .hero .meta { flex-direction: column; gap: 12px; }
+    .intro-grid, .res-grid, .lifehacks-grid { grid-template-columns: 1fr; }
+    .block-card { padding: 28px; }
+    .block-header { flex-direction: column; gap: 20px; }
+    .block-body { grid-template-columns: 1fr; }
+    .section-title h2 { font-size: 32px; }
+    header nav a { margin-left: 14px; font-size: 12px; }
+    header nav a:nth-child(n+4) { display: none; }
+    .steps-flow { grid-template-columns: repeat(2, 1fr); }
+    .timeline { flex-direction: column; gap: 24px; }
+    .timeline::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <nav>
+      <a href="#intro">О курсе</a>
+      <a href="#org-steps">Орг-шаги</a>
+      <a href="#blocks">Программа</a>
+      <a href="#lifehacks">Лайфхаки</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h1>Учебный курс<br>для энтузиастов ИИ</h1>
+    <p class="subtitle">3 шага от нуля до автономной работы с ИИ-агентом. База знаний для тех, кто начинает.</p>
+    <div class="meta">
+      <span>📋 3 больших блока</span>
+      <span>⏱ ~2–3 недели</span>
+      <span>🎯 Теория + чек-листы</span>
+    </div>
+    <br>
+    <a href="#blocks" class="cta">Начать с Блока 1</a>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="intro" id="intro">
+  <div class="container">
+    <h2>Зачем этот курс</h2>
+    <p class="section-sub">Зачем — три причины. Куда идём — дорожная карта движения.</p>
+    <div class="intro-grid">
+      <div class="intro-card">
+        <h3>Избежать наших ошибок</h3>
+        <p>Мы 2 месяца учились методом проб. Этот курс — наша эволюция, разложенная на шаги. Чтобы ты не наступал(а) на те же грабли.</p>
+      </div>
+      <div class="intro-card">
+        <h3>Понять архитектуру до работы</h3>
+        <p>Мы поняли на своём опыте: правильнее сначала понимать устройство агента, потом давать ему задачи. Не наоборот.</p>
+      </div>
+      <div class="intro-card">
+        <h3>Войти в команду энтузиастов</h3>
+        <p>После курса ты готов(а) к еженедельным сверкам и ежемесячному объединению наработок в общую архитектуру компании.</p>
+      </div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div class="roadmap">
+      <h3>Дорожная карта — где мы сейчас</h3>
+      <div class="timeline">
+        <div class="tl-point done">
+          <div class="tl-dot">✓</div>
+          <div class="tl-date">10 ФЕВ</div>
+          <div class="tl-label">Ирина создала<br>агента Ли</div>
+        </div>
+        <div class="tl-point done">
+          <div class="tl-dot">✓</div>
+          <div class="tl-date">10 МАР</div>
+          <div class="tl-label">Рабочая группа<br>«Внедрение ИИ»</div>
+        </div>
+        <div class="tl-point done">
+          <div class="tl-dot">✓</div>
+          <div class="tl-date">15 АПР</div>
+          <div class="tl-label">Ретро: решение<br>снизу вверх</div>
+        </div>
+        <div class="tl-point now">
+          <div class="tl-dot">●</div>
+          <div class="tl-date">АПР–МАЙ</div>
+          <div class="tl-label">Орг-подготовка<br>+ курс</div>
+        </div>
+        <div class="tl-point">
+          <div class="tl-dot">5</div>
+          <div class="tl-date">МАЙ–ИЮН</div>
+          <div class="tl-label">Пилот + раскатка<br>4 энтузиастов</div>
+        </div>
+        <div class="tl-point">
+          <div class="tl-dot">6</div>
+          <div class="tl-date">ИЮН–АВГ</div>
+          <div class="tl-label">Автономная<br>работа</div>
+        </div>
+        <div class="tl-point">
+          <div class="tl-dot">7</div>
+          <div class="tl-date">АВГ</div>
+          <div class="tl-label">Gate:<br>оценка</div>
+        </div>
+        <div class="tl-point">
+          <div class="tl-dot">8</div>
+          <div class="tl-date">ОКТ–ДЕК</div>
+          <div class="tl-label">Общая<br>архитектура</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORG STEPS -->
+<section class="org-steps" id="org-steps">
+  <div class="container">
+    <div class="section-title">
+      <h2>Орг-подготовка — 6 шагов</h2>
+      <p>Что нужно собрать до начала курса. Порядок важен: каждый следующий шаг опирается на предыдущий.</p>
+    </div>
+
+    <div class="steps-flow">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <h4>Иностранный телефон</h4>
+        <p>SIM или виртуальный номер для SMS</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <h4>Иностранная почта</h4>
+        <p>Gmail через новый номер</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <h4>Иностранная карта</h4>
+        <p>Банки СНГ, дистанционно</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <h4>Регистрация и оплата Claude</h4>
+        <p>Max 5x, €110/мес</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <h4>Claude Desktop + VPN</h4>
+        <p>Установка и проверка</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">6</div>
+        <h4>Порядок в файлах</h4>
+        <p>Рабочая папка для агента</p>
+      </div>
+    </div>
+
+    <p class="steps-note">
+      ⏱ <strong>Срок:</strong> 2–3 недели. Зависит от того, с чего стартуешь. У кого-то что-то уже есть.<br>
+      На каждый шаг — <strong>отдельный чек-лист внутри Блока 1</strong> программы.
+    </p>
+  </div>
+</section>
+
+<!-- BLOCKS -->
+<section class="blocks" id="blocks">
+  <div class="container">
+    <div class="section-title">
+      <h2>Программа — 3 блока</h2>
+      <p>Сначала техника, потом понимание, потом работа. Именно в таком порядке.</p>
+    </div>
+
+    <!-- BLOCK 1 -->
+    <div class="block-card">
+      <div class="block-header">
+        <div class="block-number">1</div>
+        <div class="block-title">
+          <div class="label">ШАГ 1 • ИНФРАСТРУКТУРА</div>
+          <h3>Орг — подготовительные вопросы</h3>
+          <div class="meta">⏱ 2–3 недели • делаешь сам(а) с поддержкой Ирины</div>
+        </div>
+      </div>
+
+      <div class="block-description">
+        Собираем всё что нужно для работы из России: телефон, почта, карта, регистрация, установка. Это самый непредсказуемый блок по времени — зависит от того, с чего стартуешь.
+      </div>
+
+      <div class="block-body">
+        <div class="col col-single">
+          <h4><span class="icon">✓</span> Чек-листы шагов</h4>
+          <ul class="item-list">
+            <li><strong>1.1 Иностранный телефон</strong><span class="sub">SIM или виртуальный номер — где брать, как активировать</span></li>
+            <li><strong>1.2 Иностранная почта</strong><span class="sub">Gmail через новый номер — пошаговая регистрация</span></li>
+            <li><strong>1.3 Иностранная карта</strong><span class="sub">Банки Казахстана, Армении, Грузии — дистанционное оформление</span></li>
+            <li><strong>1.4 Регистрация и оплата Claude</strong><span class="sub">Тариф Max 5x, €110/мес — почему именно он</span></li>
+            <li><strong>1.5 Установка Claude Desktop + VPN</strong><span class="sub">Права администратора, первый запуск, проверка</span></li>
+            <li><strong>1.6 Навести минимальный порядок в файлах</strong><span class="sub">Выделить рабочую папку для агента</span></li>
+          </ul>
+          <div class="placeholder">⚠ Содержание чек-листов в разработке</div>
+        </div>
+      </div>
+
+      <div class="block-output">
+        <strong>Выход из блока:</strong> техника работает, Claude открывается, ты можешь поговорить с ним и показать файлы. Готов(а) к Блоку 2.
+      </div>
+    </div>
+
+    <!-- BLOCK 2 -->
+    <div class="block-card">
+      <div class="block-header">
+        <div class="block-number">2</div>
+        <div class="block-title">
+          <div class="label">ШАГ 2 • ПОНИМАНИЕ</div>
+          <h3>Базовые правила и архитектура</h3>
+          <div class="meta">⏱ 2 недели • 5 уроков × 60 мин теории + практика</div>
+        </div>
+      </div>
+
+      <div class="block-description">
+        Сначала понимание, потом работа. Это решение из нашего опыта: если дать человеку агента без понимания архитектуры, он будет относиться к нему как к волшебной коробке, и первый же сбой его разочарует.
+      </div>
+
+      <div class="block-body">
+        <div class="col">
+          <h4><span class="icon">5</span> Уроки (по 60 мин)</h4>
+          <ul class="item-list">
+            <li><strong>Урок 1. Агент vs чат-бот. CLAUDE.md</strong><span class="sub">Разница с ChatGPT. Почему CLAUDE.md главнее инструкций в чате</span></li>
+            <li><strong>Урок 2. Память + 4 артефакта</strong><span class="sub">Skills, playbooks, rules, handoffs — чем отличаются, когда что</span></li>
+            <li><strong>Урок 3. Постановка задач. Правила и guards</strong><span class="sub">4 элемента задачи (Крол). Как учить агента «не делать»</span></li>
+            <li><strong>Урок 4. Автономность. Стадии. Ошибки</strong><span class="sub">5 уровней автономии. Стадии S1–S7. Ошибки как топливо</span></li>
+            <li><strong>Урок 5. Агент в команде. Финальный разбор</strong><span class="sub">Сверки, объединения, shadow AI. Разбор своей задачи</span></li>
+          </ul>
+        </div>
+
+        <div class="col">
+          <h4><span class="icon">✓</span> Практические чек-листы</h4>
+          <ul class="item-list">
+            <li><strong>2.1 Мой минимальный CLAUDE.md</strong><span class="sub">Шаблон + примеры. Заполнить за 20 минут</span></li>
+            <li><strong>2.2 Задача по 4 элементам</strong><span class="sub">Как описать любую задачу так, чтобы агент понял</span></li>
+            <li><strong>2.3 Прогон задачи по S1–S7</strong><span class="sub">Пошаговая карта: от классификации до архивации</span></li>
+            <li><strong>2.4 Ошибка → правило</strong><span class="sub">Как превратить провал в постоянную защиту агента</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="block-output">
+        <strong>Выход из блока:</strong> у тебя есть свой минимальный CLAUDE.md, ты понимаешь логику агента, прошёл Q&A с Ириной. Готов(а) дать агенту первую реальную задачу.
+      </div>
+    </div>
+
+    <!-- BLOCK 3 -->
+    <div class="block-card">
+      <div class="block-header">
+        <div class="block-number">3</div>
+        <div class="block-title">
+          <div class="label">ШАГ 3 • ПРАКТИКА</div>
+          <h3>Работа + гигиена архитектуры</h3>
+          <div class="meta">⏱ постоянно, первый месяц активно • уроки + ритуалы</div>
+        </div>
+      </div>
+
+      <div class="block-description">
+        <strong>Гигиена архитектуры = еженедельная рефлексия</strong> и анализ работы системы. Это не ритуал уборки — это регулярное осознание того, что работает и что надо улучшать. Без неё через 2 месяца наступает shadow AI: агент работает, но никто не понимает почему.
+      </div>
+
+      <div class="block-body">
+        <div class="col">
+          <h4><span class="icon">3</span> Уроки</h4>
+          <ul class="item-list">
+            <li><strong>Работа с задачами</strong><span class="sub">Постановка, приёмка, разбор провалов</span></li>
+            <li><strong>Еженедельная рефлексия как гигиена</strong><span class="sub">Что анализировать в пятницу: что работает, что нет, куда эволюционирует агент</span></li>
+            <li><strong>Подготовка к командной сверке</strong><span class="sub">Как рассказать за 5 минут: что отдал, что получилось, где ошибка</span></li>
+          </ul>
+        </div>
+
+        <div class="col">
+          <h4><span class="icon">✓</span> Ритуальные чек-листы</h4>
+          <ul class="item-list">
+            <li><strong>3.1 Ежедневный ритуал</strong><span class="sub">Что делать с агентом в начале и в конце дня</span></li>
+            <li><strong>3.2 Еженедельная рефлексия (пятница)</strong><span class="sub">Главный чек-лист — вопросы для анализа работы системы</span></li>
+            <li><strong>3.3 Приёмка задачи у агента</strong><span class="sub">Как проверить прежде чем сказать «готово»</span></li>
+            <li><strong>3.4 Подготовка к ежемесячному объединению</strong><span class="sub">Что передавать в общий CLAUDE.md компании</span></li>
+            <li><strong>3.5 Когда playbook / rule / skill</strong><span class="sub">Дерево решений: что создавать в каких случаях</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="block-output">
+        <strong>Выход из блока:</strong> ты работаешь самостоятельно, твой агент эволюционирует под тебя, твои находки усиливают всю команду. Прошёл Gate на автономную работу.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- LIFEHACKS -->
+<section class="lifehacks" id="lifehacks">
+  <div class="container">
+    <div class="section-title">
+      <h2>Лайфхаки из нашей практики</h2>
+      <p>20+ коротких паттернов из 2 месяцев и 160+ сессий. Справочник, к которому возвращаются.</p>
+    </div>
+
+    <div class="lifehacks-grid">
+      <div class="lh-card">
+        <div class="category">Память</div>
+        <h4>Всегда проверяй extracted-tasks до того как спрашивать</h4>
+        <p>Ответы команды из чатов загружаются автоматически. В 80% случаев ответ уже там.</p>
+      </div>
+      <div class="lh-card">
+        <div class="category">Задачи</div>
+        <h4>Задача без 4 элементов — не задача</h4>
+        <p>Что / материал / ограничения / готово когда. Если чего-то нет — уточняй до начала.</p>
+      </div>
+      <div class="lh-card">
+        <div class="category">Ошибки</div>
+        <h4>Две неудачи подряд = СТОП</h4>
+        <p>Не повторять третий раз тем же способом. Переформулируй: «какая конечная цель?»</p>
+      </div>
+      <div class="lh-card">
+        <div class="category">Коммуникация</div>
+        <h4>Перед отправкой в чат команды — двойной фильтр</h4>
+        <p>Орфография + факты из источника. Репутация зарабатывается медленно, теряется быстро.</p>
+      </div>
+      <div class="lh-card">
+        <div class="category">Память</div>
+        <h4>Handoff обязателен после 40 минут сессии</h4>
+        <p>Дольше — деградирует внимание. Перезаход со свежим контекстом даёт больше чем час усталого.</p>
+      </div>
+      <div class="lh-card">
+        <div class="category">Архитектура</div>
+        <h4>Задача повторилась 3 раза → playbook</h4>
+        <p>Не пытайся запомнить — запиши. Следующий раз агент сделает по алгоритму за минуты.</p>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:40px;">
+      <div class="placeholder">⚠ Показаны 6 из 20+. Полный справочник в разработке</div>
+    </div>
+  </div>
+</section>
+
+<!-- RESOURCES -->
+<section class="resources">
+  <div class="container">
+    <h2 style="text-align:center; margin-bottom:50px;">Ресурсы</h2>
+    <div class="res-grid">
+      <div class="res-item">
+        <div class="ic">К</div>
+        <div>
+          <h4>Книга Крола по Claude Code</h4>
+          <p>Первоисточник наших правил и структур</p>
+        </div>
+      </div>
+      <div class="res-item">
+        <div class="ic">AW</div>
+        <div>
+          <h4>Agents Week 2026 (Яндекс Образование)</h4>
+          <p>7 конспектов + выводы Ли</p>
+        </div>
+      </div>
+      <div class="res-item">
+        <div class="ic">Ли</div>
+        <div>
+          <h4>Карточка агента Ли</h4>
+          <p>2+ месяца опыта, 160+ сессий, вся наша эволюция</p>
+        </div>
+      </div>
+      <div class="res-item">
+        <div class="ic">BL</div>
+        <div>
+          <h4>Bugs-log Ли</h4>
+          <p>60+ ошибок с разбором. Учимся на чужих, не на своих</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="section-title"><h2>Частые вопросы</h2></div>
+    <div class="faq-item">
+      <h3>Сколько реально времени уйдёт на весь курс?</h3>
+      <p>Блок 1 (орг) — 2-3 недели, в основном ожидания. Блок 2 (теория) — 2 недели, ~5 часов теории + практика. Блок 3 (работа) — начинается сразу и идёт постоянно.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Мне нужно знать программирование?</h3>
+      <p>Нет. Курс для менеджеров, не для разработчиков. Агент — это инструмент, с которым говорят на русском.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Что если я не понимаю что-то из урока?</h3>
+      <p>В конце каждого урока — вопросы для Q&A с Ириной. Записывай всё что непонятно, разбираем на еженедельной сверке.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Когда я начну реально работать с агентом?</h3>
+      <p>В Блоке 3. Сначала теория, потом практика — это осознанное решение. На своём опыте мы поняли, что обратный порядок даёт поверхностное понимание.</p>
+    </div>
+    <div class="faq-item">
+      <h3>А если у меня уже есть опыт с ChatGPT?</h3>
+      <p>Отлично, но курс всё равно нужен. ChatGPT и Claude Code — это разные продукты. Урок 1 объяснит разницу.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="container">
+    <h2>Застрял(а)? Напиши Ирине</h2>
+    <p>Курс — это живой документ. Мы дорабатываем его после каждой сверки.</p>
+    <a href="https://t.me/irinalozkina" class="cta">Написать в Telegram</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    Внедрение ИИ в Стардогс • Учебный курс • Версия 0.2 (черновик) • Апрель 2026
+  </div>
+</footer>
+
+</body>
+</html>
