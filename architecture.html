@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Архитектура агента Ли</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 0;
+  }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; }
+  header .back {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.85;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+  .hero .label {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    max-width: 720px;
+    margin: 0 auto 16px;
+    line-height: 1.15;
+  }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+
+  main { padding: 60px 0 100px; }
+
+  h2 {
+    font-size: 28px;
+    color: var(--navy);
+    font-weight: 800;
+    margin: 48px 0 20px;
+  }
+  h2:first-child { margin-top: 0; }
+  h3 {
+    font-size: 18px;
+    color: var(--navy);
+    font-weight: 700;
+    margin: 24px 0 10px;
+  }
+  p { margin-bottom: 16px; }
+  p.lead {
+    font-size: 18px;
+    color: var(--gray);
+    padding: 20px 24px;
+    background: var(--navy-bg);
+    border-left: 4px solid var(--navy);
+    border-radius: 8px;
+    margin-bottom: 32px;
+  }
+  ul { padding-left: 24px; margin-bottom: 16px; }
+  ul li { margin-bottom: 8px; }
+
+  .memory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 24px 0;
+  }
+  .mem-card {
+    background: var(--navy-bg);
+    padding: 18px 22px;
+    border-radius: 10px;
+    border-top: 3px solid var(--accent);
+  }
+  .mem-card h4 {
+    color: var(--navy);
+    font-size: 15px;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .mem-card p { margin: 0; font-size: 13px; color: var(--gray); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 14px;
+  }
+  table th, table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+  table th {
+    background: var(--navy-bg);
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  table td strong { color: var(--navy); }
+
+  .timeline-list {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0;
+  }
+  .timeline-list li {
+    position: relative;
+    padding: 14px 18px 14px 80px;
+    margin-bottom: 8px;
+    background: var(--navy-bg);
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  .timeline-list li::before {
+    content: attr(data-date);
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 13px;
+    background: var(--white);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  blockquote {
+    border-left: 4px solid var(--accent);
+    padding: 16px 20px;
+    background: #FFF9EC;
+    margin: 24px 0;
+    font-size: 15px;
+    color: #6B5300;
+    border-radius: 0 8px 8px 0;
+  }
+
+  footer {
+    background: #152B47;
+    color: rgba(255,255,255,0.6);
+    padding: 32px 0;
+    text-align: center;
+    font-size: 13px;
+  }
+  footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 30px; }
+    h2 { font-size: 24px; }
+    .memory-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Ресурс 3 / Карточка агента</div>
+    <h1>Архитектура агента Ли</h1>
+    <div class="meta">Как устроен наш работающий агент • Что можно перенять</div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">Ли — ИИ-агент Ирины Ложкиной на базе Claude Code. Работает 2+ месяца, 160+ сессий, 50+ навыков. Здесь — наша текущая архитектура как референс: что есть, почему так, что из этого применимо каждому новому агенту энтузиаста.</p>
+
+    <h2>Модель памяти — 5 типов</h2>
+
+    <p>Память ИИ-агента не одна, а пять разных подсистем. Мы реализовали все пять. Каждая решает свою задачу и хранится по-разному.</p>
+
+    <div class="memory-grid">
+      <div class="mem-card">
+        <h4>Episodic (что случилось)</h4>
+        <p>Handoffs, bugs-log, индекс сессий. История конкретных событий.</p>
+      </div>
+      <div class="mem-card">
+        <h4>Semantic (что знаем)</h4>
+        <p>MEMORY.md, STATE.yaml, карта чатов, карта людей. Факты и связи.</p>
+      </div>
+      <div class="mem-card">
+        <h4>Procedural (как делать)</h4>
+        <p>Playbooks, guards, hooks, skills. Процедуры и алгоритмы.</p>
+      </div>
+      <div class="mem-card">
+        <h4>Working (текущее)</h4>
+        <p>Контекст активной сессии Claude Code. Живёт только в пределах сессии.</p>
+      </div>
+      <div class="mem-card" style="grid-column: 1 / -1;">
+        <h4>Tool (какие инструменты)</h4>
+        <p>On-demand rules, skills descriptions. Знание о том, что агент умеет и когда это использовать.</p>
+      </div>
+    </div>
+
+    <blockquote>
+      Главный цикл памяти: <strong>Episodic → Semantic → Procedural</strong>. Ошибка случилась (episodic) → превратилась в знание (semantic) → стала правилом для будущих сессий (procedural). Без этого цикла агент не учится.
+    </blockquote>
+
+    <h2>Текущие компоненты системы</h2>
+
+    <table>
+      <tr><th>Компонент</th><th>Механизм</th><th>Роль</th></tr>
+      <tr><td><strong>Playbooks</strong></td><td>memory/playbooks/</td><td>Справочники с контекстом и «камнями» — 30+ штук</td></tr>
+      <tr><td><strong>Skills</strong></td><td>.claude/skills/</td><td>Исполняемые пакеты с CONTRACT — 8 штук</td></tr>
+      <tr><td><strong>Guards</strong></td><td>.claude/rules/guards.md</td><td>5 генеративных принципов + 9 правил среды</td></tr>
+      <tr><td><strong>Hooks</strong></td><td>.claude/settings.json</td><td>Автоматические проверки на входе / выходе</td></tr>
+      <tr><td><strong>Deny-permissions</strong></td><td>settings.local.json</td><td>Архитектурные запреты: нельзя обойти</td></tr>
+    </table>
+
+    <h2>Skills vs Playbooks — наше решение</h2>
+
+    <p>Мы прошли через этап, когда всё было в playbooks. Сейчас пересматриваем: <strong>skill — это исполняемый промпт с CONTRACT, playbook — справочник.</strong></p>
+
+    <ul>
+      <li><strong>Skill</strong> — принудительный чек-лист с блокирующим hook. Агент не может обойти.</li>
+      <li><strong>Playbook</strong> — длинный текст с объяснением «почему» и описанием подводных камней. Агент читает как инструкцию.</li>
+      <li><strong>Правило перехода:</strong> когда процесс стабилизировался (3+ успешных прогонов) — playbook повышается до skill.</li>
+      <li><strong>Progressive disclosure:</strong> description skill'а (2 КБ) подгружается при старте, тело — только при триггере.</li>
+    </ul>
+
+    <h2>Фреймворк мышления: Голдратт TOC</h2>
+
+    <p>В апреле мы положили в основу мышления агента Теорию ограничений Голдратта. Почему:</p>
+
+    <ul>
+      <li><strong>Текущее ограничение агента</strong> = качество постановки задач на входе (не контекст, не правила)</li>
+      <li><strong>3 системных нарушения:</strong> локальная оптимизация (много мелких правил), растущие запасы (мёртвые playbooks), инерция (правила для старых ограничений)</li>
+      <li><strong>Метрики TOC:</strong> Проход (T) = принятые результаты, Запасы (I) = незавершённые задачи + мёртвые артефакты, OE = токены + время</li>
+    </ul>
+
+    <p>Это даёт ответ на вопрос, который мы задавали себе месяцами: «Что улучшать в первую очередь?» — то, что является bottleneck'ом именно сейчас, а не всё сразу.</p>
+
+    <h2>Системные проблемы, которые мы видим</h2>
+
+    <p>Честный список открытых вопросов — чтобы новый энтузиаст знал заранее, что решено, а что нет.</p>
+
+    <ul>
+      <li><strong>Контекст не держится между сессиями</strong> — новая сессия не всегда находит нужные файлы в памяти. Решаем через task-manifest и queryable memory</li>
+      <li><strong>Skills и playbooks параллельно</strong> — 8 skills + 30 playbooks, дублирование, миграция не завершена</li>
+      <li><strong>Инерция правил</strong> — некоторые правила для старых ограничений до сих пор нагружают контекст каждую сессию</li>
+      <li><strong>Ритм создания и архивации</strong> — нет формального механизма «удалить мёртвое». Правило: никогда не удалять, только архивировать</li>
+    </ul>
+
+    <h2>Ключевые архитектурные решения — хронология</h2>
+
+    <ul class="timeline-list">
+      <li data-date="24.03">Agent OS по Крол­у — правила в .claude/rules/, автозагрузка при старте сессии</li>
+      <li data-date="28.03">CONTRACT — 50–150 токенов невытесняемых правил в каждом skill</li>
+      <li data-date="31.03">Файловая память подтверждена — vector DB overhead не оправдан при 72 файлах</li>
+      <li data-date="01.04">Skills > Playbooks — skill как исполняемый промпт с CONTRACT</li>
+      <li data-date="04.04">Никогда не удалять — только архивировать. Правило Ирины</li>
+      <li data-date="04.04">Голдратт TOC — фреймворк мышления для агента</li>
+      <li data-date="04.04">Аудит skills через использование — не на бумаге, а по результатам</li>
+      <li data-date="11.04">Bottom-up внедрение — 4 энтузиаста строят своих агентов параллельно</li>
+    </ul>
+
+    <h2>Что из этого переносится новому агенту</h2>
+
+    <p>Когда энтузиаст создаёт своего агента, ему НЕ нужно повторять весь наш путь. Вот минимум, который мы рекомендуем собрать сразу:</p>
+
+    <ul>
+      <li><strong>CLAUDE.md</strong> с миссией, ограничениями и структурой памяти (минимум 20 строк, максимум 200)</li>
+      <li><strong>5 базовых guards</strong> — которые мы выделили из своих 30+ правил как универсальные</li>
+      <li><strong>Механизм handoff</strong> между сессиями — чтобы контекст не терялся</li>
+      <li><strong>Рабочая папка</strong> с правом чтения / записи</li>
+      <li><strong>Hook на завершение сессии</strong> — блокирует выход без записанного контекста</li>
+    </ul>
+
+    <p>Это стартовый пакет. Всё остальное (playbooks, skills, свои rules) — накапливается по мере работы, через еженедельную рефлексию и ежемесячные объединения.</p>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <a href="index.html">← Вернуться к курсу</a>
+  </div>
+</footer>
+
+</body>
+</html>

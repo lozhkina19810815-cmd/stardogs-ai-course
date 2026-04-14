@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agents Week 2026 — наши выводы</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --green: #7DA832;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 0;
+  }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.85;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+  .hero .label {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    max-width: 720px;
+    margin: 0 auto 16px;
+    line-height: 1.15;
+  }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+
+  main { padding: 60px 0 100px; }
+
+  h2 {
+    font-size: 28px;
+    color: var(--navy);
+    font-weight: 800;
+    margin: 48px 0 20px;
+  }
+  h2:first-child { margin-top: 0; }
+  h3 {
+    font-size: 20px;
+    color: var(--navy);
+    font-weight: 700;
+    margin: 32px 0 12px;
+  }
+  p { margin-bottom: 16px; color: var(--text); }
+  p.lead {
+    font-size: 18px;
+    color: var(--gray);
+    padding: 20px 24px;
+    background: var(--navy-bg);
+    border-left: 4px solid var(--navy);
+    border-radius: 8px;
+    margin-bottom: 32px;
+  }
+  ul { padding-left: 24px; margin-bottom: 16px; }
+  ul li { margin-bottom: 8px; }
+
+  .day {
+    background: var(--navy-bg);
+    padding: 24px 28px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border-left: 4px solid var(--navy-light);
+  }
+  .day .tag {
+    display: inline-block;
+    background: var(--navy);
+    color: var(--white);
+    padding: 4px 12px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .day h3 { margin: 0 0 12px; font-size: 18px; }
+  .day .row { margin: 8px 0; font-size: 14px; }
+  .day .row strong { color: var(--navy); }
+  .day .conclusion {
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: var(--white);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text);
+    border-left: 3px solid var(--accent);
+  }
+
+  .verdict {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .verdict-card {
+    padding: 20px 24px;
+    border-radius: 10px;
+    border-left: 4px solid;
+  }
+  .verdict-card.good {
+    background: #F4F8E6;
+    border-left-color: var(--green);
+  }
+  .verdict-card.know {
+    background: #FFF9EC;
+    border-left-color: var(--accent);
+  }
+  .verdict-card.skip {
+    background: #FDEDED;
+    border-left-color: #C33B3B;
+  }
+  .verdict-card h3 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .verdict-card.good h3 { color: #3C5010; }
+  .verdict-card.know h3 { color: #6B5300; }
+  .verdict-card.skip h3 { color: #8B1A1A; }
+  .verdict-card ul { margin: 0; padding-left: 20px; }
+  .verdict-card li { font-size: 14px; margin-bottom: 6px; }
+
+  blockquote {
+    border-left: 4px solid var(--accent);
+    padding: 16px 20px;
+    background: #FFF9EC;
+    margin: 24px 0;
+    font-size: 15px;
+    color: #6B5300;
+    border-radius: 0 8px 8px 0;
+  }
+  blockquote strong { color: #8B6F00; }
+
+  footer {
+    background: #152B47;
+    color: rgba(255,255,255,0.6);
+    padding: 32px 0;
+    text-align: center;
+    font-size: 13px;
+  }
+  footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 30px; }
+    h2 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Ресурс 2 / Конспект</div>
+    <h1>Agents Week 2026<br>Яндекс Образование</h1>
+    <div class="meta">Разбор 5 дней курса • Что применимо, что оверинжиниринг</div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">5-дневный курс Яндекс Образования для инженеров, строящих ИИ-агентов. Мы проходили его параллельно с нашей реальной работой, чтобы понять: что у нас уже есть, чего не хватает, что — избыточно для нашего масштаба.</p>
+
+    <h2>Общий вывод</h2>
+
+    <p>Курс рассчитан на тех, кто НАЧИНАЕТ строить агентов. У нас уже работающая система: модель + промпты + инструменты + память + guardrails + workflow + мультиагентность. Мы не целевая аудитория — мы практики.</p>
+
+    <p>Но курс полезен как <strong>язык</strong>: он даёт терминологию, которой мы раньше не пользовались, но которая описывает то, что мы уже делаем интуитивно. Это пригодится при разговорах с инженерами и в документации.</p>
+
+    <h2>По каждому дню</h2>
+
+    <div class="day">
+      <div class="tag">День 1</div>
+      <h3>Intro + Tools + MCP</h3>
+      <div class="row"><strong>В курсе:</strong> LLM как мозг, токенизация, tool calling, MCP-протокол</div>
+      <div class="row"><strong>У нас:</strong> Claude Opus 4.6, скрипты, Plane MCP, Telegram MCP</div>
+      <div class="conclusion">Базу знаем. Полезно как язык — чтобы говорить с инженерами на одном языке.</div>
+    </div>
+
+    <div class="day">
+      <div class="tag">День 2</div>
+      <h3>Memory + Guardrails</h3>
+      <div class="row"><strong>В курсе:</strong> краткосрочная / долгосрочная память, RAG, PII маскирование, prompt injection detection, human-in-the-loop</div>
+      <div class="row"><strong>У нас:</strong> STATE, handoffs, MEMORY, playbooks, rules, bugs-log, enrichment-digest. Hooks на выходе. Подтверждение отправок.</div>
+      <div class="conclusion">Память — наша сильная сторона, мы далеко впереди курса. <strong>Пробел: input guardrails</strong> — нет детекции prompt injection в Telegram. Единственное, что реально стоит внедрить.</div>
+    </div>
+
+    <div class="day">
+      <div class="tag">День 3</div>
+      <h3>Workflow + Multi-Agent + Multimodality</h3>
+      <div class="row"><strong>В курсе:</strong> ReAct, Plan-and-Execute, Reflection, CrewAI, LangGraph, vision / audio</div>
+      <div class="row"><strong>У нас:</strong> workflow S1–S7, loop-агент + терминальный + субагенты, Groq Vision, Whisper, Fathom</div>
+      <div class="conclusion">Паттерны (ReAct, Plan-and-Execute) полезны как ЯЗЫК для описания того, что мы уже делаем. Наш S1–S7 — это по сути Plan-and-Execute с Reflection на стадии S6.</div>
+    </div>
+
+    <div class="day">
+      <div class="tag">День 4</div>
+      <h3>Evaluation</h3>
+      <div class="row"><strong>В курсе:</strong> completion rate, override rate, τ-bench, LLM-as-Judge, regression suites, CI/CD gates</div>
+      <div class="row"><strong>У нас:</strong> bugs-log (ручной), прямая обратная связь от Ирины, skill /review</div>
+      <div class="conclusion">Метрики решают проблему, которой у нас нет. У нас 1 пользователь + 1 агент + прямая обратная связь. Ирина и так знает, где агент лажает — не по графикам, а по опыту. <strong>Для нас — оверинжиниринг.</strong></div>
+    </div>
+
+    <div class="day">
+      <div class="tag">День 5</div>
+      <h3>Production Engineering</h3>
+      <div class="row"><strong>В курсе:</strong> tracing (Langfuse, LangSmith), scaling, retries / fallbacks / circuit breakers, caching, cost management</div>
+      <div class="row"><strong>У нас:</strong> watchdog, launchd, heartbeat, routing между моделями</div>
+      <div class="conclusion">Production-инженерия для систем с тысячами пользователей. У нас один пользователь. Tracing, semantic caching, circuit breakers — оверинжиниринг для нашего масштаба.</div>
+    </div>
+
+    <h2>Жёсткая оценка: что реально полезно</h2>
+
+    <div class="verdict">
+      <div class="verdict-card good">
+        <h3>✅ Полезно — внедрять</h3>
+        <ul>
+          <li><strong>Input guardrails</strong> — детекция prompt injection в чатах. Единственное, что реально защищает от атак на агента через сообщения пользователей. Можно сделать дешёвым классификатором.</li>
+        </ul>
+      </div>
+
+      <div class="verdict-card know">
+        <h3>📖 Полезно как знание</h3>
+        <ul>
+          <li><strong>Паттерны workflow</strong> (ReAct, Plan-and-Execute, Reflection) — язык для описания нашей архитектуры</li>
+          <li><strong>Архитектура агента</strong> (модель + промпты + tools + память + guardrails) — подтверждение, что мы всё собрали правильно</li>
+          <li><strong>MCP</strong> — знаем, используем. Можно расширить</li>
+        </ul>
+      </div>
+
+      <div class="verdict-card skip">
+        <h3>⛔ Оверинжиниринг для нашего масштаба</h3>
+        <ul>
+          <li>Формальные метрики (completion rate, override rate) — мы видим качество напрямую</li>
+          <li>Tracing / observability (Langfuse и т.п.) — не нужны при одном пользователе</li>
+          <li>Semantic caching — нет повторяющихся запросов</li>
+          <li>Circuit breaker — watchdog уже перезапускает</li>
+          <li>CI/CD для промптов — git + CLAUDE.md достаточно</li>
+          <li>Regression suites — bugs-log + guards достаточно</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Главный инсайт</h2>
+
+    <blockquote>
+      <strong>Курс подтверждает: мы построили production-ready агента интуитивно, без формального обучения.</strong> Архитектура соответствует тому, чему учат инженеров Яндекса. Разница — в масштабе. Их инструменты (Langfuse, τ-bench, CI/CD gates) решают проблемы масштаба, которых у нас нет.<br><br>
+      Наша реальная зона роста — не инструменты из курса, а <strong>дисциплина исполнения</strong>. Это не решается ни метриками, ни tracing — это решается тем, что агент лучше следит за собой.
+    </blockquote>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <a href="index.html">← Вернуться к курсу</a>
+  </div>
+</footer>
+
+</body>
+</html>

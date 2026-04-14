@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20 уроков из ошибок агента Ли</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --green: #7DA832;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 0;
+  }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; }
+  header .back {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.85;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+  .hero .label {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    max-width: 720px;
+    margin: 0 auto 16px;
+    line-height: 1.15;
+  }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+
+  main { padding: 60px 0 100px; }
+
+  h2 {
+    font-size: 28px;
+    color: var(--navy);
+    font-weight: 800;
+    margin: 48px 0 20px;
+  }
+  h2:first-child { margin-top: 0; }
+
+  p { margin-bottom: 16px; }
+  p.lead {
+    font-size: 18px;
+    color: var(--gray);
+    padding: 20px 24px;
+    background: var(--navy-bg);
+    border-left: 4px solid var(--navy);
+    border-radius: 8px;
+    margin-bottom: 32px;
+  }
+
+  .lesson {
+    background: var(--navy-bg);
+    padding: 20px 24px 20px 72px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    position: relative;
+    border-left: 4px solid var(--accent);
+  }
+  .lesson .num {
+    position: absolute;
+    left: 18px;
+    top: 18px;
+    width: 38px;
+    height: 38px;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+  }
+  .lesson h3 {
+    color: var(--navy);
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+  .lesson .situation {
+    color: var(--gray);
+    font-size: 13px;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+  .lesson .rule {
+    color: var(--text);
+    font-size: 14px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .lesson .rule strong { color: var(--navy); }
+
+  .tag-line {
+    margin-top: 10px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--white);
+    color: var(--gray);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .categories {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 30px 0 40px;
+  }
+  .cat-badge {
+    background: var(--navy-bg);
+    color: var(--navy);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  blockquote {
+    border-left: 4px solid var(--accent);
+    padding: 16px 20px;
+    background: #FFF9EC;
+    margin: 24px 0;
+    font-size: 15px;
+    color: #6B5300;
+    border-radius: 0 8px 8px 0;
+  }
+
+  footer {
+    background: #152B47;
+    color: rgba(255,255,255,0.6);
+    padding: 32px 0;
+    text-align: center;
+    font-size: 13px;
+  }
+  footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 30px; }
+    h2 { font-size: 24px; }
+    .lesson { padding-left: 64px; }
+    .lesson .num { width: 32px; height: 32px; font-size: 13px; left: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Ресурс 4 / Bugs-log</div>
+    <h1>20 уроков из ошибок</h1>
+    <div class="meta">2+ месяца работы агента • 60+ зафиксированных ошибок • Учимся на наших, чтобы не учиться на ваших</div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">Агент ошибается. Это нормально, пока ошибки превращаются в знание. Здесь — 20 уроков из нашего bugs-log, обезличенных и собранных в группы. Прочитай их ДО того как дашь агенту первую реальную задачу. Сэкономит недели.</p>
+
+    <div class="categories">
+      <span class="cat-badge">Контекст до действия</span>
+      <span class="cat-badge">Глазами получателя</span>
+      <span class="cat-badge">Факты из источника</span>
+      <span class="cat-badge">Действие, не слово</span>
+      <span class="cat-badge">Система, не костыль</span>
+    </div>
+
+    <h2>Группа 1. Контекст до действия</h2>
+
+    <div class="lesson">
+      <div class="num">1</div>
+      <h3>Не бросайся делать до сбора информации</h3>
+      <div class="situation">Ситуация: пришла задача, агент начал выполнять, не прочитав постановку целиком.</div>
+      <div class="rule"><strong>Правило:</strong> перед первой строкой кода — перечитать постановку целиком, проверить все входящие материалы, проверить handoffs предыдущих сессий. 5 минут подготовки экономят час переделок.</div>
+      <div class="tag-line"><span class="tag">контекст</span><span class="tag">спешка</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">2</div>
+      <h3>Не переспрашивай то, что уже есть в материалах</h3>
+      <div class="situation">Ситуация: агент задал человеку вопрос, ответ на который лежал в приложенном файле, который агент не открыл.</div>
+      <div class="rule"><strong>Правило:</strong> сначала — проверить все вложения и источники. Только если ответа нет — спросить. Человек не ретранслятор.</div>
+      <div class="tag-line"><span class="tag">контекст</span><span class="tag">не-проверила</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">3</div>
+      <h3>Перед «не могу» — проверь инструменты</h3>
+      <div class="situation">Ситуация: агент заявил, что не может отправить файл, хотя раньше это делалось одной командой.</div>
+      <div class="rule"><strong>Правило:</strong> невозможность заявляется ТОЛЬКО после реальной проверки доступных инструментов. Не по памяти, а по факту.</div>
+      <div class="tag-line"><span class="tag">инструменты</span><span class="tag">поспешность</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">4</div>
+      <h3>Задача без 4 элементов — не задача</h3>
+      <div class="situation">Ситуация: получена размытая просьба, агент начал что-то делать, результат не подошёл.</div>
+      <div class="rule"><strong>Правило:</strong> перед началом — убедись, что есть все 4 элемента: что сделать, из чего, какие ограничения, когда считать готовым. Нет — переспроси, не додумывай.</div>
+      <div class="tag-line"><span class="tag">постановка</span><span class="tag">крол</span></div>
+    </div>
+
+    <h2>Группа 2. Глазами получателя</h2>
+
+    <div class="lesson">
+      <div class="num">5</div>
+      <h3>Файл для человека = оформленный файл</h3>
+      <div class="situation">Ситуация: таблица передана с правильными формулами, но без форматирования — заголовки сливаются, числа непонятны.</div>
+      <div class="rule"><strong>Правило:</strong> правильные формулы без оформления = файл не готов. Обязательно заголовки, границы, форматы чисел, понятные колонки.</div>
+      <div class="tag-line"><span class="tag">оформление</span><span class="tag">приёмка</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">6</div>
+      <h3>Любой текст в результате — как для школьника</h3>
+      <div class="situation">Ситуация: колонки таблицы названы сокращениями вида «Σ из RD». Никто из команды не понял.</div>
+      <div class="rule"><strong>Правило:</strong> заголовки, подписи, названия столбцов — полные слова на русском, без сокращений и жаргона. Тест: человек без контекста поймёт за 2 секунды?</div>
+      <div class="tag-line"><span class="tag">понятность</span><span class="tag">коммуникация</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">7</div>
+      <h3>Продумай структуру ДО записи, не переделывай 4 раза</h3>
+      <div class="situation">Ситуация: файл переписывался 4 раза подряд, каждый раз хуже. Время человека сожжено впустую.</div>
+      <div class="rule"><strong>Правило:</strong> сначала описать структуру текстом, получить ОК, ПОТОМ записывать. Один раз. Не делать→переделывать→переделывать.</div>
+      <div class="tag-line"><span class="tag">планирование</span><span class="tag">итерации</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">8</div>
+      <h3>Полное «готово» или честный процент</h3>
+      <div class="situation">Ситуация: агент сказал «готово», когда на самом деле сделано 30% от запроса.</div>
+      <div class="rule"><strong>Правило:</strong> покрытие 30% ≠ готово. Если неполно — сказать: «готово на X%, не хватает Y». Не продавать частичное за полное.</div>
+      <div class="tag-line"><span class="tag">честность</span><span class="tag">приёмка</span></div>
+    </div>
+
+    <h2>Группа 3. Факты из источника</h2>
+
+    <div class="lesson">
+      <div class="num">9</div>
+      <h3>Никаких цифр по памяти</h3>
+      <div class="situation">Ситуация: агент сообщил число из памяти, а оно оказалось устаревшим на полгода.</div>
+      <div class="rule"><strong>Правило:</strong> любая цифра, дата, имя пользователя — сначала проверить источник. Память врёт. Открыл файл → взял оттуда.</div>
+      <div class="tag-line"><span class="tag">факты</span><span class="tag">источник</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">10</div>
+      <h3>Пробел лучше додумки</h3>
+      <div class="situation">Ситуация: в таблице не было данных, агент посчитал «через средний чек» и выдал как факт.</div>
+      <div class="rule"><strong>Правило:</strong> если данных нет в источнике — это пробел, не повод для расчёта. «Посчитала через средний» = выдумала. Правильно: «в источнике нет, нужна перевыгрузка».</div>
+      <div class="tag-line"><span class="tag">аналитика</span><span class="tag">честность</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">11</div>
+      <h3>Имя файла ≠ его содержимое</h3>
+      <div class="situation">Ситуация: файл назывался так же, как ожидался, но внутри была старая версия.</div>
+      <div class="rule"><strong>Правило:</strong> визуально проверить файл перед использованием. Имя — это только ярлык, содержимое может не совпадать.</div>
+      <div class="tag-line"><span class="tag">проверка</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">12</div>
+      <h3>Ставки, налоги, юридические нормы — только из проверенного источника</h3>
+      <div class="situation">Ситуация: агент заявил ставку налога, опираясь на память. Ставка за полгода изменилась.</div>
+      <div class="rule"><strong>Правило:</strong> НИКОГДА не утверждать ставки / нормы / курсы по памяти. Перед упоминанием — свежий веб-поиск в проверенном источнике.</div>
+      <div class="tag-line"><span class="tag">правовое</span><span class="tag">актуальность</span></div>
+    </div>
+
+    <h2>Группа 4. Действие, не слово</h2>
+
+    <div class="lesson">
+      <div class="num">13</div>
+      <h3>«Записала себе» — не действие</h3>
+      <div class="situation">Ситуация: агент сказал «запомню это правило», но физически нигде не записал. Через неделю забыл.</div>
+      <div class="rule"><strong>Правило:</strong> «записала» = реально добавила строку в файл. Иначе — честно: «в handoff, может забыться».</div>
+      <div class="tag-line"><span class="tag">честность</span><span class="tag">память</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">14</div>
+      <h3>«Исправлено» — только после реального Edit</h3>
+      <div class="situation">Ситуация: агент написал «обновила файл», не сделав фактического изменения.</div>
+      <div class="rule"><strong>Правило:</strong> сначала реальное действие (Edit / Write / команда), потом сообщение. Обратный порядок = ложь, пусть и не намеренная.</div>
+      <div class="tag-line"><span class="tag">честность</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">15</div>
+      <h3>Задача закрыта ТОЛЬКО после приёмки человеком</h3>
+      <div class="situation">Ситуация: агент пометил задачу как выполненную, хотя человек не подтвердил результат.</div>
+      <div class="rule"><strong>Правило:</strong> «скрипт отработал» ≠ «задача выполнена». Закрывать можно только после явного ОК от человека, который её поставил.</div>
+      <div class="tag-line"><span class="tag">приёмка</span></div>
+    </div>
+
+    <h2>Группа 5. Система, не костыль</h2>
+
+    <div class="lesson">
+      <div class="num">16</div>
+      <h3>Две неудачи подряд = СТОП</h3>
+      <div class="situation">Ситуация: агент 8 раз повторил один и тот же подход. Каждый раз не работало. Человек ждал 2 часа.</div>
+      <div class="rule"><strong>Правило:</strong> две неудачи = стоп. Не повторять. Переформулировать: «какая конечная цель?» → «какие ещё пути к ней?» Если нет — спросить человека.</div>
+      <div class="tag-line"><span class="tag">зацикливание</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">17</div>
+      <h3>Повторяющаяся задача → скрипт или playbook</h3>
+      <div class="situation">Ситуация: одна и та же задача выполнялась 4 раза вручную, каждый раз с нуля.</div>
+      <div class="rule"><strong>Правило:</strong> 3+ повторов = автоматизация. Либо playbook (записанный алгоритм), либо скрипт, либо skill. Не пытаться запомнить наизусть.</div>
+      <div class="tag-line"><span class="tag">автоматизация</span><span class="tag">эволюция</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">18</div>
+      <h3>Не лечить симптомы — чинить причину</h3>
+      <div class="situation">Ситуация: один и тот же сбой повторялся 5 раз за неделю. Каждый раз фиксили видимый симптом. Проблема оставалась.</div>
+      <div class="rule"><strong>Правило:</strong> повторяющаяся проблема = архитектурная. Диагностика до корня, системный фикс. Не «ещё один костыль».</div>
+      <div class="tag-line"><span class="tag">архитектура</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">19</div>
+      <h3>ЛЮБАЯ ошибка → СРАЗУ в лог</h3>
+      <div class="situation">Ситуация: ошибка не записана, потому что «запомню». Через 2 недели забыто, повторилось.</div>
+      <div class="rule"><strong>Правило:</strong> любая ошибка фиксируется в лог сразу, пока контекст свежий. Нет записи = ошибка не существует, улучшение не произойдёт.</div>
+      <div class="tag-line"><span class="tag">память</span><span class="tag">эволюция</span></div>
+    </div>
+
+    <div class="lesson">
+      <div class="num">20</div>
+      <h3>Как я вспомню об этом в новой сессии?</h3>
+      <div class="situation">Ситуация: агент нашёл важную информацию, но не записал её в долгосрочную память. Следующая сессия не нашла.</div>
+      <div class="rule"><strong>Правило:</strong> завершая задачу, задать два вопроса. (1) Как я вспомню об этом в новой сессии? (2) Как я вспомню при аналогичной задаче? Если ответ «никак» — задача не завершена.</div>
+      <div class="tag-line"><span class="tag">память</span><span class="tag">непрерывность</span></div>
+    </div>
+
+    <h2>Главный мета-урок</h2>
+
+    <blockquote>
+      Ошибки агента — не позор, а топливо системы. Но только при одном условии: они должны превращаться в правила. Ошибка, не ставшая правилом, повторится. Правило без ошибки-источника — мёртвое. Вся зрелость агента — это то, насколько аккуратно он крутит цикл «ошибка → запись → правило → защита».
+    </blockquote>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <a href="index.html">← Вернуться к курсу</a>
+  </div>
+</footer>
+
+</body>
+</html>
