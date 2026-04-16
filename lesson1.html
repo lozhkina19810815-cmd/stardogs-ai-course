@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 1 v2. Агент vs чат-бот. Ваш первый CLAUDE.md</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --green: #2E7D4F;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.65;
+    font-size: 16px;
+  }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 0;
+  }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 70px 0 50px;
+    text-align: center;
+  }
+  .hero .label {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-size: 38px;
+    font-weight: 800;
+    max-width: 720px;
+    margin: 0 auto 14px;
+    line-height: 1.15;
+  }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+  .hero .meta strong { color: var(--accent); }
+
+  main { padding: 50px 0 100px; }
+
+  h2 {
+    font-size: 26px;
+    color: var(--navy);
+    font-weight: 800;
+    margin: 52px 0 18px;
+    scroll-margin-top: 80px;
+  }
+  h2:first-of-type { margin-top: 0; }
+  h3 {
+    font-size: 18px;
+    color: var(--navy);
+    font-weight: 700;
+    margin: 28px 0 12px;
+  }
+
+  p { margin-bottom: 16px; }
+  p.lead {
+    font-size: 17px;
+    color: var(--gray);
+    padding: 20px 24px;
+    background: var(--navy-bg);
+    border-left: 4px solid var(--navy);
+    border-radius: 8px;
+    margin-bottom: 32px;
+  }
+
+  ul, ol { padding-left: 24px; margin-bottom: 16px; }
+  ul li, ol li { margin-bottom: 8px; }
+
+  strong { color: var(--navy); }
+
+  .toc {
+    background: var(--navy-bg);
+    border-radius: 10px;
+    padding: 20px 28px;
+    margin-bottom: 40px;
+    border-left: 4px solid var(--accent);
+  }
+  .toc h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .toc ol { padding-left: 20px; margin: 0; }
+  .toc ol li { margin-bottom: 6px; font-size: 15px; }
+  .toc a { color: var(--navy-light); text-decoration: none; }
+  .toc a:hover { color: var(--accent); text-decoration: underline; }
+
+  .box {
+    background: var(--navy-bg);
+    padding: 22px 26px;
+    border-radius: 10px;
+    margin: 24px 0;
+    border-left: 4px solid var(--accent);
+  }
+  .box h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .box p:last-child { margin-bottom: 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0 28px;
+    font-size: 15px;
+    background: var(--white);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  th {
+    background: var(--navy);
+    color: var(--white);
+    text-align: left;
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  td {
+    padding: 14px 18px;
+    border-top: 1px solid var(--border);
+    vertical-align: top;
+    font-size: 14.5px;
+  }
+  td:first-child { font-weight: 600; color: var(--navy); width: 25%; }
+
+  .example-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 14px 0;
+  }
+  .example-card h4 {
+    color: var(--navy);
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .example-card h4 span {
+    font-weight: 400;
+    color: var(--gray);
+    font-size: 14px;
+  }
+  .example-card ul { margin-bottom: 0; }
+  .example-card ul li {
+    font-size: 14.5px;
+    margin-bottom: 6px;
+  }
+
+  .pullquote {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    text-align: center;
+    padding: 28px 24px;
+    margin: 36px 0;
+    border-top: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    line-height: 1.4;
+  }
+
+  .action-block {
+    background: var(--accent-bg);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .action-block h3 {
+    color: var(--accent);
+    margin-top: 0;
+    font-size: 18px;
+  }
+  .action-block h3:first-child { margin-top: 0; }
+
+  .simple-prompt {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--navy);
+    white-space: pre-wrap;
+  }
+
+  details {
+    background: var(--navy-bg);
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--navy-light);
+  }
+  details summary {
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+    font-size: 15px;
+    outline: none;
+  }
+  details[open] summary { margin-bottom: 12px; }
+  details p { margin-bottom: 0; font-size: 14.5px; }
+
+  .mistakes { counter-reset: m; }
+  .mistake {
+    background: var(--navy-bg);
+    border-left: 4px solid var(--red);
+    padding: 16px 22px 16px 58px;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 12px;
+    position: relative;
+    counter-increment: m;
+  }
+  .mistake::before {
+    content: counter(m);
+    position: absolute;
+    left: 18px;
+    top: 16px;
+    width: 28px;
+    height: 28px;
+    background: var(--red);
+    color: var(--white);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 28px;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .mistake h4 { color: var(--red); font-size: 15px; margin-bottom: 4px; }
+  .mistake p { font-size: 14px; margin-bottom: 0; color: var(--text); }
+
+  .future-map {
+    background: var(--navy-bg);
+    border: 2px solid var(--navy);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 28px 0;
+  }
+  .future-map h3 {
+    margin-top: 0;
+    color: var(--navy);
+    font-size: 17px;
+  }
+  .future-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .future-col {
+    background: var(--white);
+    padding: 18px 20px;
+    border-radius: 8px;
+    border-left: 4px solid var(--navy-light);
+  }
+  .future-col.now { border-left-color: var(--accent); }
+  .future-col h4 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray);
+    margin-bottom: 10px;
+  }
+  .future-col.now h4 { color: var(--accent); }
+  .future-col ul { padding-left: 18px; margin: 0; }
+  .future-col ul li {
+    font-size: 13.5px;
+    margin-bottom: 6px;
+  }
+  .future-col ul li strong { color: var(--navy); }
+
+  .bridge {
+    text-align: center;
+    padding: 24px;
+    margin: 36px 0 24px;
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .bridge small {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-top: 6px;
+  }
+
+  .next {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 32px 32px;
+    border-radius: 14px;
+    margin-top: 48px;
+    text-align: center;
+  }
+  .next h3 { color: var(--white); font-size: 20px; margin-bottom: 10px; }
+  .next p { color: rgba(255,255,255,0.9); margin-bottom: 16px; }
+  .next a {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--white);
+    padding: 12px 26px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  footer {
+    background: #152B47;
+    color: rgba(255,255,255,0.6);
+    padding: 30px 0;
+    text-align: center;
+    font-size: 13px;
+  }
+  footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
+
+  /* Mini file tree */
+  .file-tree {
+    background: #1A1A1A;
+    color: #E8E8E8;
+    padding: 22px 28px;
+    border-radius: 10px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 14.5px;
+    line-height: 1.85;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .file-tree .tree-dir { color: #6FA8DC; }
+  .file-tree .tree-star { color: var(--accent); font-weight: 700; }
+  .file-tree .tree-comment { color: #8A9DAD; }
+
+  /* Full architecture map */
+  .arch-map {
+    margin: 24px 0 28px;
+    padding: 26px;
+    background: var(--navy-bg);
+    border: 2px solid var(--navy);
+    border-radius: 14px;
+  }
+  .arch-level {
+    border: 2px dashed var(--navy-light);
+    border-radius: 10px;
+    padding: 26px 20px 20px;
+    margin: 16px 0;
+    background: var(--white);
+    position: relative;
+  }
+  .arch-title {
+    position: absolute;
+    top: -11px;
+    left: 18px;
+    background: var(--navy);
+    color: var(--white);
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+  }
+  .arch-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .arch-box {
+    flex: 1;
+    padding: 14px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .arch-box.dim {
+    background: #EEF1F5;
+    color: #8A8A8A;
+    border: 2px solid #D5DAE1;
+  }
+  .arch-box.active {
+    background: var(--accent);
+    color: var(--white);
+    border: 2px solid #B86D00;
+    box-shadow: 0 3px 10px rgba(232,139,0,0.3);
+  }
+  .arch-box small {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.92;
+    margin-top: 4px;
+    text-transform: none;
+  }
+  .arch-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .arch-item {
+    padding: 11px 13px;
+    background: var(--navy-bg);
+    border-left: 3px solid var(--navy-light);
+    border-radius: 6px;
+    font-size: 13.5px;
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .arch-item small {
+    display: block;
+    font-size: 11px;
+    color: var(--gray);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .arch-item.star {
+    background: #FFF9EC;
+    border: 2px solid var(--accent);
+    border-left-width: 4px;
+  }
+  .arch-item.star small { color: #8B6F00; }
+  .arch-desc {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: var(--gray);
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 28px; }
+    h2 { font-size: 22px; }
+    table { font-size: 14px; }
+    th, td { padding: 10px 12px; }
+    .future-row { grid-template-columns: 1fr; }
+    .arch-row { flex-direction: column; }
+    .arch-map { padding: 16px; }
+    .file-tree { font-size: 12.5px; padding: 16px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Блок 2 · Урок 1 · Введение</div>
+    <h1>Агент vs чат-бот.<br>Ваш первый CLAUDE.md</h1>
+    <div class="meta"><strong>10 минут читать · 20 минут делать</strong> · v2 черновик</div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">Этот урок — первый шаг. После него у вас будет работающий агент, который помнит, кто вы, как с вами работать, и чего делать нельзя. Не «знает теорию», а реально работает с вашими правилами. 10 минут чтения, 20 минут действий — и всё.</p>
+
+    <div class="box">
+      <h4>Одно важное уточнение перед стартом</h4>
+      <p>В приложении Claude Cowork есть несколько режимов в разных окнах. Нам нужно <strong>окно «Код»</strong> — это режим агента. Окно «Чат» — это обычный разговор с Клодом, как в ChatGPT: файлы он там не видит, правила не читает, запретов не понимает. Весь курс — только про окно «Код». Если вы сейчас в «Чате» — закройте его и откройте «Код».</p>
+    </div>
+
+    <div class="toc">
+      <h4>В этом уроке</h4>
+      <ol>
+        <li><a href="#why">Зачем этот урок</a></li>
+        <li><a href="#vs">Стажёр vs штатный сотрудник — что такое агент</a></li>
+        <li><a href="#claudemd">CLAUDE.md на примере трёх ролей</a></li>
+        <li><a href="#practice">Практика: соберите свой CLAUDE.md прямо сейчас</a></li>
+        <li><a href="#check">Проверь, что ты понял</a></li>
+        <li><a href="#mistakes">5 ошибок первого дня</a></li>
+        <li><a href="#future">Что у вас впереди</a></li>
+      </ol>
+    </div>
+
+    <h2 id="why">1. Зачем этот урок</h2>
+
+    <p>Когда вы впервые открываете Claude Cowork, он выглядит как ещё один ChatGPT. Вы задаёте вопрос, он отвечает. Просите написать текст — пишет. Кажется, что ничего нового. И первая мысль у большинства: «ну и чем это отличается от браузерного чата?»</p>
+
+    <p>Отличие — в одном маленьком файле, который вы кладёте в рабочую папку. Он называется <strong>CLAUDE.md</strong>. Пока его нет, агент действительно ведёт себя как обычный чат-бот: забывает ваши правила после каждой сессии, не знает ваших запретов, каждый раз задаёт одни и те же вопросы. Когда файл появляется — он превращается в сотрудника, который помнит всё, что вы ему рассказали, и действует по вашим правилам. Всё. Вот об этом весь урок.</p>
+
+    <h2 id="vs">2. Стажёр vs штатный сотрудник — что такое агент</h2>
+
+    <p>Представьте две разные ситуации.</p>
+
+    <p><strong>Первая:</strong> к вам на один день прислали стажёра. Очень умного, очень способного, обучался в лучшем университете. Но он сегодня у вас впервые. Он не знает, чем занимается компания, как устроены процессы, кто с кем работает. Вы даёте ему задачу — он уточняет всё по десять раз. Он осторожен, потому что не хочет напортачить. В конце дня он уходит, а завтра его место займёт точно такой же новый стажёр, которому всё надо объяснять заново.</p>
+
+    <p><strong>Вторая:</strong> у вас в штате есть сотрудник, который работает полгода. Он знает, как устроена компания. Он помнит, что Мария из аналитики любит отчёты в одном формате, а Сергей из эксплуатации — в другом. Он знает, что по пятницам перед праздниками вы ничего не рассылаете. Он помнит правило «цифры — только из проверенного источника, никогда не из головы». Когда вы даёте ему задачу, он не спрашивает «а что такое БДДС», он её просто делает.</p>
+
+    <p>Первая ситуация — это ChatGPT в браузере. Вторая — это агент с настроенным CLAUDE.md. Модель в обоих случаях может быть одна и та же. Разница — в том, что один помнит контекст, а другой нет.</p>
+
+    <table>
+      <thead>
+        <tr><th>Параметр</th><th>Чат-бот (ChatGPT)</th><th>Агент (Claude Cowork)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Доступ к файлам</td>
+          <td>Только то, что вставили в чат руками</td>
+          <td>Файлы в рабочей папке, Google Docs и Sheets, репозитории, данные через API — всё, что настроите</td>
+        </tr>
+        <tr>
+          <td>Что умеет делать</td>
+          <td>Только отвечать текстом</td>
+          <td>Работает с документами и таблицами, ходит в почту и календарь, подключается к вашим рабочим сервисам, ищет в интернете, обрабатывает изображения и PDF, пишет код, настраивает автоматическую работу по скриптам</td>
+        </tr>
+        <tr>
+          <td>Память</td>
+          <td>Забывает всё после закрытия окна</td>
+          <td>Помнит ваши правила, проекты, задачи, решения — благодаря целой системе файлов: CLAUDE.md, память, правила, навыки и другие <em>(подробная карта — ниже)</em></td>
+        </tr>
+        <tr>
+          <td>Инициатива</td>
+          <td>Отвечает только на прямой вопрос</td>
+          <td>Тоже реагирует на запрос — но ему можно настроить автоматические действия по расписанию или по событию (разберём позже)</td>
+        </tr>
+        <tr>
+          <td>Ответственность</td>
+          <td>Даёт совет — делаете вы</td>
+          <td>Выполняет задачу — вы проверяете результат</td>
+        </tr>
+        <tr>
+          <td>Контроль с вашей стороны</td>
+          <td>Не нужен — он ничего не трогает</td>
+          <td>Обязателен — он реально меняет файлы и запускает действия</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <details>
+      <summary>Полная карта: из чего состоит агент</summary>
+      <p>CLAUDE.md — это только точка входа. Со временем у агента появляется целая архитектура памяти и поведения. Вот как это выглядит на практике:</p>
+      <table>
+        <thead>
+          <tr><th>Элемент</th><th>Что делает</th><th>Когда появится</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>CLAUDE.md</td><td>Главные правила — кто вы, как работать, что нельзя</td><td>Урок 1 (сегодня)</td></tr>
+          <tr><td>Память (memory/)</td><td>Проекты, решения, уроки, контакты — всё что агент накопил</td><td>Урок 3</td></tr>
+          <tr><td>Правила (rules/)</td><td>Детальные инструкции по темам: безопасность, таблицы, отправка</td><td>Урок 4</td></tr>
+          <tr><td>Навыки (skills/)</td><td>Готовые сценарии для повторяющихся задач: отчёт, рассылка, проверка</td><td>Урок 5</td></tr>
+          <tr><td>Хуки (hooks)</td><td>Автоматические проверки — агент не может обойти, даже если забудет</td><td>Урок 6</td></tr>
+          <tr><td>Передача смены (handoffs/)</td><td>Записка для следующей сессии — что сделано, что дальше</td><td>Урок 4</td></tr>
+          <tr><td>Задачник</td><td>Трекер задач с приоритетами и статусами</td><td>Урок 7</td></tr>
+        </tbody>
+      </table>
+      <p>Не пугайтесь объёма — всё это нарастает постепенно, за 3-4 недели. Сегодня вам нужен только CLAUDE.md.</p>
+    </details>
+
+    <p class="pullquote">Чат-бот — это стажёр на один день.<br>Агент — это развивающийся сотрудник в штате.</p>
+
+    <h2 id="claudemd">3. CLAUDE.md на примере трёх ролей</h2>
+
+    <p>CLAUDE.md — это обычный текстовый файл, который лежит в рабочей папке вашего проекта. Агент читает его каждый раз, когда вы открываете папку, и всё, что там написано, становится для него постоянными правилами.</p>
+
+    <p>Чтобы было понятно, как он может выглядеть, — три примера от людей с разными ролями. Обратите внимание: никакого кода, никаких технических терминов. Просто правила на человеческом языке.</p>
+
+    <div class="example-card">
+      <h4>Ольга, финансовый директор <span>— её CLAUDE.md, если очень коротко</span></h4>
+      <ul>
+        <li><strong>Кто я:</strong> отвечаю за бюджет и казначейство, работаю с отчётами и план-фактами</li>
+        <li><strong>Рабочая папка:</strong> «Финансы». В папку «Личное» не ходить никогда</li>
+        <li><strong>Правила:</strong> цифры брать только из проверенных таблиц, никогда из головы. Перед любыми правками в бюджете — показать план и дождаться моего согласия. Отчёты перед отправкой — показывать мне</li>
+        <li><strong>Запреты:</strong> не удалять строки в исторических файлах. Не отправлять письма без моего явного ОК</li>
+      </ul>
+    </div>
+
+    <div class="example-card">
+      <h4>Виктор, директор по эксплуатации <span>— его CLAUDE.md, если очень коротко</span></h4>
+      <ul>
+        <li><strong>Кто я:</strong> отвечаю за работу точек, поставки, ремонты, оборудование</li>
+        <li><strong>Рабочая папка:</strong> «Эксплуатация». Общие документы сети — только читать, не править</li>
+        <li><strong>Правила:</strong> прежде чем что-то поменять в графике работ — сверься с Марией из аналитики. Названия точек — только полностью, без сокращений. Сроки в днях, не в неделях</li>
+        <li><strong>Запреты:</strong> не трогать таблицы с пометкой «АРХИВ». Не писать в общие чаты от моего имени</li>
+      </ul>
+    </div>
+
+    <div class="example-card">
+      <h4>Юля, HR-директор <span>— её CLAUDE.md, если очень коротко</span></h4>
+      <ul>
+        <li><strong>Кто я:</strong> отвечаю за подбор, адаптацию, обучение и культуру</li>
+        <li><strong>Рабочая папка:</strong> «HR». Данные сотрудников — это чувствительно, никому не показывать и никуда не копировать</li>
+        <li><strong>Правила:</strong> тон писем — тёплый и человечный, никаких канцеляризмов. Имена всегда полные. Перед отправкой сообщения сотруднику — показать мне черновик</li>
+        <li><strong>Запреты:</strong> не упоминать зарплаты в любых файлах, которые я буду кому-то показывать. Не делать выводов о людях без их слов</li>
+      </ul>
+    </div>
+
+    <p>Видно, что CLAUDE.md у каждого свой, и это нормально. Один и тот же агент Claude Cowork, открытый в папке Ольги, становится «финансистом», открытый в папке Виктора — «эксплуатационщиком», в папке Юли — «HR-директором». Всё решает содержимое файла.</p>
+
+    <p><strong>Важно:</strong> примеры выше — короткие выжимки. Ваш реальный файл будет подробнее. Как его собрать — в следующем разделе.</p>
+
+    <div class="bridge">
+      Теория закончилась. Дальше — только действия.
+      <small>Закройте другие вкладки. Следующие 20 минут — практика. Вам понадобится только текстовый редактор.</small>
+    </div>
+
+    <h2 id="practice">4. Практика: соберите заготовку для вашего CLAUDE.md</h2>
+
+    <div class="box">
+      <h4>Зачем заготовка, а не сразу файл?</h4>
+      <p>Claude у вас появится чуть позже. Но ждать не надо — самое ценное в CLAUDE.md это не формат файла, а ваши мысли: правила, запреты, стиль работы. Их можно собрать прямо сейчас в любом документе. Когда Claude появится, вы скопируете заготовку в первый диалог с агентом — и он за минуту превратит её в рабочий файл. Чем точнее заготовка, тем сильнее будет агент с первого дня.</p>
+    </div>
+
+    <div class="box">
+      <h4>Честный дисклеймер</h4>
+      <p>Первая версия получится сырой. Это нормально. У меня и у Ирины CLAUDE.md переписывался три-четыре раза, прежде чем стал рабочим — и до сих пор обновляется, когда мы замечаем что-то новое. Ваша цель сегодня — не идеал, а первый черновик. Идеал вы будете нащупывать через живую работу.</p>
+    </div>
+
+    <div class="action-block">
+      <h3>Шаг 1 · Создайте документ «Мой агент — заготовка»</h3>
+
+      <p>Откройте Google Docs, Word, Заметки — что угодно. Назовите документ «Мой агент — заготовка». Это ваш рабочий файл на весь курс: сюда будут добавляться наработки из каждого урока.</p>
+    </div>
+
+    <div class="action-block">
+      <h3>Шаг 2 · Ответьте на 7 вопросов — своими словами, без структуры</h3>
+
+      <p>Пишите как думаете, коротко, без заголовков и оформления. Это черновик только для вас.</p>
+
+      <ol>
+        <li><strong>Кто вы и за что отвечаете</strong> — одна строка. Имя, должность, основная зона.</li>
+        <li><strong>Где лежат ваши рабочие файлы</strong> — папка на компьютере или на Google Drive. Что точно нельзя трогать.</li>
+        <li><strong>С чем вы работаете ежедневно</strong> — Excel, Google Docs, почта, календарь, что ещё.</li>
+        <li><strong>5 правил «так делать»</strong> — вспомните ситуации, когда вы бы сказали сотруднику «всегда поступай так».</li>
+        <li><strong>Как вы хотите, чтобы агент с вами говорил</strong> — коротко или подробно, формально или тепло, какие фразы вас раздражают.</li>
+        <li><strong>3-5 жёстких запретов</strong> — что агент точно не должен делать никогда, ни при каких условиях.</li>
+        <li><strong>Когда агент должен остановиться и спросить</strong> — в каких действиях ему нельзя двигаться без вашего подтверждения.</li>
+      </ol>
+    </div>
+
+    <div class="action-block">
+      <h3>Шаг 3 · Перечитайте и проверьте себя</h3>
+
+      <p>Прочитайте свои ответы глазами нового сотрудника, который видит их впервые. Три вопроса:</p>
+
+      <ul>
+        <li>Если бы сотрудник прочитал только это — он бы понял, чего вам нельзя делать?</li>
+        <li>Правила сформулированы как обязательства, а не как пожелания? («Никогда не удалять строки» vs «Хорошо бы не удалять»)</li>
+        <li>Нет ли противоречий? (например, «будь краток» и тут же «всегда объясняй подробно»)</li>
+      </ul>
+
+      <p>Поправьте то, что не проходит проверку. Отложите документ — к нему мы будем возвращаться в каждом следующем уроке.</p>
+    </div>
+
+    <div class="box">
+      <h4>Когда появится Claude</h4>
+      <p>Вы откроете агента, вставите заготовку в первое сообщение и напишете: «Вот мои правила — собери из них файл CLAUDE.md. Если что-то непонятно, спроси, не додумывай». За минуту у вас будет рабочий файл. Но его качество напрямую зависит от того, насколько вы продумали заготовку сейчас.</p>
+    </div>
+
+    <h2 id="check">5. Проверь, что ты понял</h2>
+
+    <p>Три вопроса для самопроверки. Ответы под каждым — нажмите, чтобы увидеть.</p>
+
+    <details>
+      <summary>Почему правила лучше держать в CLAUDE.md, а не говорить агенту в начале каждой сессии?</summary>
+      <p>Потому что в новой сессии вы забудете половину правил повторить. А CLAUDE.md агент читает автоматически при каждом запуске, без исключений. Промпт — это разговор, который исчезает. CLAUDE.md — постоянный документ, который действует, пока лежит в папке.</p>
+    </details>
+
+    <details>
+      <summary>Вы начали новую сессию, и агент не помнит ваших правил. Что это значит?</summary>
+      <p>Одно из двух: (1) вы открыли другую рабочую папку, в которой этого CLAUDE.md нет, или (2) CLAUDE.md лежит не в корне папки, а где-то глубже, и агент его не видит. Проверьте — файл должен быть ровно в той папке, которую вы открыли как рабочую.</p>
+    </details>
+
+    <details>
+      <summary>Почему первая версия CLAUDE.md будет сырой, и это нормально?</summary>
+      <p>Потому что вы ещё не работали с агентом и не знаете, в каких местах он будет ошибаться. Каждое хорошее правило в CLAUDE.md — это уже пережитый инцидент: агент что-то сделал не так, вы дописали правило, чтобы не повторилось. Через две недели активной работы файл станет сильно точнее. Сразу идеальным он получиться не может физически.</p>
+    </details>
+
+    <h2 id="mistakes">6. 5 ошибок первого дня</h2>
+
+    <p>Всё это мы реально проходили. Не наступайте на те же грабли.</p>
+
+    <div class="mistakes">
+      <div class="mistake">
+        <h4>Писать правила как пожелания</h4>
+        <p>«Хорошо бы проверять цифры» — это не правило, это вздох. Пишите в форме запрета или обязательства: «Любую цифру — только из источника. Нет источника — пиши "нет данных"». Коротко, безапелляционно.</p>
+      </div>
+      <div class="mistake">
+        <h4>Смешивать всё в один абзац</h4>
+        <p>Стена текста работает плохо: агент теряет важное в середине. Разбивайте на блоки с заголовками — правила отдельно, запреты отдельно, стиль отдельно.</p>
+      </div>
+      <div class="mistake">
+        <h4>Забыть запрет на удаления</h4>
+        <p>Самая частая потеря — агент в попытке «оптимизировать» что-то удаляет. В первый день жёсткое правило: «Ничего не удалять без моего явного подтверждения». Сэкономит как минимум один инцидент.</p>
+      </div>
+      <div class="mistake">
+        <h4>Написать один раз и забыть</h4>
+        <p>CLAUDE.md — живой документ, не священный текст. Агент ошибся — не злитесь, допишите правило, чтобы не повторилось. Через месяц у вас закалённый реальностью файл.</p>
+      </div>
+      <div class="mistake">
+        <h4>Путать CLAUDE.md с описанием проекта</h4>
+        <p>Это инструкция для агента, а не рассказ о вашем бизнесе. Не надо писать «Стардогс — крупная сеть общепита…». Надо писать «Как именно работать с этим проектом».</p>
+      </div>
+    </div>
+
+    <h2 id="future">7. Что у вас впереди</h2>
+
+    <p>Этот урок — самый первый кирпич. Дальше конструкция будет расти. Вот короткая карта того, что у вас есть сейчас и что появится в следующих уроках.</p>
+
+    <div class="future-map">
+      <h3>Ваш агент сейчас и через месяц</h3>
+      <div class="future-row">
+        <div class="future-col now">
+          <h4>После этого урока</h4>
+          <ul>
+            <li><strong>CLAUDE.md</strong> в рабочей папке — агент знает кто вы и по каким правилам работает</li>
+            <li>Базовый список запретов</li>
+            <li>Стиль общения настроен под вас</li>
+          </ul>
+        </div>
+        <div class="future-col">
+          <h4>В следующих уроках добавится</h4>
+          <ul>
+            <li><strong>Память</strong> между сессиями — агент помнит вчерашние решения (урок 3)</li>
+            <li><strong>Навыки и правила по темам</strong> — разные инструкции для разных типов задач (уроки 3-4)</li>
+            <li><strong>Интеграции</strong> с Google, почтой, календарём (урок 5)</li>
+            <li><strong>Автоматические проверки</strong> перед рискованными действиями (урок 6)</li>
+            <li><strong>Задачник</strong> для проектов (урок 7)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <p>Не пытайтесь сделать всё сразу. Цель этой недели — прожить с CLAUDE.md и почувствовать, как агент стал другим. Остальное нарастёт постепенно.</p>
+
+    <div class="box">
+      <h4>Домашнее задание</h4>
+      <p>Выполните шаги 1–3 из раздела «Практика» — соберите свой первый CLAUDE.md через агента. После этого попробуйте дать ему одну реальную мелкую задачу из вашей работы (что-то нестрашное — найти файл, пересказать длинное письмо, собрать короткую сводку). Посмотрите, как он применит ваши правила. Запишите два наблюдения: что сработало и что агент понял не так. На следующем уроке мы из этих наблюдений дополним ваш CLAUDE.md.</p>
+    </div>
+
+    <div class="next">
+      <h3>Следующий урок</h3>
+      <p>Урок 2. Безопасность данных — что можно и нельзя отдавать агенту.<br>19 апреля, суббота</p>
+      <a href="index.html">← вернуться к курсу</a>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Курс «Внедрение ИИ в Стардогс» · Урок 1 · v2 черновик ·
+    <a href="index.html">главная страница курса</a>
+  </div>
+</footer>
+
+</body>
+</html>
