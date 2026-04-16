@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Архитектура агента — шпаргалка</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --green: #2E7D4F;
+    --red: #C8392A;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.65;
+    font-size: 16px;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 0;
+  }
+  header .container { display: flex; justify-content: space-between; align-items: center; }
+  header .logo { font-size: 18px; font-weight: 700; }
+  header a { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header a:hover { opacity: 1; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 50px 0 40px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 34px; font-weight: 800; margin-bottom: 10px; }
+  .hero p { opacity: 0.85; font-size: 15px; }
+
+  main { padding: 40px 0 80px; }
+
+  h2 {
+    font-size: 22px;
+    color: var(--navy);
+    font-weight: 800;
+    margin: 40px 0 16px;
+  }
+  h2:first-of-type { margin-top: 0; }
+
+  p { margin-bottom: 14px; }
+
+  .intro-box {
+    background: var(--accent-bg);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 32px;
+    font-size: 15px;
+  }
+  .intro-box strong { color: var(--navy); }
+
+  /* Architecture layers */
+  .arch-layer {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    position: relative;
+  }
+  .arch-layer.active {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+  }
+  .layer-label {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    padding: 2px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    color: var(--white);
+  }
+  .layer-label.short { background: var(--navy-light); }
+  .layer-label.long { background: var(--navy); }
+  .layer-label.claude { background: var(--accent); }
+
+  .element-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .element {
+    padding: 14px 16px;
+    background: var(--white);
+    border-left: 4px solid var(--navy-light);
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  .element.highlight {
+    border-left-color: var(--accent);
+    background: var(--accent-bg);
+    border: 2px solid var(--accent);
+  }
+  .element strong { color: var(--navy); display: block; margin-bottom: 4px; font-size: 15px; }
+  .element small { color: var(--gray); font-size: 12.5px; }
+  .element .lesson {
+    display: inline-block;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-top: 6px;
+  }
+
+  /* Schema visual */
+  .schema {
+    background: var(--navy-bg);
+    border-radius: 14px;
+    padding: 28px;
+    margin: 28px 0;
+    text-align: center;
+  }
+  .schema-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+  }
+  .schema-box {
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    min-width: 140px;
+  }
+  .schema-box.claudemd {
+    background: var(--accent);
+    color: var(--white);
+    font-size: 16px;
+    padding: 16px 24px;
+    box-shadow: 0 3px 10px rgba(232,139,0,0.3);
+  }
+  .schema-box.short { background: var(--navy-light); color: var(--white); }
+  .schema-box.long { background: var(--navy); color: var(--white); }
+  .schema-box.control { background: var(--white); color: var(--navy); border: 2px solid var(--navy); }
+  .schema-arrow {
+    font-size: 20px;
+    color: var(--navy-light);
+    font-weight: 700;
+  }
+  .schema-label {
+    font-size: 12px;
+    color: var(--gray);
+    margin: 4px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 14px;
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  th {
+    background: var(--navy);
+    color: var(--white);
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  td {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    vertical-align: top;
+  }
+  td:first-child { font-weight: 600; color: var(--navy); }
+
+  .callout {
+    text-align: center;
+    padding: 20px;
+    margin: 28px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    border-top: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+  }
+
+  footer {
+    background: #152B47;
+    color: rgba(255,255,255,0.6);
+    padding: 24px 0;
+    text-align: center;
+    font-size: 13px;
+  }
+  footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 26px; }
+    .schema-row { flex-direction: column; }
+    .schema-arrow { transform: rotate(90deg); }
+    .element-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Архитектура агента</h1>
+    <p>Шпаргалка: из чего состоит агент, как элементы связаны, где CLAUDE.md</p>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <div class="intro-box">
+      <strong>CLAUDE.md — это точка входа, но не вся система.</strong> Агент становится надёжным только когда все элементы работают вместе: правила говорят что делать, guards — что не делать, хуки — блокируют автоматически, handoff — передаёт смену, память — накапливает опыт.
+    </div>
+
+    <h2>Общая схема</h2>
+
+    <div class="schema">
+      <div class="schema-label">Точка входа</div>
+      <div class="schema-row">
+        <div class="schema-box claudemd">CLAUDE.md</div>
+      </div>
+      <div class="schema-arrow">↓</div>
+      <div class="schema-label">Долгосрочная память — растёт с каждой сессией</div>
+      <div class="schema-row">
+        <div class="schema-box long">Guards</div>
+        <div class="schema-box long">Память (memory/)</div>
+        <div class="schema-box long">Навыки (skills/)</div>
+        <div class="schema-box long">Правила (rules/)</div>
+      </div>
+      <div class="schema-arrow">↓</div>
+      <div class="schema-label">Краткосрочная память — передача смены</div>
+      <div class="schema-row">
+        <div class="schema-box short">Handoff</div>
+        <div class="schema-box short">STATE</div>
+      </div>
+      <div class="schema-arrow">↓</div>
+      <div class="schema-label">Механизмы контроля</div>
+      <div class="schema-row">
+        <div class="schema-box control">Хуки (hooks)</div>
+        <div class="schema-box control">Задачник</div>
+      </div>
+    </div>
+
+    <div class="callout">CLAUDE.md — это должностная инструкция.<br>Остальная архитектура — это система, которая заставляет её работать.</div>
+
+    <h2>Два типа памяти</h2>
+
+    <div class="arch-layer">
+      <div class="layer-label short">Краткосрочная</div>
+      <p style="margin-top: 6px; font-size: 14px; color: var(--gray);">Передаёт контекст между сессиями. Без неё агент каждый раз начинает с нуля.</p>
+      <div class="element-grid">
+        <div class="element">
+          <strong>Handoff</strong>
+          Записка для следующей сессии: что сделано, что дальше, какие решения приняты
+          <small>Аналог: передача смены между сменами</small>
+          <div class="lesson">Урок 2</div>
+        </div>
+        <div class="element">
+          <strong>STATE</strong>
+          Полная картина всех проектов и статусов. Агент читает при каждом старте
+          <small>Аналог: дашборд проектов</small>
+          <div class="lesson">Урок 2</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arch-layer active">
+      <div class="layer-label long">Долгосрочная</div>
+      <p style="margin-top: 6px; font-size: 14px; color: var(--gray);">Живёт вечно, растёт с каждой сессией. Каждая ошибка → правило, каждый приём → навык.</p>
+      <div class="element-grid">
+        <div class="element highlight">
+          <strong>CLAUDE.md</strong>
+          Главные правила: кто вы, как работать, что нельзя. Точка входа во всю систему
+          <small>Аналог: должностная инструкция сотрудника</small>
+          <div class="lesson" style="background: var(--accent);">Урок 1</div>
+        </div>
+        <div class="element">
+          <strong>Guards</strong>
+          Запреты и правила «не делать». Каждая ошибка превращается в защиту
+          <small>Аналог: техника безопасности</small>
+          <div class="lesson">Урок 3</div>
+        </div>
+        <div class="element">
+          <strong>Память (memory/)</strong>
+          Проекты, решения, уроки, контакты, исследования
+          <small>Аналог: корпоративная база знаний</small>
+          <div class="lesson">Урок 4</div>
+        </div>
+        <div class="element">
+          <strong>Навыки (skills/)</strong>
+          Готовые сценарии для повторяющихся задач: отчёт, рассылка, проверка
+          <small>Аналог: пошаговые регламенты</small>
+          <div class="lesson">Урок 4</div>
+        </div>
+        <div class="element">
+          <strong>Правила (rules/)</strong>
+          Детальные инструкции по темам: таблицы, отправка, проверки
+          <small>Аналог: справочник процедур</small>
+          <div class="lesson">Урок 4</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Механизмы контроля</h2>
+
+    <div class="arch-layer">
+      <div class="element-grid">
+        <div class="element">
+          <strong>Хуки (hooks)</strong>
+          Автоматические проверки, которые агент не может обойти. Срабатывают до или после действия
+          <small>Аналог: сигнализация, которая звонит сама</small>
+          <div class="lesson">Урок 7</div>
+        </div>
+        <div class="element">
+          <strong>Задачник</strong>
+          Трекер задач с приоритетами и статусами. Внешняя «рабочая память» проектов
+          <small>Аналог: доска задач (Trello, Jira)</small>
+          <div class="lesson">Урок 8</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Как элементы связаны</h2>
+
+    <table>
+      <thead>
+        <tr><th>Ситуация</th><th>Какие элементы работают</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Агент стартует</td><td>Читает CLAUDE.md → загружает STATE → проверяет handoff</td></tr>
+        <tr><td>Получает задачу</td><td>Ищет подходящий skill или правило → выполняет → проверяет guards</td></tr>
+        <tr><td>Ошибается</td><td>Ошибка записывается → превращается в guard → hook блокирует повтор</td></tr>
+        <tr><td>Отправляет результат</td><td>Hook проверяет перед отправкой → guard напоминает про запреты</td></tr>
+        <tr><td>Завершает сессию</td><td>Пишет handoff → обновляет STATE → сохраняет в память</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">Цикл роста: ошибка → guard → hook → навык.<br>Каждая сессия делает агента сильнее.</div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Курс «Внедрение ИИ в Стардогс» · Шпаргалка: Архитектура агента ·
+    <a href="index.html">главная страница курса</a>
+  </div>
+</footer>
+
+</body>
+</html>
