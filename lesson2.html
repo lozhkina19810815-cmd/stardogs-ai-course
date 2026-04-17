@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 2. Контекст, компакт, handoff — как не терять работу между сессиями</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --green: #2E7D4F;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.65;
+    font-size: 16px;
+  }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 0;
+  }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 70px 0 50px;
+    text-align: center;
+  }
+  .hero .label {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-size: 38px;
+    font-weight: 800;
+    max-width: 720px;
+    margin: 0 auto 14px;
+    line-height: 1.15;
+  }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+  .hero .meta strong { color: var(--accent); }
+
+  main { padding: 50px 0 100px; }
+
+  h2 {
+    font-size: 26px;
+    color: var(--navy);
+    font-weight: 800;
+    margin: 52px 0 18px;
+    scroll-margin-top: 80px;
+  }
+  h2:first-of-type { margin-top: 0; }
+  h3 {
+    font-size: 18px;
+    color: var(--navy);
+    font-weight: 700;
+    margin: 28px 0 12px;
+  }
+
+  p { margin-bottom: 16px; }
+  p.lead {
+    font-size: 17px;
+    color: var(--gray);
+    padding: 20px 24px;
+    background: var(--navy-bg);
+    border-left: 4px solid var(--navy);
+    border-radius: 8px;
+    margin-bottom: 32px;
+  }
+
+  ul, ol { padding-left: 24px; margin-bottom: 16px; }
+  ul li, ol li { margin-bottom: 8px; }
+
+  strong { color: var(--navy); }
+
+  .toc {
+    background: var(--navy-bg);
+    border-radius: 10px;
+    padding: 20px 28px;
+    margin-bottom: 40px;
+    border-left: 4px solid var(--accent);
+  }
+  .toc h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .toc ol { padding-left: 20px; margin: 0; }
+  .toc ol li { margin-bottom: 6px; font-size: 15px; }
+  .toc a { color: var(--navy-light); text-decoration: none; }
+  .toc a:hover { color: var(--accent); text-decoration: underline; }
+
+  .box {
+    background: var(--navy-bg);
+    padding: 22px 26px;
+    border-radius: 10px;
+    margin: 24px 0;
+    border-left: 4px solid var(--accent);
+  }
+  .box h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .box p:last-child { margin-bottom: 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0 28px;
+    font-size: 15px;
+    background: var(--white);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  th {
+    background: var(--navy);
+    color: var(--white);
+    text-align: left;
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  td {
+    padding: 14px 18px;
+    border-top: 1px solid var(--border);
+    vertical-align: top;
+    font-size: 14.5px;
+  }
+  td:first-child { font-weight: 600; color: var(--navy); width: 25%; }
+
+  .example-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 14px 0;
+  }
+  .example-card h4 {
+    color: var(--navy);
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .example-card h4 span {
+    font-weight: 400;
+    color: var(--gray);
+    font-size: 14px;
+  }
+  .example-card ul { margin-bottom: 0; }
+  .example-card ul li {
+    font-size: 14.5px;
+    margin-bottom: 6px;
+  }
+
+  .pullquote {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    text-align: center;
+    padding: 28px 24px;
+    margin: 36px 0;
+    border-top: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    line-height: 1.4;
+  }
+
+  .action-block {
+    background: var(--accent-bg);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .action-block h3 {
+    color: var(--accent);
+    margin-top: 0;
+    font-size: 18px;
+  }
+  .action-block h3:first-child { margin-top: 0; }
+
+  .simple-prompt {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--navy);
+    white-space: pre-wrap;
+  }
+
+  details {
+    background: var(--navy-bg);
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--navy-light);
+  }
+  details summary {
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+    font-size: 15px;
+    outline: none;
+  }
+  details[open] summary { margin-bottom: 12px; }
+  details p { margin-bottom: 0; font-size: 14.5px; }
+
+  .mistakes { counter-reset: m; }
+  .mistake {
+    background: var(--navy-bg);
+    border-left: 4px solid var(--red);
+    padding: 16px 22px 16px 58px;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 12px;
+    position: relative;
+    counter-increment: m;
+  }
+  .mistake::before {
+    content: counter(m);
+    position: absolute;
+    left: 18px;
+    top: 16px;
+    width: 28px;
+    height: 28px;
+    background: var(--red);
+    color: var(--white);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 28px;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .mistake h4 { color: var(--red); font-size: 15px; margin-bottom: 4px; }
+  .mistake p { font-size: 14px; margin-bottom: 0; color: var(--text); }
+
+  .analogy {
+    background: var(--accent-bg);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .analogy h4 {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .analogy p:last-child { margin-bottom: 0; }
+
+  .diagram {
+    background: #1A1A1A;
+    color: #E8E8E8;
+    padding: 28px 32px;
+    border-radius: 10px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 15px;
+    line-height: 2;
+    margin: 24px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .diagram .arrow { color: var(--accent); font-weight: 700; }
+  .diagram .label { color: #8A9DAD; font-size: 12px; }
+  .diagram .highlight { color: var(--accent); font-weight: 700; }
+
+  .next {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 32px 32px;
+    border-radius: 14px;
+    margin-top: 48px;
+    text-align: center;
+  }
+  .next h3 { color: var(--white); font-size: 20px; margin-bottom: 10px; }
+  .next p { color: rgba(255,255,255,0.9); margin-bottom: 16px; }
+  .next a {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--white);
+    padding: 12px 26px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  footer {
+    background: #152B47;
+    color: rgba(255,255,255,0.6);
+    padding: 30px 0;
+    text-align: center;
+    font-size: 13px;
+  }
+  footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
+
+  .bridge {
+    text-align: center;
+    padding: 24px;
+    margin: 36px 0 24px;
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .bridge small {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-top: 6px;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 28px; }
+    h2 { font-size: 22px; }
+    table { font-size: 14px; }
+    th, td { padding: 10px 12px; }
+    .diagram { font-size: 13px; padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Блок 2 · Урок 2 · Память между сессиями</div>
+    <h1>Контекст, компакт, handoff.<br>Как не терять работу</h1>
+    <div class="meta"><strong>12 минут читать · 15 минут делать</strong></div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">Самая частая жалоба на ИИ-агента: «вчера объяснил всё, сегодня он опять не помнит». Это не баг — это особенность архитектуры. В этом уроке вы поймёте, почему агент забывает, и научитесь трём приёмам, которые решают проблему.</p>
+
+    <div class="toc">
+      <h4>В этом уроке</h4>
+      <ol>
+        <li><a href="#why">Почему агент забывает</a></li>
+        <li><a href="#context">Что такое контекст и куда он девается</a></li>
+        <li><a href="#compact">Компакт — сжатие на лету</a></li>
+        <li><a href="#handoff">Handoff — передача смены</a></li>
+        <li><a href="#state">STATE — полная картина</a></li>
+        <li><a href="#together">Как это работает вместе</a></li>
+        <li><a href="#practice">Практика: допишите инструкцию в заготовку</a></li>
+        <li><a href="#check">Проверь, что ты понял</a></li>
+        <li><a href="#mistakes">3 ошибки передачи смены</a></li>
+      </ol>
+    </div>
+
+    <!-- ========== 1. Почему агент забывает ========== -->
+
+    <h2 id="why">1. Почему агент забывает</h2>
+
+    <p>Когда вы закрываете сессию с агентом и открываете новую — он начинает с чистого листа. Это не ошибка и не экономия. Так устроена модель: каждая сессия — отдельный разговор, без связи с предыдущими.</p>
+
+    <p>CLAUDE.md решает часть проблемы: агент каждый раз перечитывает ваши правила. Но правила — это «кто вы и как работать». А «что мы делали вчера, на чём остановились и что дальше» — этого в CLAUDE.md нет. И без дополнительных инструментов агент об этом не знает.</p>
+
+    <div class="analogy">
+      <h4>Аналогия</h4>
+      <p>Вы наняли сотрудника, который каждое утро приходит на работу и читает должностную инструкцию (CLAUDE.md). Но он не помнит, чем занимался вчера. Каждый день — с нуля. Звучит абсурдно? Именно так работает агент без передачи смены.</p>
+    </div>
+
+    <p>Решение — три инструмента, которые дополняют друг друга. Дальше разберём каждый.</p>
+
+    <div class="box">
+      <h4>Важно: агент делает это сам</h4>
+      <p>Все файлы, о которых пойдёт речь — передача смены, состояние проектов — <strong>агент пишет и обновляет сам</strong>. Вам не нужно вести эти записи вручную. Ваша задача — понимать логику: зачем они нужны и как работают. Когда вы поймёте принцип, вы сможете проверить, что агент делает это правильно, и поправить, если что-то не так.</p>
+    </div>
+
+    <!-- ========== 2. Контекст ========== -->
+
+    <h2 id="context">2. Что такое контекст и куда он девается</h2>
+
+    <p><strong>Контекст</strong> — это всё, что агент «держит в голове» во время одной сессии: ваши сообщения, его ответы, файлы которые он прочитал, результаты команд. Всё это складывается в одну ленту, и агент видит её целиком.</p>
+
+    <p>Но у ленты есть физический предел — <strong>контекстное окно</strong>. Думайте о нём как о рабочем столе конечного размера. Пока задач мало, всё помещается. Но когда вы час работаете, читаете длинные файлы, обсуждаете детали — стол переполняется.</p>
+
+    <div class="diagram">
+      <span class="label">начало сессии</span><br>
+      <span style="color:#6FA8DC">CLAUDE.md</span> + <span style="color:#6FA8DC">ваш вопрос</span> + <span style="color:#6FA8DC">ответ</span><br>
+      <span class="arrow">↓ работаете 30 минут ↓</span><br>
+      <span style="color:#6FA8DC">CLAUDE.md</span> + <span style="color:#6FA8DC">20 сообщений</span> + <span style="color:#6FA8DC">5 файлов</span> + <span style="color:#6FA8DC">результаты</span><br>
+      <span class="arrow">↓ ещё 30 минут ↓</span><br>
+      <span class="highlight">⚠ контекст переполнен — агент начинает терять начало разговора</span>
+    </div>
+
+    <p>Когда контекст заполняется — агент начинает «забывать» ранние части разговора. Не специально, а потому что они физически не помещаются. Это как если бы сотрудник помнил последние два часа разговора, а первые три — уже размыто.</p>
+
+    <p><strong>Что из этого следует для вас:</strong></p>
+    <ul>
+      <li>Длинные сессии (больше часа) менее надёжны, чем короткие</li>
+      <li>Если загрузили в агента огромный файл — контекст заполнится быстрее</li>
+      <li>Важные договорённости из начала сессии могут «потеряться» к концу</li>
+    </ul>
+
+    <!-- ========== 3. Компакт ========== -->
+
+    <h2 id="compact">3. Компакт — сжатие на лету</h2>
+
+    <p>Когда контекст приближается к пределу, система автоматически делает <strong>компакт</strong> — сжимает историю разговора. Представьте, что кто-то пересказал ваш двухчасовой разговор в пять абзацев. Суть сохранилась, детали потерялись.</p>
+
+    <p>Компакт — это не катастрофа, но и не бесплатная операция. После сжатия агент помнит общий ход работы, но может забыть конкретную формулировку, число или договорённость из середины разговора.</p>
+
+    <div class="box">
+      <h4>Что делать, а что не делать</h4>
+      <p><strong>Не бояться компакта</strong> — это нормальный механизм, он работает каждый день.</p>
+      <p><strong>Не полагаться на него</strong> — если сказали агенту что-то важное в начале часовой сессии, после компакта он может это потерять.</p>
+      <p><strong>Важные решения фиксировать</strong> — не в разговоре, а в файле. Что записано в файл — не потеряется при сжатии.</p>
+    </div>
+
+    <p>Компакт можно запустить и вручную — командой <strong>/compact</strong>. Это полезно, когда вы закончили большой блок работы и хотите «обнулить» контекст перед следующей задачей, не закрывая сессию.</p>
+
+    <h3>Как это выглядит в реальной работе</h3>
+
+    <p>У нас с Ли (мой агент) настроено автоматическое напоминание в Telegram. Когда контекст заполняется — мне приходит сообщение: «Контекст заполнен, пора перезайти». Дальше всё просто:</p>
+
+    <ol>
+      <li>Я вижу сообщение в Telegram</li>
+      <li>Говорю агенту: <strong>«Запишись, перезаходим»</strong></li>
+      <li>Агент записывает передачу смены и состояние проектов</li>
+      <li>Я закрываю сессию и открываю новую</li>
+      <li>Новая сессия читает записку — и мы продолжаем с того же места</li>
+    </ol>
+
+    <p>Весь цикл занимает меньше минуты. Никакой потери контекста, никаких повторных объяснений. Как настроить такое напоминание в Telegram — разберём в одном из следующих уроков про интеграции.</p>
+
+    <table>
+      <thead>
+        <tr><th>Ситуация</th><th>Что происходит</th><th>Что делать</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Работаете 20 минут</td>
+          <td>Всё в порядке, контекст свободен</td>
+          <td>Продолжать работу</td>
+        </tr>
+        <tr>
+          <td>Работаете час, агент стал хуже отвечать</td>
+          <td>Контекст заполняется, скоро компакт</td>
+          <td>Закончить текущую задачу, сделать /compact или закрыть сессию</td>
+        </tr>
+        <tr>
+          <td>Загрузили огромный файл</td>
+          <td>Контекст резко заполнился</td>
+          <td>После работы с файлом — /compact, чтобы освободить место</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ========== 4. Handoff ========== -->
+
+    <h2 id="handoff">4. Handoff — передача смены</h2>
+
+    <p>Компакт помогает внутри одной сессии. Но между сессиями он не работает — новая сессия начинается с чистого листа. И здесь нужен <strong>handoff</strong> — передача смены.</p>
+
+    <div class="analogy">
+      <h4>Аналогия</h4>
+      <p>Представьте ночную смену на производстве. Уходящая смена оставляет записку: «Линия 3 остановлена на профилактику, запчасть приедет утром. Заказ 145 отгружен наполовину, остаток — завтра к обеду. Клиент Иванов звонил, просил перезвонить до 10:00». Новая смена приходит и сразу знает, что делать. Без записки — они бы начали разбираться с нуля.</p>
+    </div>
+
+    <p><strong>Handoff</strong> — это файл, который агент создаёт в конце каждой сессии. В нём:</p>
+
+    <ul>
+      <li><strong>Что сделано</strong> — конкретные результаты этой сессии</li>
+      <li><strong>Что не закончено</strong> — начатое, но не завершённое</li>
+      <li><strong>Решения</strong> — что решили вы или агент (и почему)</li>
+      <li><strong>Следующие шаги</strong> — что делать дальше</li>
+      <li><strong>Контекст</strong> — одно-два предложения для быстрого понимания</li>
+    </ul>
+
+    <p>Агент читает последний handoff при каждом старте сессии. Это первое, что он делает — как сотрудник, который утром читает записку от ночной смены.</p>
+
+    <h3>Как выглядит handoff на практике</h3>
+
+    <div class="example-card">
+      <h4>Пример от Ольги <span>(финансовый директор)</span></h4>
+      <ul>
+        <li><strong>Сделано:</strong> обновила бюджет апреля, добавила строки по новым точкам</li>
+        <li><strong>Не закончено:</strong> сверка план-факт за март — ждём данные от бухгалтерии</li>
+        <li><strong>Решение:</strong> командировочные выделяем отдельной строкой, а не в «прочее»</li>
+        <li><strong>Дальше:</strong> когда придут данные от бухгалтерии — закончить сверку и отправить Кириллу</li>
+      </ul>
+    </div>
+
+    <div class="example-card">
+      <h4>Пример от Виктора <span>(директор по эксплуатации)</span></h4>
+      <ul>
+        <li><strong>Сделано:</strong> составил график профилактики на май для 12 точек</li>
+        <li><strong>Не закончено:</strong> три точки без подтверждения от подрядчика</li>
+        <li><strong>Решение:</strong> точки с рейтингом ниже 4.0 — в приоритете</li>
+        <li><strong>Дальше:</strong> дождаться ответа подрядчика, закрыть график, отправить партнёрам</li>
+      </ul>
+    </div>
+
+    <div class="example-card">
+      <h4>Пример от Юли <span>(HR-директор)</span></h4>
+      <ul>
+        <li><strong>Сделано:</strong> подготовила описание вакансии администратора для трёх точек</li>
+        <li><strong>Не закончено:</strong> Ирина попросила добавить блок про обучение — жду уточнение</li>
+        <li><strong>Решение:</strong> зарплатную вилку не указываем в публичном описании</li>
+        <li><strong>Дальше:</strong> получить от Ирины текст про обучение, финализировать, опубликовать</li>
+      </ul>
+    </div>
+
+    <!-- ========== 5. STATE ========== -->
+
+    <h2 id="state">5. STATE — полная картина</h2>
+
+    <p>Handoff отвечает на вопрос «что было в прошлой сессии». Но если вы ведёте пять проектов, а handoff написан про один — остальные четыре агент не вспомнит.</p>
+
+    <p>Для этого существует <strong>STATE</strong> — файл, в котором описано состояние <em>всех</em> ваших текущих проектов и задач. Не история работы, а снимок: что сейчас в каком состоянии.</p>
+
+    <div class="analogy">
+      <h4>Аналогия</h4>
+      <p>Handoff — это записка от прошлой смены: «вот что мы делали сегодня». STATE — это доска с карточками в кабинете: все проекты, все статусы, все ожидания. Сотрудник приходит утром, читает записку (что было вчера), смотрит на доску (что вообще в работе) — и понимает полную картину.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Инструмент</th><th>Отвечает на вопрос</th><th>Обновляется</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CLAUDE.md</td>
+          <td>Кто я, как работать, чего нельзя</td>
+          <td>Когда меняются правила</td>
+        </tr>
+        <tr>
+          <td>Handoff</td>
+          <td>Что было в прошлой сессии</td>
+          <td>В конце каждой сессии</td>
+        </tr>
+        <tr>
+          <td>STATE</td>
+          <td>Что сейчас происходит по всем проектам</td>
+          <td>В конце каждой сессии</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Как может выглядеть STATE</h3>
+
+    <div class="example-card">
+      <h4>STATE Ольги <span>(пример — краткий фрагмент)</span></h4>
+      <ul>
+        <li><strong>Бюджет апреля</strong> — обновлён, новые точки добавлены, ждём данные бухгалтерии для сверки</li>
+        <li><strong>Отчёт для собственника</strong> — черновик готов, Кирилл посмотрит в пятницу</li>
+        <li><strong>Прогноз на второе полугодие</strong> — не начат, приоритет после закрытия апреля</li>
+        <li><strong>Ожидание:</strong> данные от бухгалтерии (обещали к среде)</li>
+      </ul>
+    </div>
+
+    <p>STATE не обязательно длинный. Для начала хватит списка текущих дел с одной строкой статуса по каждому. Со временем он вырастет — и это нормально.</p>
+
+    <!-- ========== 6. Как это работает вместе ========== -->
+
+    <h2 id="together">6. Как это работает вместе</h2>
+
+    <p>Вот что происходит, когда всё настроено:</p>
+
+    <div class="diagram">
+      <span class="label">вы открываете новую сессию</span><br><br>
+      <span style="color:#6FA8DC">1.</span> Агент читает <span class="highlight">CLAUDE.md</span> — вспоминает правила<br>
+      <span style="color:#6FA8DC">2.</span> Агент читает <span class="highlight">STATE</span> — видит все проекты<br>
+      <span style="color:#6FA8DC">3.</span> Агент читает <span class="highlight">последний handoff</span> — понимает, на чём остановились<br><br>
+      <span class="arrow">→ готов к работе за 10 секунд ←</span>
+    </div>
+
+    <p>Без этой связки — каждая сессия начинается с объяснений: «помнишь, мы вчера работали над бюджетом? Так вот, там три точки осталось...». С этой связкой — агент сам говорит: «Вижу, в прошлой сессии осталась сверка бюджета — ждём данные от бухгалтерии. Продолжаем или есть новые задачи?»</p>
+
+    <div class="pullquote">CLAUDE.md говорит агенту, кто он.<br>STATE — что происходит вокруг.<br>Handoff — что было вчера и что дальше.</div>
+
+    <div class="bridge">
+      Теория закончилась. Дальше — практика.
+      <small>Откройте заготовку из урока 1. Следующие 15 минут — дополняем её.</small>
+    </div>
+
+    <!-- ========== 7. Практика ========== -->
+
+    <h2 id="practice">7. Практика: допишите инструкцию в заготовку</h2>
+
+    <div class="box">
+      <h4>Напоминание</h4>
+      <p>В уроке 1 вы создали документ «Мой агент — заготовка» и ответили на 7 вопросов. Сейчас мы дополним его двумя новыми блоками. Когда у вас появится Claude — он прочитает заготовку целиком и сразу настроит и правила, и передачу смены.</p>
+    </div>
+
+    <div class="action-block">
+      <h3>Шаг 1 · Добавьте блок «Передача смены»</h3>
+
+      <p>Допишите в свою заготовку новый раздел. Своими словами опишите:</p>
+
+      <ol>
+        <li><strong>Что фиксировать в конце каждой сессии</strong> — что сделано, что не закончено, какие решения приняты, что дальше.</li>
+        <li><strong>Что читать в начале каждой сессии</strong> — последнюю записку передачи смены + полное состояние проектов.</li>
+        <li><strong>Формат</strong> — нужен ли вам подробный отчёт или хватит пяти строк? Как вам удобнее видеть информацию при старте?</li>
+      </ol>
+
+      <p>Пример того, как это может выглядеть в заготовке:</p>
+
+      <div class="simple-prompt">В конце каждой сессии — записывай:
+— что сделано (конкретно, не «работал над отчётом»)
+— что не закончено и почему
+— решения, которые мы приняли
+— что делать дальше
+
+В начале каждой сессии — первым делом:
+— прочитай последнюю записку передачи смены
+— прочитай текущее состояние всех проектов
+— коротко скажи мне, что видишь: «Прошлая сессия: Х. Продолжаем Y или есть новое?»
+
+Отчёт при старте — максимум 3 строки. Без воды.</div>
+    </div>
+
+    <div class="action-block">
+      <h3>Шаг 2 · Добавьте блок «Мои проекты»</h3>
+
+      <p>Это заготовка для STATE — файла с полной картиной. Перечислите свои текущие проекты и задачи. По каждому — одна строка статуса.</p>
+
+      <p>Пример:</p>
+
+      <div class="simple-prompt">Мои текущие проекты:
+
+1. Бюджет на апрель — обновлён, ждём данные для сверки
+2. Отчёт собственнику — черновик готов, нужна правка после сверки
+3. Подбор администратора — описание вакансии в работе
+4. Прогноз на 2 полугодие — не начат, после закрытия апреля</div>
+    </div>
+
+    <div class="action-block">
+      <h3>Шаг 3 · Перечитайте всю заготовку</h3>
+
+      <p>У вас теперь три блока: правила (урок 1), передача смены, проекты. Перечитайте всё вместе. Представьте, что новый сотрудник читает это в первый рабочий день. Вопросы:</p>
+
+      <ul>
+        <li>Он поймёт, кто вы и как с вами работать?</li>
+        <li>Он поймёт, что сейчас в работе?</li>
+        <li>Он поймёт, как сдать вам смену, когда уходит?</li>
+      </ul>
+
+      <p>Если на все три «да» — заготовка готова к следующему уроку.</p>
+    </div>
+
+    <!-- ========== 8. Проверь, что ты понял ========== -->
+
+    <h2 id="check">8. Проверь, что ты понял</h2>
+
+    <details>
+      <summary>Вы работали с агентом час, а потом закрыли сессию. Что знает агент при следующем открытии?</summary>
+      <p>Ничего из прошлой сессии — только то, что написано в CLAUDE.md. Разговор, файлы, решения — всё исчезло. Если был handoff — агент прочитает его и восстановит контекст. Если не было — начнёт с нуля.</p>
+    </details>
+
+    <details>
+      <summary>Чем handoff отличается от STATE?</summary>
+      <p>Handoff — это записка про конкретную сессию: что делали, что решили, что дальше. STATE — полная картина всех проектов, независимо от сессии. Handoff меняется каждый раз. STATE обновляется, но сохраняет все проекты.</p>
+    </details>
+
+    <details>
+      <summary>Агент стал давать странные ответы через час работы. Что скорее всего происходит?</summary>
+      <p>Контекст переполняется — агент теряет начало разговора. Решение: завершить текущую задачу и либо сделать /compact (сжатие), либо закрыть сессию и открыть новую. Важные решения из начала разговора стоит зафиксировать в файле до сжатия.</p>
+    </details>
+
+    <!-- ========== 9. 3 ошибки ========== -->
+
+    <h2 id="mistakes">9. 3 ошибки передачи смены</h2>
+
+    <div class="mistakes">
+      <div class="mistake">
+        <h4>Не делать handoff вообще</h4>
+        <p>Самая частая ошибка. Работали два часа, агент нашёл важные данные, приняли три решения — и закрыли сессию без записи. Завтра всё начинается с нуля. Два часа потеряны. Правило простое: <strong>нет handoff — сессия не существовала</strong>.</p>
+      </div>
+      <div class="mistake">
+        <h4>Писать «работал над проектом» вместо конкретики</h4>
+        <p>Handoff должен быть конкретным. «Работал над бюджетом» — бесполезно. «Обновил бюджет апреля: добавил 3 новых точки, ждём данные бухгалтерии для сверки» — полезно. Новая сессия должна понять за 10 секунд, на чём вы остановились.</p>
+      </div>
+      <div class="mistake">
+        <h4>Полагаться на память вместо STATE</h4>
+        <p>Вы помните все свои проекты. Агент — нет. Если STATE не обновлён, агент «видит» только тот проект, про который вы говорите прямо сейчас. Остальные для него не существуют. Обновляйте STATE — это занимает минуту, а экономит объяснения в каждой сессии.</p>
+      </div>
+    </div>
+
+    <!-- ========== Итог + анонс ========== -->
+
+    <div class="box">
+      <h4>Домашнее задание</h4>
+      <p>Дополните свою заготовку двумя блоками: «Передача смены» и «Мои проекты». Когда у вас появится Claude, вы вставите заготовку целиком — и агент сразу настроит и правила, и передачу смены, и будет знать ваши проекты.</p>
+      <p style="margin-top: 12px;">Бонус: попробуйте вести «бумажную передачу смены» уже сейчас — в конце рабочего дня записывать себе три строки: что сделано, что не закончено, что дальше. Через неделю заметите, как утром меньше времени уходит на раскачку.</p>
+    </div>
+
+    <div class="next">
+      <h3>Следующий урок</h3>
+      <p>Урок 3. Ошибка → правило. Guards — как превращать ошибки агента в защиту.<br>21 апреля, понедельник</p>
+      <a href="index.html">← вернуться к курсу</a>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Курс «Внедрение ИИ в Стардогс» · Урок 2 · черновик ·
+    <a href="index.html">главная страница курса</a>
+  </div>
+</footer>
+
+</body>
+</html>
