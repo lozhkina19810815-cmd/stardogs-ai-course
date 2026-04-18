@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 3. Ошибка → правило. Guards</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --green: #2E7D4F;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.65;
+    font-size: 16px;
+  }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px 0;
+  }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 70px 0 50px;
+    text-align: center;
+  }
+  .hero .label {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-size: 38px;
+    font-weight: 800;
+    max-width: 720px;
+    margin: 0 auto 14px;
+    line-height: 1.15;
+  }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+  .hero .meta strong { color: var(--accent); }
+
+  main { padding: 50px 0 100px; }
+
+  h2 {
+    font-size: 26px;
+    color: var(--navy);
+    font-weight: 800;
+    margin: 52px 0 18px;
+    scroll-margin-top: 80px;
+  }
+  h2:first-of-type { margin-top: 0; }
+  h3 {
+    font-size: 18px;
+    color: var(--navy);
+    font-weight: 700;
+    margin: 28px 0 12px;
+  }
+
+  p { margin-bottom: 16px; }
+  p.lead {
+    font-size: 17px;
+    color: var(--gray);
+    padding: 20px 24px;
+    background: var(--navy-bg);
+    border-left: 4px solid var(--navy);
+    border-radius: 8px;
+    margin-bottom: 32px;
+  }
+
+  ul, ol { padding-left: 24px; margin-bottom: 16px; }
+  ul li, ol li { margin-bottom: 8px; }
+
+  strong { color: var(--navy); }
+
+  .toc {
+    background: var(--navy-bg);
+    border-radius: 10px;
+    padding: 20px 28px;
+    margin-bottom: 40px;
+    border-left: 4px solid var(--accent);
+  }
+  .toc h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .toc ol { padding-left: 20px; margin: 0; }
+  .toc ol li { margin-bottom: 6px; font-size: 15px; }
+  .toc a { color: var(--navy-light); text-decoration: none; }
+  .toc a:hover { color: var(--accent); text-decoration: underline; }
+
+  .box {
+    background: var(--navy-bg);
+    padding: 22px 26px;
+    border-radius: 10px;
+    margin: 24px 0;
+    border-left: 4px solid var(--accent);
+  }
+  .box h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .box p:last-child { margin-bottom: 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0 28px;
+    font-size: 15px;
+    background: var(--white);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  th {
+    background: var(--navy);
+    color: var(--white);
+    text-align: left;
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  td {
+    padding: 14px 18px;
+    border-top: 1px solid var(--border);
+    vertical-align: top;
+    font-size: 14.5px;
+  }
+  td:first-child { font-weight: 600; color: var(--navy); width: 22%; }
+
+  .example-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 14px 0;
+  }
+  .example-card h4 {
+    color: var(--navy);
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .example-card h4 span {
+    font-weight: 400;
+    color: var(--gray);
+    font-size: 14px;
+  }
+  .example-card ul { margin-bottom: 0; }
+  .example-card ul li {
+    font-size: 14.5px;
+    margin-bottom: 6px;
+  }
+
+  .pullquote {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    text-align: center;
+    padding: 28px 24px;
+    margin: 36px 0;
+    border-top: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    line-height: 1.4;
+  }
+
+  .action-block {
+    background: var(--accent-bg);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .action-block h3 {
+    color: var(--accent);
+    margin-top: 0;
+    font-size: 18px;
+  }
+  .action-block h3:first-child { margin-top: 0; }
+
+  .simple-prompt {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--navy);
+    white-space: pre-wrap;
+  }
+
+  details {
+    background: var(--navy-bg);
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--navy-light);
+  }
+  details summary {
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+    font-size: 15px;
+    outline: none;
+  }
+  details[open] summary { margin-bottom: 12px; }
+  details p { margin-bottom: 0; font-size: 14.5px; }
+
+  .mistakes { counter-reset: m; }
+  .mistake {
+    background: var(--navy-bg);
+    border-left: 4px solid var(--red);
+    padding: 16px 22px 16px 58px;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 12px;
+    position: relative;
+    counter-increment: m;
+  }
+  .mistake::before {
+    content: counter(m);
+    position: absolute;
+    left: 18px;
+    top: 16px;
+    width: 28px;
+    height: 28px;
+    background: var(--red);
+    color: var(--white);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 28px;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .mistake h4 { color: var(--red); font-size: 15px; margin-bottom: 4px; }
+  .mistake p { font-size: 14px; margin-bottom: 0; color: var(--text); }
+
+  .analogy {
+    background: var(--accent-bg);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .analogy h4 {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .analogy p:last-child { margin-bottom: 0; }
+
+  .story {
+    background: #FAFBFC;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin: 24px 0;
+  }
+  .story h4 {
+    color: var(--red);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .story p:last-child { margin-bottom: 0; }
+
+  .steps { counter-reset: s; margin: 24px 0; }
+  .step {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--navy-light);
+    border-radius: 0 10px 10px 0;
+    padding: 18px 24px 18px 70px;
+    margin-bottom: 14px;
+    position: relative;
+    counter-increment: s;
+  }
+  .step::before {
+    content: counter(s);
+    position: absolute;
+    left: 20px;
+    top: 18px;
+    width: 34px;
+    height: 34px;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 34px;
+    font-weight: 800;
+    font-size: 16px;
+  }
+  .step h4 { color: var(--navy); font-size: 16px; margin-bottom: 6px; }
+  .step p { font-size: 15px; margin-bottom: 0; color: var(--text); }
+
+  .levels { display: grid; gap: 14px; margin: 24px 0; }
+  .level {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .level-badge {
+    background: var(--navy-bg);
+    color: var(--navy);
+    text-align: center;
+    padding: 10px 6px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .level-badge.auto { background: var(--accent-bg); color: var(--accent); }
+  .level h4 { font-size: 16px; margin-bottom: 6px; color: var(--navy); }
+  .level p { margin-bottom: 0; font-size: 14.5px; }
+
+  .metric-callout {
+    background: var(--navy);
+    color: var(--white);
+    padding: 26px 30px;
+    border-radius: 12px;
+    margin: 28px 0;
+  }
+  .metric-callout h4 {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .metric-callout strong { color: var(--accent); }
+  .metric-callout p { color: rgba(255,255,255,0.92); margin-bottom: 10px; }
+  .metric-callout p:last-child { margin-bottom: 0; }
+
+  .next {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 32px 32px;
+    border-radius: 14px;
+    margin-top: 48px;
+    text-align: center;
+  }
+  .next h3 { color: var(--white); font-size: 20px; margin-bottom: 10px; }
+  .next p { color: rgba(255,255,255,0.9); margin-bottom: 16px; }
+  .next a {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--white);
+    padding: 12px 26px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  footer {
+    background: #152B47;
+    color: rgba(255,255,255,0.6);
+    padding: 30px 0;
+    text-align: center;
+    font-size: 13px;
+  }
+  footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
+
+  .bridge {
+    text-align: center;
+    padding: 24px;
+    margin: 36px 0 24px;
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .red-warning {
+    background: var(--red);
+    color: var(--white);
+    padding: 32px 32px;
+    margin: 40px 0 28px;
+    border-radius: 14px;
+    text-align: center;
+  }
+  .red-warning .label {
+    color: rgba(255,255,255,0.85);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .red-warning h3 {
+    color: var(--white);
+    font-size: 26px;
+    line-height: 1.25;
+    font-weight: 800;
+    margin: 0 0 14px;
+  }
+  .red-warning p {
+    color: rgba(255,255,255,0.95);
+    font-size: 15.5px;
+    margin: 0;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .red-warning strong { color: var(--white); }
+
+  .tools-grid {
+    display: grid;
+    gap: 12px;
+    margin: 24px 0;
+  }
+  .tools-grid .tool-row {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 18px;
+    padding: 16px 20px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    align-items: start;
+  }
+  .tools-grid .tool-name {
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .tools-grid .tool-name small {
+    display: block;
+    color: var(--gray);
+    font-weight: 400;
+    font-size: 12.5px;
+    margin-top: 3px;
+  }
+  .tools-grid .tool-when {
+    font-size: 14.5px;
+  }
+  @media (max-width: 768px) {
+    .tools-grid .tool-row { grid-template-columns: 1fr; }
+  }
+  .bridge small {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-top: 6px;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 28px; }
+    h2 { font-size: 22px; }
+    table { font-size: 13px; }
+    th, td { padding: 10px 12px; }
+    .level { grid-template-columns: 1fr; }
+    .level-badge { justify-self: start; padding: 6px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Блок 2 · Урок 3 · Как агент учится на ошибках</div>
+    <h1>Ошибка → правило.<br>Guards</h1>
+    <div class="meta"><strong>11 минут читать · 15 минут делать</strong></div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">Если правило живёт только у вас в голове — агент будет ломать его снова и снова. Единственный способ остановить повтор — превратить ошибку в правило и положить в его память. В этом уроке вы увидите путь от конкретной ошибки до правила, которое защитит от повтора, и поймёте, кто что делает в этой работе: вы или агент.</p>
+
+    <div class="toc">
+      <h4>В этом уроке</h4>
+      <ol>
+        <li><a href="#why">Почему агент повторяет одну и ту же ошибку</a></li>
+        <li><a href="#guard">Что такое guard</a></li>
+        <li><a href="#path">Путь от ошибки к правилу — 5 шагов</a></li>
+        <li><a href="#example">Три живых примера — и три разных лекарства</a></li>
+        <li><a href="#roles">Кто за что отвечает</a></li>
+        <li><a href="#metric">Метрика «кто первым заметил»</a></li>
+        <li><a href="#levels">Семь инструментов защиты — и когда что выбирать</a></li>
+        <li><a href="#practice">Практика: одна ошибка — одно правило</a></li>
+        <li><a href="#ritual">Еженедельный разбор — регулярная работа с ошибками</a></li>
+        <li><a href="#mistakes">Типичные ошибки новичка</a></li>
+      </ol>
+    </div>
+
+    <!-- ========== 1. Почему повторяется ========== -->
+
+    <h2 id="why">1. Почему агент повторяет одну и ту же ошибку</h2>
+
+    <p>Представьте: вы попросили агента обновить таблицу. Он случайно стирает чужие формулы. Вы его поправляете: «так не делай». Он кивает, исправляет. На следующей неделе — та же задача, и он снова стирает формулы.</p>
+
+    <p>Это не вредность и не невнимательность. Просто прошлый разговор для агента закрылся, а правило, которое он тогда услышал, нигде не сохранилось. Каждая новая сессия начинается как будто предыдущей не было.</p>
+
+    <div class="analogy">
+      <h4>Аналогия</h4>
+      <p>Новый стажёр работает день, на второй приходит — и опять не знает, что нельзя заливать воду в ноутбук. Потому что вчерашнее предупреждение ему никто не записал в памятку. Каждое утро — чистый лист. Пока вы не сделаете памятку — он будет лить воду.</p>
+    </div>
+
+    <p>Памятка агента называется <strong>guard</strong>. Это не магия и не программа. Это текстовая запись: «перед X — проверь Y» или «никогда не делай Z». Лежит в обычном файле, агент читает его каждый старт сессии.</p>
+
+    <!-- ========== 2. Что такое guard ========== -->
+
+    <h2 id="guard">2. Что такое guard</h2>
+
+    <p>Guard — это <strong>фундаментальный принцип или запрет</strong>, записанный одной строкой в файл памяти агента. Не пошаговая инструкция. Не алгоритм. Принцип.</p>
+
+    <p>Формулировка почти всегда начинается с отрицания — «<strong>не делаю X</strong>», «<strong>не утверждаю без проверки</strong>», «<strong>не трогаю чужое</strong>». Или с базовой установки — «<strong>факт всегда важнее мнения</strong>», «<strong>сначала контекст — потом действие</strong>».</p>
+
+    <p>Главное — не «умно написано», а <strong>узнаваемо в моменте</strong>. Когда агент через неделю снова окажется в похожей ситуации, он должен увидеть принцип и узнать: «это про меня сейчас».</p>
+
+    <h3>Как выглядит хороший guard</h3>
+
+    <div class="example-card">
+      <h4>Три примера из живой работы <span>— мои собственные правила, каждое родилось из ошибки</span></h4>
+      <ul>
+        <li><strong>Не переписываю чужой файл целиком.</strong> Только точечные правки. Причина: уничтожила фильтры и формулы в большой таблице — часы чужой работы не восстановить.</li>
+        <li><strong>Не утверждаю «фейк», «не существует», «не работает» без проверки.</strong> Сначала поиск — потом оценка. Причина: назвала реальную функцию выдумкой, потом пришлось извиняться.</li>
+        <li><strong>Не делаю выводов до полной проверки фактов.</strong> Сначала все источники — потом суждение. Причина: обвинила систему в сбое, а оказалось — в моём коде.</li>
+      </ul>
+    </div>
+
+    <p>Обратите внимание: все три начинаются с <strong>«не»</strong>. Это фундаментальные запреты — не алгоритмы. После принципа — короткая причина. Причина нужна не для красоты: чтобы агент в пограничной ситуации мог понять, подходит правило или нет.</p>
+
+    <div class="box">
+      <h4>Важно: guard ≠ инструкция</h4>
+      <p>Если правило звучит как «сделай A, потом B, потом C» — это <strong>не guard, а playbook</strong> (пошаговая карта) или <strong>skill</strong> (готовый навык). О них — в четвёртом уроке. Guard — это одна фундаментальная граница. Один запрет. Одна принципиальная установка. Всё «как именно делать» — в других артефактах.</p>
+    </div>
+
+    <div class="box">
+      <h4>Guard — это текст</h4>
+      <p>Не автоматическая проверка, не код. Просто запись, которую агент читает и применяет в голове. Если агент прочитал принцип и не применил — виноват он, не файл. Автоматические проверки (hooks) — это другой инструмент, о них в пятом уроке.</p>
+    </div>
+
+    <!-- ========== 3. Путь ========== -->
+
+    <h2 id="path">3. Путь от ошибки к правилу — 5 шагов</h2>
+
+    <p>Когда происходит ошибка, проходят пять этапов. Порядок важен: если перепрыгнуть — правило получится либо слишком размытое, либо слишком узкое.</p>
+
+    <div class="steps">
+      <div class="step">
+        <h4>Заметить ошибку</h4>
+        <p>Кто-то заметил: агент или человек. Не важно кто — важно, что ошибка перестала быть невидимой.</p>
+      </div>
+      <div class="step">
+        <h4>Записать факт</h4>
+        <p>Что именно произошло — одно-два предложения в файл «журнал ошибок». Без оценок и выводов. Только симптом: «нажал не ту кнопку», «удалил нужное», «ответил не туда».</p>
+      </div>
+      <div class="step">
+        <h4>Пять «почему» — докопаться до корня</h4>
+        <p>Главный шаг. Задавайте вопрос «почему?» пять раз подряд. Не останавливайтесь на «я забыла» или «поспешила» — это не причина, а симптом. Ищите, <strong>что именно в устройстве работы позволило этому случиться</strong>.</p>
+      </div>
+      <div class="step">
+        <h4>Сформулировать правило одной строкой</h4>
+        <p>Коротко. Конкретно. Так, чтобы при повторной ситуации агент узнал её с первого взгляда. Размытое правило «будь внимательнее» — бесполезно.</p>
+      </div>
+      <div class="step">
+        <h4>Положить в файл правил</h4>
+        <p>В том же репозитории, где живёт CLAUDE.md. Агент читает этот файл при каждом старте. Правило появляется в его памяти автоматически.</p>
+      </div>
+    </div>
+
+    <!-- ========== 4. Три живых примера ========== -->
+
+    <h2 id="example">4. Три живых примера — и три разных лекарства</h2>
+
+    <p>Одна суббота, 18 апреля. Три разные ошибки в одной сессии. И у каждой — <strong>свой тип лекарства</strong>. Это важно: в следующей главе мы распишем все семь инструментов, но сначала покажем на живом — что guards решают не всё.</p>
+
+    <h3>Ошибка 1. Автоматическое обновление агента оборвало сессию посреди работы</h3>
+
+    <p>Я работала с агентом — шёл разбор отзывов. Вдруг сессия закрылась, контекст стёрся, пришлось начинать заново. Оказалось: программа агента в фоне проверила «вышла ли новая версия» и решила обновиться автоматически, не спросив разрешения.</p>
+
+    <div class="story">
+      <h4>Пять «почему» и корень</h4>
+      <p><strong>Почему сессия закрылась?</strong> — Программа агента обновилась сама.</p>
+      <p><strong>Почему обновилась?</strong> — В настройках по умолчанию включена автопроверка раз в час и автоустановка.</p>
+      <p><strong>Почему было по умолчанию?</strong> — Никто не поменял эту настройку, жили с поведением «из коробки».</p>
+      <p><strong>Корень:</strong> настройка среды, а не поведение агента. Правило словами «не обрывай сессию» не поможет — агент и не обрывал, это делала сама программа.</p>
+    </div>
+
+    <p><strong>Лекарство: отключить автообновление в настройках.</strong> Одна строка в файле настроек — и больше никогда. Плюс написать маленький скрипт, который при каждом старте сессии сам проверяет «а нет ли новой версии» и в стартовом отчёте предлагает: «доступно обновление, хочешь обновиться сейчас?» — и только по команде человека. Ручное управление, а не автоматика.</p>
+
+    <div class="simple-prompt">Тип лекарства: настройка среды + маленький скрипт + встроить вывод в стартовый отчёт. Guard'а тут нет — нечего запрещать агенту, он не виноват.</div>
+
+    <h3>Ошибка 2. Позитивный ответ сгенерился на негативный отзыв</h3>
+
+    <p>Агент должен был ответить на звёздный отзыв «очень вкусно» вежливой благодарностью. В код попал и клиент со звездой «грубо обслужили, еда сырая». Агент отправил ему: «Спасибо! Рады что понравилось, ждём снова!». Удалось перехватить и удалить до публикации, но разница между «отправил» и «опубликовано клиенту» — пять минут случайности.</p>
+
+    <div class="story">
+      <h4>Пять «почему» и корень</h4>
+      <p><strong>Почему позитивный ответ на негатив?</strong> — Функция «генерируй ответ» применилась ко всем отзывам без фильтра по оценке.</p>
+      <p><strong>Почему без фильтра?</strong> — Я копировала функцию из рабочего скрипта, но забыла скопировать ветку «если звезда меньше 4 — отдельный обработчик».</p>
+      <p><strong>Почему забыла?</strong> — Торопилась. Взяла минимум «чтобы быстрее», не проверила полный путь.</p>
+      <p><strong>Корень:</strong> два слоя. Первый — поспешность человека, это можно закрыть правилом. Второй — сама функция допускает вызов на негатив, программа не сопротивляется.</p>
+    </div>
+
+    <p><strong>Лекарство: три слоя одновременно.</strong></p>
+
+    <ul>
+      <li><strong>Правило (guard):</strong> «когда копирую функцию — копирую полную ветку вызовов, а не только саму функцию». Текст в файле правил. Первый уровень защиты.</li>
+      <li><strong>Проверка прямо в коде функции:</strong> первой строкой «если звезда &lt; 4 — остановись с ошибкой». Программа сопротивляется неправильному вызову. Даже если человек забыл правило — программа не даст.</li>
+      <li><strong>Режим «показать без отправки»:</strong> в скрипте флаг, при котором он печатает «кому бы отправил и что» — но не отправляет. Человек просмотрел, нажал «теперь реально отправляй». Третий уровень: физически отделить генерацию от публикации.</li>
+    </ul>
+
+    <div class="simple-prompt">Тип лекарства: guard + проверка в коде + режим dry-run. Три инструмента, и только один из них — правило. Остальные — программные.</div>
+
+    <h3>Ошибка 3. Фикс, который «считался рабочим», не доставлял ответы 10 дней</h3>
+
+    <p>Девять дней назад в скрипте ответов на отзывы поменяли один адрес (который был неправильным) на другой. Программа начала отвечать «ок, принято» — но сами ответы на карты (Яндекс, 2ГИС, Google) не доходили. За 10 дней накопилось 125 отзывов, «отмеченных как отвеченные» в нашей системе, но никто на площадках их не видел. Заметила я — случайно, по скриншоту одной точки.</p>
+
+    <div class="story">
+      <h4>Пять «почему» и корень</h4>
+      <p><strong>Почему не заметили 10 дней?</strong> — Программа писала в лог «отправлено успешно», агент и я видели это как «всё хорошо».</p>
+      <p><strong>Почему «отправлено» не означало «доставлено»?</strong> — После отправки никто не проверял факт появления ответа на площадке. Полагались на код ответа сервера.</p>
+      <p><strong>Почему не проверяли?</strong> — Такой проверки в коде не было, никто её не писал.</p>
+      <p><strong>Почему 10 дней не всплыло?</strong> — Никакая автоматика не сравнивала «сколько отправлено» с «сколько реально появилось» на площадках. Человек один раз закрыл задачу — и она перестала привлекать внимание.</p>
+      <p><strong>Корень:</strong> нет постоянного мониторинга. И нет ритуала проверки «раз в неделю глянь — а оно вообще работает, то что ты починил».</p>
+    </div>
+
+    <p><strong>Лекарство: ещё три слоя, но все — не правила.</strong></p>
+
+    <ul>
+      <li><strong>Проверка после отправки прямо в скрипте:</strong> через 5 минут агент сам делает запрос «а появился ли ответ на площадке?». Если не появился — это не «отправлено», а «не доставлено». Счётчик успехов считает только реально доставленные.</li>
+      <li><strong>Ежесубботняя сводка доставок:</strong> отдельный скрипт запускается по расписанию, сравнивает «сколько отправлено за неделю» с «сколько реально опубликовано», и если расхождение больше 5% — алерт в чат. Без этого скрипта человеку надо помнить проверять, а он не помнит.</li>
+      <li><strong>Правило (guard):</strong> «задача с комментарием "ждём X" не закрывается — ей ставится дата проверки». Это единственный текстовый правило из трёх. Предотвращает повтор «поменяли и забыли».</li>
+    </ul>
+
+    <div class="simple-prompt">Тип лекарства: проверка в коде + расписание с автоматическим запуском + guard. Два из трёх — не правила, а программные механизмы.</div>
+
+    <div class="pullquote">Три ошибки одного дня — девять разных решений. Из них <strong>чистых правил — два</strong>.<br>Семь остальных — это настройки, проверки в коде, расписания, режимы работы. Правила — только начало.</div>
+
+    <!-- ========== 5. Роли ========== -->
+
+    <h2 id="roles">5. Кто за что отвечает</h2>
+
+    <p>Это самое важное место урока. Если не понимать, кто что делает, вы либо перегрузите себя, либо отдадите агенту работу, с которой он сам не справится.</p>
+
+    <p>Цикл «ошибка → правило» состоит из семи этапов. На каждом — свой вклад агента и свой вклад человека:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Этап</th>
+          <th>Агент</th>
+          <th>Человек</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1. Заметить ошибку</td>
+          <td>Ловит, когда узнаёт симптом</td>
+          <td>Ловит, когда агент не заметил</td>
+        </tr>
+        <tr>
+          <td>2. Записать факт</td>
+          <td>Сбрасывает в журнал ошибок сам</td>
+          <td>Проверяет, что записано верно</td>
+        </tr>
+        <tr>
+          <td>3. Найти корень — 5 «почему»</td>
+          <td>Предлагает цепочку причин</td>
+          <td>Критикует, если вместо причины пишет «я забыла»</td>
+        </tr>
+        <tr>
+          <td>4. Сформулировать правило</td>
+          <td>Предлагает текст одной строкой</td>
+          <td><strong>Утверждает формулировку</strong></td>
+        </tr>
+        <tr>
+          <td>5. Выбрать уровень защиты</td>
+          <td>Предлагает: память / чеклист / автомат</td>
+          <td>Решает, какой уровень нужен</td>
+        </tr>
+        <tr>
+          <td>6. Применить</td>
+          <td>Добавляет в файл правил</td>
+          <td>Даёт разрешение, если правило трогает настройки</td>
+        </tr>
+        <tr>
+          <td>7. Проверить, что работает</td>
+          <td>Демонстрирует на том же сценарии</td>
+          <td>Подтверждает: работает или нет</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Где человеку нельзя делегировать</h3>
+
+    <p>Два этапа — ваши. Всегда.</p>
+
+    <ul>
+      <li><strong>Шаг 4 — утвердить формулировку правила.</strong> Агент может предложить десять вариантов, но выбирать и править должен человек. Правило формирует поведение агента в будущем — если вы не прочли и не согласились, вы не контролируете, чему он учится.</li>
+      <li><strong>Шаг 7 — подтвердить, что работает.</strong> Агент может сказать «проверил, всё хорошо». Но единственный надёжный тест — вы воспроизвели ту же ошибку и увидели, что теперь агент её ловит. Без вашего подтверждения правило числится активным, но может не работать.</li>
+    </ul>
+
+    <h3>Как фиксировать свой вклад</h3>
+
+    <ul>
+      <li><strong>В чате:</strong> короткие «да / нет / исправь» — агент учитывает эти ответы, они попадают в историю сессии.</li>
+      <li><strong>Правки руками в файле правил:</strong> если агент предложил формулировку, а вы её переписали — сделайте это сами, не просите агента «переделать получше». Ваши слова точнее попадают в суть.</li>
+      <li><strong>Отдельный файл решений:</strong> ключевые моменты «почему мы выбрали такой путь» — записывать своими словами. Это ваша позиция, агент её не придумает.</li>
+    </ul>
+
+    <!-- ========== 6. Метрика ========== -->
+
+    <h2 id="metric">6. Метрика «кто первым заметил»</h2>
+
+    <p>Простой способ понять, насколько агент уже вырос из стажёра. Пройдите по последним десяти ошибкам совместной работы и на каждой спросите: <strong>кто заметил первым — вы или агент?</strong></p>
+
+    <div class="metric-callout">
+      <h4>Что считается нормой</h4>
+      <p><strong>В начале работы</strong> (первые две-три недели): 70–90% ошибок ловит человек. Это нормально — агент ещё не знает ваши сценарии.</p>
+      <p><strong>Через месяц:</strong> цель — сдвинуть к 30%. Большую часть ошибок агент ловит сам.</p>
+      <p><strong>Как двигать показатель:</strong> каждая пойманная человеком ошибка → правило → в следующий раз агент узнаёт её и ловит сам. Чем больше правил накоплено — тем самостоятельнее агент.</p>
+    </div>
+
+    <p>Если через месяц показатель не сдвинулся — значит правила не превращаются в изменение поведения. Стоит перечитать: достаточно ли они конкретные? Может быть, формулировка слишком размытая?</p>
+
+    <!-- ========== 7. Семь инструментов защиты ========== -->
+
+    <div class="red-warning">
+      <div class="label">Главное признание урока</div>
+      <h3>Правила не защитят от ошибок.</h3>
+      <p>Одних текстовых правил (guards) недостаточно. По нашей статистике — они закрывают примерно <strong>30% типов ошибок</strong>. Остальные 70% требуют <strong>других инструментов</strong>: настроек, проверок в коде, автоматов, расписаний. Если оставить только guards — ошибки вернутся другими путями.</p>
+    </div>
+
+    <h2 id="levels">7. Семь инструментов защиты — и когда что выбирать</h2>
+
+    <p>В прошлой главе вы увидели: три ошибки одного дня — девять разных решений. Только два из них — guards. Остальные — другие инструменты. Ниже — полный набор, от самого дешёвого до самого надёжного.</p>
+
+    <div class="tools-grid">
+      <div class="tool-row">
+        <div class="tool-name">Guard<small>правило текстом</small></div>
+        <div class="tool-when">Короткая запись в файле правил. Агент читает при старте, применяет в голове. Цена 0, скорость 5 минут. Работает, только если агент внимательно прочитает и вспомнит в момент ошибки.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">Rule<small>проектная инструкция</small></div>
+        <div class="tool-when">Правило в файле CLAUDE.md или рядом. Загружается автоматически при каждой задаче, держится в памяти агента всю сессию. Строже guard, но тоже текст.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">Playbook<small>пошаговая карта</small></div>
+        <div class="tool-when">Готовый алгоритм для повторяющегося процесса («как делать еженедельный отчёт», «как обновить цены»). Агент берёт его и идёт по шагам. Защищает от «забыл порядок».</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">Skill<small>готовый навык</small></div>
+        <div class="tool-when">То же что playbook, но с формализованным описанием — когда вызывать. Агент сам распознаёт, что подходит, и подключает. Для задач типа «работа с таблицей», «отправка в Telegram».</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">Проверка в коде<small>код-ассерт</small></div>
+        <div class="tool-when">Прямо внутри функции: «если параметр не подходит — остановись с ошибкой». Программа сопротивляется неправильному вызову. Человек забыл правило — программа не даст сделать.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">Hook<small>автоматическая проверка</small></div>
+        <div class="tool-when">Внешний сторож, который срабатывает до или после действия агента и может заблокировать. Агент не может обойти. Для опасного: отправка клиенту, удаление, публикация.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">Scheduled task<small>задача по расписанию</small></div>
+        <div class="tool-when">Система сама запускает скрипт в понедельник в 10:00. Агент не забудет — потому что вспоминает не он, а система. Для регулярных проверок, сводок, аудита.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">Настройка среды<small>env / settings</small></div>
+        <div class="tool-when">Переменная или ключ в файле настроек. Меняет поведение программы, а не агента. Для инфраструктуры: автообновление, токены, лимиты.</div>
+      </div>
+    </div>
+
+    <h3>Дерево решений — какой инструмент для какой ошибки</h3>
+
+    <p>Когда разбираете очередную ошибку на еженедельной ревизии — идите по этому дереву сверху вниз. Первое «да» — ваш ответ:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Признак ошибки</th>
+          <th>Инструмент</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ошибка в настройках программы, не в поведении агента (обновление, токен, лимит)</td>
+          <td><strong>Настройка среды</strong></td>
+        </tr>
+        <tr>
+          <td>Деструктивное или необратимое действие (отправка клиенту, удаление, публикация)</td>
+          <td><strong>Hook</strong> (автомат, агент не обойдёт)</td>
+        </tr>
+        <tr>
+          <td>Функция принимает «плохой» параметр и ломает результат</td>
+          <td><strong>Проверка в коде</strong> (программа сопротивляется)</td>
+        </tr>
+        <tr>
+          <td>Нужно помнить регулярно — каждую субботу проверять X</td>
+          <td><strong>Scheduled task</strong> (вспоминает система, не человек)</td>
+        </tr>
+        <tr>
+          <td>Повторяющийся процесс со шагами — «как делать отчёт»</td>
+          <td><strong>Playbook</strong> или <strong>skill</strong></td>
+        </tr>
+        <tr>
+          <td>Повторилась 2–3 раза несмотря на guard, ошибка в поведении агента</td>
+          <td><strong>Rule</strong> (строже, всегда в памяти)</td>
+        </tr>
+        <tr>
+          <td>Первый раз, легко держится в голове, нет необратимых последствий</td>
+          <td><strong>Guard</strong> (самое дешёвое, начните с этого)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="box">
+      <h4>Главное правило выбора</h4>
+      <p>Начинайте с самого дешёвого — guard. Если ошибка вернулась — поднимайтесь на следующий уровень. Не делайте hook там, где хватит guard — это трата времени. И не полагайтесь на guard там, где нужен hook — это трата нервов и денег.</p>
+    </div>
+
+    <div class="bridge">
+      Глубокий разбор каждого инструмента — в уроках 4–7.
+      <small>Урок 4 — rules, playbooks, skills. Урок 5 — hooks. А сейчас продолжаем с guards.</small>
+    </div>
+
+    <!-- ========== 8. Практика ========== -->
+
+    <h2 id="practice">8. Практика: одна ошибка — один принцип</h2>
+
+    <p>Цель этого блока — пройти цикл на своей, а не чужой ошибке. У вас пока нет своего агента — и это нормально. Прокачиваем <strong>привычку мыслить в формате guards</strong>, а когда в следующем уроке вы получите стартовый комплект агента — ваши принципы уже будут готовы, их останется просто перенести в его файл правил.</p>
+
+    <p>Ниже — три шага. Хватит пятнадцати минут.</p>
+
+    <div class="action-block">
+      <h3>Шаг 1. Откройте документ «Мои принципы работы»</h3>
+      <p>Где угодно — Google Docs, Notion, блокнот в телефоне, заметка на Маке. Назовите: «Мои принципы работы (guards)». Это ваш будущий guards-файл для агента, пока что — личный документ.</p>
+
+      <p>Это документ-накопитель: в течение следующей недели вы будете вносить сюда новые принципы по мере того как будут ловиться ошибки. Одна ошибка — одна строка.</p>
+    </div>
+
+    <div class="action-block">
+      <h3>Шаг 2. Возьмите одну ошибку из последней недели</h3>
+      <p>Вашу собственную — или рабочую, или личную. Сорвался дедлайн, отправили не тот файл, забыли пункт в повестке, перепутали имя в письме. Не обязательно крупную — главное свежую.</p>
+
+      <p>Запишите в три строки:</p>
+      <ul>
+        <li>Что произошло — одним предложением</li>
+        <li>Кто первым заметил — вы или кто-то другой</li>
+        <li>Чего вы ожидали вместо этого</li>
+      </ul>
+
+      <p>Теперь задайте пять «почему». Начните с «почему это произошло?» — и на каждый ответ снова спросите «почему?». Записывайте каждый уровень.</p>
+
+      <p>Когда дойдёте до ответа вида «принцип не был сформулирован» или «не было проверки перед действием» — вы на корне. Если упёрлись в «я забыла» или «я поспешила» — это ещё не корень, идите глубже.</p>
+    </div>
+
+    <div class="action-block">
+      <h3>Шаг 3. Сформулируйте принцип и запишите</h3>
+      <p>По найденному корню напишите одну строку. Хорошая форма — с отрицания:</p>
+
+      <div class="simple-prompt">Не [делаю X] до [проверки / условия].
+Причина: [короткое описание случая, из которого принцип родился].</div>
+
+      <p>Примеры ваших будущих принципов:</p>
+      <ul>
+        <li>«<strong>Не отправляю письмо клиенту</strong> без перечитывания вслух. Причина: отправила с непрописанным именем — три раза извинялась.»</li>
+        <li>«<strong>Не принимаю решение за отсутствующего</strong> без письменного согласования. Причина: коллега вернулся — конфликт.»</li>
+        <li>«<strong>Не обещаю сроки в переписке</strong> — только в календаре с напоминанием. Причина: обещания в чате теряются.»</li>
+      </ul>
+
+      <p>Запишите своё — одну строку — в документ из шага 1.</p>
+    </div>
+
+    <div class="box">
+      <h4>Что дальше</h4>
+      <p>Через неделю — посмотрите на документ. Похожая ошибка повторилась? Если нет — принцип живой, работает в голове. Если да — либо формулировка размытая и её надо острее, либо принцип нужно повышать на уровень автоматики (см. §7). Когда в уроке-стартовом-комплекте вы получите агента — просто перенесёте документ в его файл правил, и принципы начнут работать уже у него, а не только у вас.</p>
+    </div>
+
+    <!-- ========== 9. Еженедельный разбор ========== -->
+
+    <h2 id="ritual">9. Еженедельный разбор — регулярная работа с ошибками</h2>
+
+    <p>Одно правило — хорошо. Но ошибки копятся, и разовое разбирательство каждой по отдельности теряет картину. Через пару недель вы увидите, что одни правила работают, другие — нет. Одни ошибки исчезли, другие повторяются разными способами. Без взгляда сверху вы не поймёте, где на самом деле слабое место.</p>
+
+    <p>Поэтому помимо разбора каждой ошибки отдельно — нужен <strong>регулярный разбор всех ошибок недели целиком</strong>. Это не дополнительная опция, а часть цикла. Без неё правила превращаются в хаотичный список, который никто не поддерживает.</p>
+
+    <div class="analogy">
+      <h4>Аналогия</h4>
+      <p>Представьте бригадира, который каждую мелкую поломку на производстве фиксирует в журнал, но раз в неделю никто не собирается и не смотрит журнал целиком. Починить отдельный станок — не значит увидеть, что тридцать станков ломаются из-за одного и того же поставщика деталей. Еженедельный разбор — это взгляд на журнал целиком.</p>
+    </div>
+
+    <h3>Пять шагов разбора — кто и что делает на каждом</h3>
+
+    <p>По каждому шагу — чётко: кто ответственный, что на выходе, в какой форме. Слева колонка «сейчас без агента» (у вас журнал в Google Doc и разбор руками). Справа — «когда появится агент» (уроки 1, 4, 5 научат настраивать автоматический сбор).</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 22%;">Шаг</th>
+          <th>Сейчас (без агента)</th>
+          <th>С агентом</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Собрать все ошибки</strong></td>
+          <td>Человек открывает документ «Журнал ошибок» и просматривает записи за 7 дней. Если журнала нет — завести: Google Doc с таблицей «дата / что произошло / почему».</td>
+          <td>Скрипт «собери ошибки за неделю» вытаскивает их из файла журнала, сортирует по дате, выдаёт таблицей в Telegram или отдельный документ.</td>
+        </tr>
+        <tr>
+          <td><strong>2. Сгруппировать по паттерну</strong></td>
+          <td>Человек читает и вручную группирует: «три про проверки перед записью», «два про невнимательность к сообщениям». Помечает тегами в документе.</td>
+          <td>Агент предлагает группировку (видит похожие формулировки), человек её принимает или правит. Агент считает повторы.</td>
+        </tr>
+        <tr>
+          <td><strong>3. Посмотреть тренд</strong></td>
+          <td>Сравнить с прошлой неделей глазами: паттерн рос или упал? Без большой статистики — по ощущению.</td>
+          <td>Скрипт считает «было 2 → стало 5 → +150%» и подсвечивает растущие. Человек видит список отсортированный по тренду.</td>
+        </tr>
+        <tr>
+          <td><strong>4. Решить тип лекарства</strong></td>
+          <td><strong>Только человек.</strong> По дереву решений из §7: guard? rule? skill? hook? Это всегда решение человека — агент не может выбирать сам себе автомат.</td>
+          <td><strong>Только человек.</strong> Агент может предложить, но утверждает человек. Без этого шага цикл сломан.</td>
+        </tr>
+        <tr>
+          <td><strong>5. Применить решение</strong></td>
+          <td>Человек дописывает новый принцип в документ. Или планирует дать задачу себе или команде — записывает в таск-трекер.</td>
+          <td>Агент добавляет принцип в файл правил. Если решение сложнее (hook, skill) — создаёт задачу в Plane на реализацию.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Когда — точный ритуал</h3>
+
+    <ul>
+      <li><strong>Конкретный день и время</strong> — «каждая суббота, 10:00» или «каждая пятница, 17:00». Не «когда получится» — это значит «никогда».</li>
+      <li><strong>20–30 минут</strong> — этого хватает на 10–20 ошибок. Не растягивайте.</li>
+      <li><strong>Как вспомнить:</strong>
+        <ul>
+          <li>Сейчас без агента: <strong>повторяющееся событие в календаре</strong> с напоминанием за час. Без календаря — не будет.</li>
+          <li>С агентом: <strong>scheduled task</strong> — агент сам запускает сбор в субботу 10:00 и присылает готовую таблицу в Telegram. Вы просто открываете, разбираете, отвечаете.</li>
+        </ul>
+      </li>
+      <li><strong>Форма результата</strong> — короткий отчёт-итог в 5 строк:
+        <div class="simple-prompt">Неделя N (11–17 апреля)
+Всего ошибок: 12
+Повторяющихся паттернов: 4
+Новых принципов добавлено: 2
+Красный флаг: паттерн "не проверила inbox" — 3-я неделя подряд, надо повышать уровень с принципа на hook.</div>
+      </li>
+      <li><strong>Где хранить итог</strong> — отдельный документ «Еженедельный разбор», в который добавляете новую запись каждую субботу. Через месяц виден тренд.</li>
+    </ul>
+
+    <div class="box">
+      <h4>Что считается красным флагом</h4>
+      <p>Один и тот же паттерн повторяется третью неделю подряд — значит принципа в памяти недостаточно, пора повышать уровень. По дереву решений из §7: rule → skill → hook. Если ошибка повторяется даже с hook — значит hook настроен не в той точке, переносите выше в цепочке действий.</p>
+    </div>
+
+    <p><strong>Раз в месяц</strong> — более глубокий разбор: какие принципы собрались за месяц, не противоречат ли друг другу, какие устарели. Это уже не «разбор ошибок», а <strong>ревизия правил</strong>. Её я сейчас поставила себе в задачу — результат покажу на уроке-комплекте.</p>
+
+    <!-- ========== 10. Ошибки новичка ========== -->
+
+    <h2 id="mistakes">10. Типичные ошибки новичка</h2>
+
+    <div class="mistakes">
+      <div class="mistake">
+        <h4>«Агент сам разберётся, нечего мне вычитывать каждое правило»</h4>
+        <p>Через неделю у вас тридцать правил, половина противоречит друг другу, никто не смотрел. Guards без человеческой фильтрации = мусор. Без шага «утверждает человек» цикл сломан.</p>
+      </div>
+      <div class="mistake">
+        <h4>Слишком размытое правило — «будь внимательнее»</h4>
+        <p>Такое правило агент прочитает и кивнёт. И нарушит. Правило должно описывать конкретную ситуацию и конкретное действие. «Перед сохранением таблицы — проверить, что формулы не стёрты».</p>
+      </div>
+      <div class="mistake">
+        <h4>Слишком узкое правило — под конкретный файл</h4>
+        <p>«Не стирать таблицу бюджет-апрель-2026». Через месяц таблица называется иначе, правило не применяется. Описывайте тип ситуации, а не конкретный объект.</p>
+      </div>
+      <div class="mistake">
+        <h4>Записываете правило, но не проверяете через неделю</h4>
+        <p>Правило прижилось или нет — видно только по повторам. Раз в неделю смотрите журнал ошибок: какие правила реально сработали, какие нет.</p>
+      </div>
+      <div class="mistake">
+        <h4>Делегируете шаг «утвердить формулировку» агенту</h4>
+        <p>«Напиши сам и добавь». Агент пишет формулировку в свою пользу — мягче, чем нужно. Через месяц окажется, что никаких твёрдых правил у вас нет. Этот шаг — ваш, всегда.</p>
+      </div>
+    </div>
+
+    <!-- ========== Что дальше ========== -->
+
+    <div class="next">
+      <h3>Следующий урок</h3>
+      <p>Урок 4. Память + skills, playbooks, rules.<br>Куда класть guards, чтобы агент точно их нашёл, и чем они отличаются от других видов памяти.</p>
+      <a href="#">Читать дальше →</a>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Курс «Внедрение ИИ в Стардогс» · Блок 2 · Урок 3 из 11
+  </div>
+</footer>
+
+</body>
+</html>
