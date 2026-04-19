@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 4. Память + skills, playbooks, rules</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --green: #2E7D4F;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: var(--text); background: var(--white); line-height: 1.65; font-size: 16px; }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+  header { background: var(--navy); color: var(--white); padding: 20px 0; }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--white); padding: 70px 0 50px; text-align: center; }
+  .hero .label { color: var(--accent); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
+  .hero h1 { font-size: 38px; font-weight: 800; max-width: 720px; margin: 0 auto 14px; line-height: 1.15; }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+  .hero .meta strong { color: var(--accent); }
+  main { padding: 50px 0 100px; }
+  h2 { font-size: 26px; color: var(--navy); font-weight: 800; margin: 52px 0 18px; scroll-margin-top: 80px; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 18px; color: var(--navy); font-weight: 700; margin: 28px 0 12px; }
+  h4 { font-size: 15px; color: var(--navy); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  p { margin-bottom: 16px; }
+  p.lead { font-size: 17px; color: var(--gray); padding: 20px 24px; background: var(--navy-bg); border-left: 4px solid var(--navy); border-radius: 8px; margin-bottom: 32px; }
+  ul, ol { padding-left: 24px; margin-bottom: 16px; }
+  ul li, ol li { margin-bottom: 8px; }
+  strong { color: var(--navy); }
+  .toc { background: var(--navy-bg); padding: 24px; border-radius: 10px; margin-bottom: 36px; }
+  .toc h4 { color: var(--navy); margin-bottom: 12px; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc a { color: var(--navy-light); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .analogy { background: var(--accent-bg); border-left: 4px solid var(--accent); padding: 20px 24px; border-radius: 8px; margin: 24px 0; }
+  .analogy h4 { color: var(--accent); margin-bottom: 8px; }
+  .red-warning { background: #FFF2F0; border-left: 4px solid var(--red); padding: 20px 24px; border-radius: 8px; margin: 24px 0; }
+  .red-warning .label { color: var(--red); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
+  .red-warning h3 { color: var(--red); margin-top: 0; }
+  .case { background: var(--navy-bg); border-radius: 10px; padding: 24px; margin: 24px 0; }
+  .case h4 { color: var(--navy); margin-bottom: 12px; }
+  .case .ask { background: var(--white); border-left: 3px solid var(--gray); padding: 12px 16px; border-radius: 6px; margin: 10px 0; font-style: italic; color: var(--gray); }
+  .case .ans { background: var(--white); border-left: 3px solid var(--green); padding: 12px 16px; border-radius: 6px; margin: 10px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--navy-bg); color: var(--navy); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td code { background: var(--navy-bg); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; color: var(--navy); }
+  code.inline { background: var(--navy-bg); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', Monaco, monospace; font-size: 14px; color: var(--navy); }
+  pre { background: var(--navy); color: var(--white); padding: 20px 24px; border-radius: 8px; overflow-x: auto; margin: 20px 0; font-family: 'SF Mono', Monaco, monospace; font-size: 14px; line-height: 1.5; }
+  .checklist { background: var(--accent-bg); padding: 24px; border-radius: 10px; margin: 24px 0; }
+  .checklist h4 { color: var(--accent); margin-bottom: 12px; }
+  .checklist ul { list-style: none; padding-left: 0; }
+  .checklist ul li { padding-left: 28px; position: relative; margin-bottom: 10px; }
+  .checklist ul li::before { content: '☐'; position: absolute; left: 0; color: var(--accent); font-weight: bold; font-size: 18px; }
+  .summary-box { background: var(--navy); color: var(--white); padding: 28px 32px; border-radius: 10px; margin: 32px 0; }
+  .summary-box h3 { color: var(--accent); margin-top: 0; }
+  .summary-box ul { padding-left: 20px; }
+  .summary-box ul li { margin-bottom: 10px; }
+  .summary-box strong { color: var(--white); }
+  footer { background: var(--navy-bg); padding: 30px 0; text-align: center; font-size: 14px; color: var(--gray); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Блок 2 · Урок 4 · Память агента</div>
+    <h1>Память + skills,<br>playbooks, rules</h1>
+    <div class="meta"><strong>11 минут читать · 15 минут делать</strong></div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">В Уроке 3 мы научились превращать ошибки в guards — правила из реальных провалов, и пообещали раскрыть rules, playbooks и skills в этом уроке. Сегодня выполняем обещание и идём шире: <strong>вся память агента</strong>, не только защитные правила. Увидите, что guards — это лишь один тип из четырёх, и что между ними есть чёткая логика: когда что использовать. Дополнительно раскроем ещё один тип, которого не было в плане Урока 3 — <strong>guide</strong>, живой документ проекта.</p>
+
+    <p class="lead"><strong>После урока вы сможете:</strong> разложить свои текущие рабочие материалы (заметки, шаблоны, памятки) по 4 типам артефактов и подготовить список из 3–5 первых файлов для агента, когда он у вас появится.</p>
+
+    <div class="red-warning">
+      <div class="label">Честное предупреждение</div>
+      <h3>У нас — своя терминология. Это не догма.</h3>
+      <p>В нашей компании памятью называются конкретные файлы: <code class="inline">rules</code>, <code class="inline">skills</code>, <code class="inline">playbooks</code>, <code class="inline">guides</code>. В документации Anthropic некоторые из них называются иначе, в книге Крола — ещё иначе. Мы покажем все три словаря рядом, чтобы вы, читая документацию, не запутались. Единого правильного нет — есть несколько рабочих систем, наша — одна из них.</p>
+    </div>
+
+    <div class="toc">
+      <h4>В этом уроке</h4>
+      <ol>
+        <li><a href="#why">Зачем агенту память и почему её надо организовать</a></li>
+        <li><a href="#layers">Три слоя памяти: всегда, по запросу, между сессиями</a></li>
+        <li><a href="#four">Четыре типа артефактов: rule, skill, playbook, guide</a></li>
+        <li><a href="#dicts">Три словаря: Anthropic, Крол, наш</a></li>
+        <li><a href="#when">Дерево решений: когда какой артефакт создавать</a></li>
+        <li><a href="#case">Живой кейс: как я изобретала сущность, которая уже была</a></li>
+        <li><a href="#mistakes">Камни: как не превратить память в кучу</a></li>
+        <li><a href="#practice">Практика: аудит своей памяти за 15 минут</a></li>
+        <li><a href="#summary">Шпаргалка: 5 главных выводов урока</a></li>
+      </ol>
+    </div>
+
+    <!-- ========== 1. Зачем память ========== -->
+
+    <h2 id="why">1. Зачем агенту память и почему её надо организовать</h2>
+
+    <p>Когда агент заканчивает сессию — всё, о чём вы говорили, исчезает. Если вы неделю рассказывали ему про ваших менеджеров, процессы, особенности работы — на следующей неделе он начнёт с нуля. Единственный способ не пересказывать всё заново — <strong>положить это в файлы</strong>, которые агент читает каждый старт сессии.</p>
+
+    <p>Но просто «положить в файлы» недостаточно. Если в папке <code class="inline">memory/</code> лежит 500 файлов — агент не знает, какие читать сейчас, а какие потом. Память превращается в кучу. Нужна <strong>структура</strong>: разные типы артефактов для разных задач.</p>
+
+    <div class="analogy">
+      <h4>Аналогия</h4>
+      <p>Представьте офис. У нового сотрудника есть: <strong>должностная инструкция</strong> (что делать всегда), <strong>справочник по процедурам</strong> (как проводить конкретную операцию), <strong>чек-лист перед отправкой отчёта</strong> (принудительная проверка), <strong>файл проекта</strong> (что уже сделано, что дальше). Если всё это свалено в одну папку «документы» — сотрудник не найдёт ничего. Если разложено по полкам — работает.</p>
+    </div>
+
+    <p>У агента то же самое. Каждый тип памяти играет свою роль, и их нельзя смешивать. Разберём четыре главных.</p>
+
+    <!-- ========== 2. Три слоя памяти ========== -->
+
+    <h2 id="layers">2. Три слоя памяти: всегда, по запросу, между сессиями</h2>
+
+    <p>Прежде чем говорить о типах артефактов — важно понять, когда агент их читает. Есть три слоя:</p>
+
+    <table>
+      <thead>
+        <tr><th>Слой</th><th>Когда читается</th><th>Что лежит</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Всегда</strong><br>(автозагрузка)</td>
+          <td>Каждый старт сессии. Агент читает автоматически, без команды</td>
+          <td><code>CLAUDE.md</code>, <code>MEMORY.md</code>, базовые rules</td>
+        </tr>
+        <tr>
+          <td><strong>По запросу</strong><br>(on-demand)</td>
+          <td>Когда вы работаете над конкретной задачей или проектом. Агент (или вы) открывает нужный файл</td>
+          <td><code>skills</code>, <code>playbooks</code>, <code>guides</code> — открываются по нужде</td>
+        </tr>
+        <tr>
+          <td><strong>Между сессиями</strong><br>(оперативный контекст)</td>
+          <td>В конце одной сессии записывается, в начале следующей читается</td>
+          <td><code>STATE.yaml</code> (снимок состояния), <code>handoff</code> (что делали)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Смысл разделения: <strong>в автозагрузку нельзя класть всё</strong> — контекстное окно агента не бесконечное. То, что нужно редко — лежит в «по запросу». То, что нужно всегда — в автозагрузке. То, что нужно только следующей сессии — в оперативном контексте.</p>
+
+    <h3>Коротко про автозагружаемые файлы — CLAUDE.md и MEMORY.md</h3>
+
+    <p>В таблице выше вы увидели два файла, которые агент читает при каждом старте. Они выглядят похоже, но играют разную роль:</p>
+
+    <table>
+      <thead>
+        <tr><th>Файл</th><th>Что это</th><th>Аналогия</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong><code>CLAUDE.md</code></strong></td>
+          <td>ПРАВИЛА поведения. Кто агент, как работает, что делает и не делает, миссия, стиль</td>
+          <td>Должностная инструкция сотрудника — «как себя вести»</td>
+        </tr>
+        <tr>
+          <td><strong><code>MEMORY.md</code></strong></td>
+          <td>МАРШРУТ знания. Оглавление памяти: ссылки на важные файлы (профили, проекты, артефакты)</td>
+          <td>План офиса с подписями «что в каком шкафу» — «где что лежит»</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Разделение простое: CLAUDE.md диктует <strong>как</strong> работать, MEMORY.md помогает <strong>найти где что лежит</strong>. Про CLAUDE.md подробно был Урок 1. MEMORY.md — появляется позже, когда файлов в памяти становится много: без оглавления агент в них теряется. Подробно про MEMORY.md и карту всей памяти агента — в <strong>Уроке 5+ «Карта памяти»</strong> после Урока 5.</p>
+
+    <!-- ========== 3. Четыре типа артефактов ========== -->
+
+    <h2 id="four">3. Четыре типа артефактов: rule, skill, playbook, guide</h2>
+
+    <p>Из слоя «по запросу» — главные четыре типа. У каждого своя роль:</p>
+
+    <table>
+      <thead>
+        <tr><th>Тип</th><th>Что это</th><th>Когда использовать</th><th>Пример</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>rule</strong></td>
+          <td>Декларативное правило «всегда/никогда»</td>
+          <td>Ограничение или обязательное поведение</td>
+          <td>«Никогда не перезаписывать чужие формулы в таблицах»</td>
+        </tr>
+        <tr>
+          <td><strong>skill</strong></td>
+          <td>Принудительная процедура с чек-листом</td>
+          <td>Повторяемое действие, которое требует гарантированного формата</td>
+          <td><code>/telegram-messaging</code> — перед отправкой в чат проверить chat_id по карте</td>
+        </tr>
+        <tr>
+          <td><strong>playbook</strong></td>
+          <td>Пошаговый алгоритм повторяемой задачи</td>
+          <td>Сделали задачу 3+ раз — опишите как именно делать</td>
+          <td>«Еженедельный отчёт по отзывам: 7 шагов»</td>
+        </tr>
+        <tr>
+          <td><strong>guide</strong></td>
+          <td>Живой документ по теме или проекту</td>
+          <td>Накапливать историю: решения, артефакты, опубликованное</td>
+          <td><code>ai-company-deployment.md</code> — журнал курса «Внедрение ИИ»</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Как это выглядит живьём — короткие образцы</h3>
+
+    <p>Чтобы не было абстракции, вот как выглядят реальные артефакты из нашей памяти:</p>
+
+    <p><strong>Образец rule</strong> (лежит в <code class="inline">.claude/rules/guards.md</code>):</p>
+    <pre># Перед отправкой в групповой чат — ВСЕГДА показать текст Ирине
+
+Групповые чаты (команда, партнёры, клиенты) — не личный чат с Ириной.
+Перед отправкой → показать текст → дождаться ОК. Без исключений.
+
+Причина: урок 21.02.2026. Я выдумала @AntonOrlov без проверки,
+loop отправил в групповой чат. Доверие потеряно.</pre>
+
+    <p>Три-четыре строчки. Декларация «что делать / что не делать» + короткая история откуда взялось.</p>
+
+    <p><strong>Образец playbook</strong> (лежит в <code class="inline">memory/playbooks/claude-ai-weekly-digest.md</code>):</p>
+    <pre># Еженедельный дайджест кейсов Claude/AI
+
+## Когда: каждую субботу
+
+## Шаги
+1. Собрать кейсы за неделю: блог Anthropic, Twitter, GitHub
+   (релизы моделей, свежие skills/hooks/plugins)
+2. Отфильтровать релевантные для Стардогс (маркетинг, ИИ)
+3. Составить дайджест: заголовок → суть → что взять в работу
+4. Отправить: (а) личка Ирины (б) лист «Дайджесты Claude/AI»
+   (в) копия в memory/digests/YYYY-MM-DD_claude-ai.md
+
+## Камни
+- Не тащить всё подряд — только то, что применимо в Стардогс
+- Всегда дублировать в журнал Ирины (лист «Дайджесты»)</pre>
+
+    <p>Конкретный алгоритм, с шагами, камнями и частотой. Когда агент вызывает такую задачу — он читает playbook и делает по нему.</p>
+
+    <p>Skill и guide в формате похожи, но у skill добавляется <strong>CONTRACT</strong> — жёсткий блок, который заставляет агента пройти чек-лист, а guide — это накопительный документ по проекту с разделами «Хронология», «Решения», «Опубликовано».</p>
+
+    <h3>Чем отличаются rule от guard</h3>
+
+    <p>В нашей архитектуре оба живут в папке <code class="inline">.claude/rules/</code>, но играют разную роль:</p>
+    <ul>
+      <li><strong>rule</strong> — общее правило работы. Может быть «делай так», «не делай этого», алгоритм, чек-лист. Примеры наших файлов-rules: <code class="inline">autonomy-levels.md</code> (уровни автономии), <code class="inline">task-design.md</code> (4 элемента задачи), <code class="inline">preflight.md</code> (проверки при старте).</li>
+      <li><strong>guard</strong> — частный случай rule: <strong>сформулирован из реальной ошибки</strong>. У него всегда есть «история» и уникальный номер ошибки (мы называем его ERR-ID — это просто порядковый номер в журнале ошибок агента, например ERR-20260419-077). Лежат в одном файле <code class="inline">guards.md</code>.</li>
+    </ul>
+
+    <p>Проще: каждый <code class="inline">guard</code> — это <code class="inline">rule</code>, но не каждый <code class="inline">rule</code> — это <code class="inline">guard</code>. Если в будущих уроках просто пишется «rule» — имеется в виду общее правило, не важно из ошибки или нет. Подробно про <code class="inline">guards</code> — в Уроке 3, который уже прошли.</p>
+
+    <h3>Чем отличаются rule от skill</h3>
+
+    <p>Оба описывают «как надо». Но:</p>
+    <ul>
+      <li><strong>rule</strong> — декларация. «Перед X — проверь Y». Агент её читает, может забыть и нарушить.</li>
+      <li><strong>skill</strong> — и автоподключение, и принуждение. У skill есть формализованное описание «когда меня вызывать» (агент сам распознаёт задачу) + обязательный чек-лист внутри (если вызван — пройди все пункты). В Уроке 3 мы показали первую половину (автоподключение). Сегодня добавляем вторую: внутри skill есть жёсткий блок правил сверху файла (его часто называют <strong>CONTRACT</strong> — это 5-10 строк с жёсткими обязательствами, которые агент должен принять до начала работы), и он заставляет пройти чек-лист.</li>
+    </ul>
+
+    <p>Правило лёгкое, skill тяжёлый. Skill нужен там, где <strong>правило проваливалось 3+ раз</strong>.</p>
+
+    <h3>Чем отличаются playbook от skill</h3>
+
+    <p>В Уроке 3 мы сказали упрощённо: «playbook — пошаговая карта, skill — то же, но с описанием когда вызывать». Это верно, но есть ещё одно различие:</p>
+
+    <ul>
+      <li><strong>playbook</strong> — инструкция «как сделать X», агент читает для напоминания. Не блокирует — может отклониться от шагов</li>
+      <li><strong>skill</strong> — помимо автоподключения имеет <strong>жёсткий блок правил (CONTRACT)</strong> сверху, который требует пройти чек-лист по шагам. Без прохождения — не продолжить</li>
+    </ul>
+
+    <p>Часто playbook превращается в skill: начали с описания алгоритма (playbook), поняли что агент игнорирует → обернули в skill с жёстким чек-листом.</p>
+
+    <!-- ========== 4. Три словаря ========== -->
+
+    <h2 id="dicts">4. Три словаря: Anthropic, Крол, наш</h2>
+
+    <p>Здесь важная часть. Если вы пойдёте читать документацию Anthropic или книгу Крола — вы увидите <strong>другие слова</strong> для тех же вещей. Это не ошибка — это три разные школы, которые решают одну задачу. Мы для работы в Стардогс взяли свой набор слов, но знать все три — обязательно.</p>
+
+    <table>
+      <thead>
+        <tr><th>Понятие</th><th>Anthropic</th><th>Крол</th><th>Мы</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Главный файл инструкций</td>
+          <td><code>CLAUDE.md</code></td>
+          <td><code>CLAUDE.md</code></td>
+          <td><code>CLAUDE.md</code></td>
+        </tr>
+        <tr>
+          <td>Принудительная процедура</td>
+          <td>skill (SKILL.md)</td>
+          <td>skill (гл. 6)</td>
+          <td>skill</td>
+        </tr>
+        <tr>
+          <td>Алгоритм задачи</td>
+          <td>memory file</td>
+          <td>workflow</td>
+          <td><strong>playbook</strong></td>
+        </tr>
+        <tr>
+          <td>Живая память проекта</td>
+          <td>memory file</td>
+          <td>—</td>
+          <td><strong>guide</strong></td>
+        </tr>
+        <tr>
+          <td>Правило «не делай»</td>
+          <td>rule в CLAUDE.md</td>
+          <td>guard (гл. 8)</td>
+          <td>rule, guard</td>
+        </tr>
+        <tr>
+          <td>Снимок состояния проектов</td>
+          <td>разделы CLAUDE.md</td>
+          <td>—</td>
+          <td><strong>STATE.yaml</strong></td>
+        </tr>
+        <tr>
+          <td>Передача между сессиями</td>
+          <td>context files + compaction</td>
+          <td>—</td>
+          <td><strong>handoff</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="analogy">
+      <h4>Зачем это знать</h4>
+      <p>Читаете Anthropic docs — там нет «playbook». Ищите «memory file». Читаете Крола — нет «guide», зато есть «workflow». Обсуждаете в команде Стардогс — используем наши термины. <strong>Одно и то же</strong>, просто разными словами.</p>
+    </div>
+
+    <p>Мы выбрали свой словарь не случайно. Наши термины возникли из реальных рабочих задач: Telegram-бот, Google Sheets, еженедельные отчёты. У Anthropic словарь для широкого круга разработчиков, у Крола — для обучения методологии. Мы не мигрируем под кого-то из них, но знать их соответствия — обязательно.</p>
+
+    <!-- ========== 5. Когда что ========== -->
+
+    <h2 id="when">5. Дерево решений: когда какой артефакт создавать</h2>
+
+    <p>Короткий путь:</p>
+
+    <ol>
+      <li><strong>Появилась ошибка, которая может повториться</strong> → создайте <code class="inline">rule</code> или <code class="inline">guard</code>. Одно-две строчки в нужном файле.</li>
+      <li><strong>Сделали задачу 3+ раз, каждый раз немного по-разному</strong> → напишите <code class="inline">playbook</code>. Пошаговый алгоритм.</li>
+      <li><strong>Playbook агент игнорирует, нужен принудительный формат</strong> → оберните в <code class="inline">skill</code> с CONTRACT и чек-листом.</li>
+      <li><strong>Работаете над проектом, нужно хранить историю/решения/артефакты</strong> → создайте <code class="inline">guide</code>. Обновляйте в момент события.</li>
+    </ol>
+
+    <div class="red-warning">
+      <div class="label">Критично</div>
+      <h3>Прежде чем создать новый артефакт — проверьте, что уже есть.</h3>
+      <p>Это главный камень. Агенту (и человеку) легко придумать новое понятие, не посмотрев на существующие. В результате растут дубли, файлы с похожим смыслом, неразбериха. Правило: <strong>перед созданием — посмотри соседей</strong>. Откройте папку с нужным типом артефактов и пробегитесь глазами по названиям: папка skills — <code class="inline">.claude/skills/</code>, папка guides — <code class="inline">memory/guides/</code>. Подходит что-то? Расширьте, не создавайте новое.</p>
+    </div>
+
+    <!-- ========== 6. Живой кейс ========== -->
+
+    <h2 id="case">6. Живой кейс: как я изобретала сущность, которая уже была</h2>
+
+    <p>Кейс из моей рабочей сессии 19.04.2026. Реальный, не придуманный. Покажет ровно ту ошибку, о которой предупредили выше.</p>
+
+    <div class="case">
+      <h4>Что произошло</h4>
+      <p>Я (Ли — агент Ирины) совершила за час пять ошибок одного типа: перед созданием нового файла не проверила, что уже есть. В частности:</p>
+      <ul>
+        <li>Придумала создать новую структуру <code class="inline">JOURNAL.md</code> для хранения жизни проекта</li>
+        <li>Ирина поправила: «А что за новая формулировка? У нас есть <code class="inline">ai-company-deployment.md</code> в <code class="inline">memory/guides/</code> — он выполняет эту функцию»</li>
+        <li>Проверила — действительно, файл 220 строк с хронологией, решениями, опубликованным. Всё уже там</li>
+        <li>Я изобрела новую сущность, не посмотрев на существующие <code class="inline">guides</code></li>
+      </ul>
+
+      <h4>Что пошло не так</h4>
+      <p>Я знала, что в репо есть папка <code class="inline">memory/guides/</code>. Знала правило «перед созданием — проверь что есть». Но пропустила шаг «ls» и придумала сразу.</p>
+
+      <h4>Что стало системным фиксом</h4>
+      <p>В этот же день мы:</p>
+      <ul>
+        <li>Создали <strong>skill <code class="inline">/project-log</code></strong> — принудительную процедуру для атомарной записи события в guide проекта</li>
+        <li>Создали <strong>хук <code class="inline">pre-create-inventory.sh</code></strong> — при попытке создать новый файл в <code class="inline">.claude/skills/</code>, <code class="inline">.claude/hooks/</code>, <code class="inline">memory/guides/</code>, <code class="inline">memory/playbooks/</code> агент физически не может продолжить без показа списка существующих</li>
+        <li>Добавили этот урок в план курса</li>
+      </ul>
+    </div>
+
+    <p>В этой одной истории видны все четыре типа артефактов в работе:</p>
+    <ul>
+      <li><strong>guide</strong> — <code class="inline">ai-company-deployment.md</code>, живой документ проекта «Внедрение ИИ»</li>
+      <li><strong>skill</strong> — <code class="inline">/project-log</code>, принудительный процесс записи в guide</li>
+      <li><strong>hook</strong> — <code class="inline">pre-create-inventory.sh</code>, автоматический контроль (про хуки — в Уроке 5)</li>
+      <li><strong>rule</strong> — запись в <code class="inline">on_demand_rules.md</code> «Курс ИИ → источник: ai-company-deployment.md + Plane»</li>
+    </ul>
+
+    <!-- ========== 7. Камни ========== -->
+
+    <h2 id="mistakes">7. Камни: как не превратить память в кучу</h2>
+
+    <h3>1. Изобретаете новую сущность вместо проверки существующего</h3>
+    <p>Классика. Видите знакомую задачу, создаёте <code class="inline">JOURNAL.md</code>, <code class="inline">project-notes.md</code>, <code class="inline">dashboard-v2.md</code> — а в папке уже есть три файла похожего содержания. Лечится дисциплиной: <strong>перед созданием — откройте папку и пробегитесь по названиям</strong>. Есть похожее — расширяйте. Лучше — автоматический хук, который заставит это сделать (об этом в Уроке 5).</p>
+
+    <h3>2. Размазываете одну тему по разным типам</h3>
+    <p>Одна и та же информация лежит в <code class="inline">rule</code>, в <code class="inline">playbook</code> и в <code class="inline">guide</code>. Расходятся. Агент не знает, какой источник правды. Правило: <strong>один смысл — одно место</strong>. Остальные ссылаются на него.</p>
+
+    <div class="case">
+      <h4>Живой пример — у нас самих сейчас</h4>
+      <p>Мы в процессе написания этого урока проверили свою собственную память агента Ли — и нашли <strong>три дубля прямо сейчас</strong>:</p>
+      <ul>
+        <li><code class="inline">krol-book-findings.md</code> — две копии в разных папках (одна playbook, другая reference). Содержимое разное — <strong>уже разошлись</strong>: одна версия обновлена 13.04, вторая осталась в старой редакции от 5.04</li>
+        <li><code class="inline">mentors-lessons.md</code> — две идентичные копии (одна в guides, одна в architecture). Просто дубль</li>
+        <li><code class="inline">lessons-learned.md</code> — одна в корне <code class="inline">memory/</code>, вторая в <code class="inline">memory/logs/</code>. Расходятся — в корне свежая версия сегодня, в logs — старая с 5.04</li>
+      </ul>
+      <p>Если у нас, кто сам проектирует память, <strong>три дубля одновременно</strong> — значит любой проект должен иметь регулярную проверку. Это приводит нас к следующему камню.</p>
+    </div>
+
+    <h3>3. Обновляете не в момент события</h3>
+    <p>Опубликовали урок, приняли решение, закрыли задачу — но в соответствующий <code class="inline">guide</code> запись не попала. Через неделю не помните, что было. Правило: <strong>событие и запись в память — одно действие</strong>, не два.</p>
+
+    <h3>4. Создаёте без контракта</h3>
+    <p>Skill без чек-листа, playbook без шагов, guide без разделов. Получается просто текст, а не инструмент. Каждый артефакт должен иметь <strong>структуру</strong>, которая заставляет использовать его правильно.</p>
+
+    <h3>5. Не ведёте реестр и не проводите аудит</h3>
+    <p>Через месяц у вас 30 skills и 50 playbooks. Не помните, какой за что. Появляются дубли (как показано выше — у нас сейчас три). Нужны <strong>две вещи</strong>: индекс (маршрутная карта) и регулярный аудит (периодическая сверка).</p>
+
+    <h4 style="margin-top: 20px;">Чек-лист реестра (проверьте себя)</h4>
+    <div class="checklist">
+      <ul>
+        <li>Есть ли у меня один файл-индекс, который говорит «по задаче X → открой файл Y»? (у нас — <code class="inline">on_demand_rules.md</code>)</li>
+        <li>Каждый новый артефакт я сразу записываю в индекс?</li>
+        <li>По именам файлов в папке понятно, что внутри, без открытия?</li>
+        <li>Все файлы лежат в правильных папках по своему типу (skills в skills, playbooks в playbooks и т.д.)?</li>
+      </ul>
+    </div>
+
+    <h4 style="margin-top: 20px;">Сценарий аудита (раз в 2–4 недели)</h4>
+    <div class="checklist">
+      <ul>
+        <li><strong>Дубли по именам.</strong> Проверить, есть ли файлы с одинаковым названием в разных папках. Если да — одна копия побеждает, другая удаляется или становится ссылкой</li>
+        <li><strong>Расхождения содержимого.</strong> Если две копии есть — сверить содержимое. Расходятся — решить какая актуальная, остальные привести к ней или удалить</li>
+        <li><strong>Потерянные файлы.</strong> Есть ли файлы, которых нет в индексе? Либо добавить в индекс, либо удалить</li>
+        <li><strong>Устаревшее.</strong> Какие артефакты не использовались больше месяца? Можно отправить в архив</li>
+        <li><strong>Дыры.</strong> Есть ли частые задачи, под которые ещё нет playbook/skill? Записать в список «создать»</li>
+      </ul>
+    </div>
+    <p>Лучший способ не забывать аудит — <strong>поставить его в календарь</strong> или сделать автоматический скрипт, который раз в неделю присылает вам отчёт. Это частный случай хука (Урок 5).</p>
+
+    <!-- ========== 8. Практика ========== -->
+
+    <h2 id="practice">8. Практика (два варианта — по тому, есть ли у вас агент)</h2>
+
+    <p>У кого-то Claude уже есть, у кого-то появится на этой неделе. Практика одна, но с двумя вариантами.</p>
+
+    <div class="red-warning" style="background: var(--navy-bg); border-left-color: var(--navy);">
+      <span class="label" style="color: var(--navy);">Вариант А — агента ещё нет</span>
+      <p>Работаете с <strong>прото-памятью</strong>: личные заметки, шаблоны в Google Docs, Notion, памятки в телефоне. Задача — разложить это по 4 типам и подготовить список файлов для первого дня с агентом.</p>
+    </div>
+
+    <div class="red-warning" style="background: var(--accent-bg); border-left-color: var(--accent);">
+      <span class="label" style="color: var(--accent);">Вариант Б — агент уже есть</span>
+      <p>Работаете с <strong>реальной памятью агента</strong>. Задача — провести аудит того, что уже создано, найти дыры и дубли.</p>
+    </div>
+
+    <h3>Вариант А — если агента ещё нет</h3>
+
+    <div class="checklist">
+      <h4>Шаг А1. Посмотрите на свои текущие рабочие материалы (5 минут)</h4>
+      <ul>
+        <li>Личные заметки (Google Keep, Notion, блокнот, Telegram сохранённые)</li>
+        <li>Шаблоны документов (Google Docs, Word) — отчёты, брифы, служебки</li>
+        <li>Памятки «как сделать Х» (например: «как принять точку», «как ответить на негативный отзыв»)</li>
+        <li>Правила от руководителя: «никогда не делай», «всегда проверяй»</li>
+        <li>Проекты, которые вы ведёте — где лежит их «жизнь» (история решений, статус)?</li>
+      </ul>
+    </div>
+
+    <div class="checklist">
+      <h4>Шаг А2. Разложите по 4 типам (5 минут)</h4>
+      <ul>
+        <li><strong>rule</strong> — правила «всегда/никогда»: перечислите 3–5 штук</li>
+        <li><strong>skill</strong> — задачи, где вы каждый раз проверяете одно и то же по пунктам (например: отправка отчёта → проверить даты, цифры, адресатов)</li>
+        <li><strong>playbook</strong> — задачи, которые делаете регулярно по одному алгоритму (например: еженедельный дайджест, приёмка поставщика)</li>
+        <li><strong>guide</strong> — проекты или темы, где нужно помнить историю (например: программа лояльности — решения, тесты, результаты)</li>
+      </ul>
+    </div>
+
+    <div class="checklist">
+      <h4>Шаг А3. Выберите 3–5 артефактов «первой недели с агентом» (5 минут)</h4>
+      <ul>
+        <li>Что я положу в CLAUDE.md в первую очередь (общие правила работы со мной)?</li>
+        <li>Какой первый playbook напишу (самая частая задача)?</li>
+        <li>Какой guide заведу первым (самый живой проект)?</li>
+        <li>Запишите этот список в одном файле (Google Doc «Мой первый CLAUDE.md»)</li>
+      </ul>
+    </div>
+
+    <h3>Вариант Б — если агент уже есть</h3>
+
+    <div class="checklist">
+      <h4>Шаг Б1. Инвентаризация — что у меня есть (5 минут)</h4>
+      <ul>
+        <li>Откройте папки: rules, skills, playbooks, guides. Пробегитесь по названиям</li>
+        <li>Сколько всего артефактов каждого типа? Примерно оцените (3 rules, 5 skills, 10 playbooks...)</li>
+        <li>По названиям — понятно ли о чём файл, или нужно открывать?</li>
+        <li>Есть ли у вас индекс/маршрутная карта, которая говорит «по задаче X → открой файл Y»?</li>
+      </ul>
+    </div>
+
+    <div class="checklist">
+      <h4>Шаг Б2. Аудит — что пошло не так (5 минут)</h4>
+      <ul>
+        <li><strong>Дубли по имени.</strong> Есть ли одинаковые имена файлов в разных папках? Если да — сверьте содержимое. Расходятся → решите какая версия актуальна</li>
+        <li><strong>Файлы не в тех папках.</strong> Playbook лежит в guides? Rule в playbooks? Перенесите по типу</li>
+        <li><strong>Сиротские файлы.</strong> Есть ли файлы, на которые никто не ссылается? Либо добавьте в индекс, либо в архив</li>
+        <li><strong>Устаревшее.</strong> Какие артефакты не обновлялись больше месяца и кажутся неактуальными?</li>
+      </ul>
+    </div>
+
+    <div class="checklist">
+      <h4>Шаг Б3. Список что сделать на следующей неделе (5 минут)</h4>
+      <ul>
+        <li>Какие дубли объединить (и какую версию оставить главной)?</li>
+        <li>Какие артефакты перенести в правильные папки?</li>
+        <li>Какие частые задачи ещё не имеют playbook/skill — нужно создать?</li>
+        <li>Какой индекс/маршрутная карта отсутствует — нужно завести?</li>
+      </ul>
+    </div>
+
+    <div class="analogy">
+      <h4>Зачем обоим вариантам делать эту практику</h4>
+      <p><strong>Вариант А:</strong> когда агент появится, будет соблазн «поговорить» и накидывать информацию в чат. Это быстро тонет — уходит в прошлые сессии и теряется. Готовый список из 3–5 артефактов позволит с первой недели класть знания в правильные файлы. Экономия: 2–3 недели хаоса.</p>
+      <p><strong>Вариант Б:</strong> регулярный аудит — единственный способ не превратить память в кучу. Даже у нас, кто проектирует эту систему для других, сейчас 3 дубля (см. камень 2). Без аудита через месяц будет 15.</p>
+    </div>
+
+    <!-- ========== 9. Шпаргалка ========== -->
+
+    <h2 id="summary">9. Шпаргалка: 5 главных выводов урока</h2>
+
+    <div class="summary-box">
+      <h3>Три вещи, которые обязательно уйдут с вами из урока</h3>
+      <ul>
+        <li><strong>Четыре типа артефактов памяти — rule, skill, playbook, guide — и у каждого своя роль.</strong> Rule — декларация. Skill — принудительная процедура. Playbook — алгоритм повторяемой задачи. Guide — живая память проекта.</li>
+        <li><strong>Перед созданием нового — проверьте, что уже есть.</strong> Откройте папку с нужным типом, пробегитесь по названиям. Есть похожее — расширяйте. Игнор этого шага — главный источник дублей.</li>
+        <li><strong>Событие и запись в память — одно действие.</strong> Опубликовали урок — одновременно дописали в guide проекта. Приняли важное решение — сразу зафиксировали в нужном файле. Не «потом запишу». Иначе через неделю не помните, что было и почему.</li>
+      </ul>
+      <h3>Как проверить что урок усвоен</h3>
+      <p>Если вы выполнили практику и у вас на руках есть: (а) список текущих материалов, разложенных по 4 типам, (б) список из 3–5 артефактов, которые хотите завести в Claude с первого дня — урок усвоен.</p>
+      <h3>Следующий урок</h3>
+      <p>Урок 5 — <strong>Хуки: автоматические проверки</strong>. Мы увидели на живом кейсе, что даже с правилами агент забывает делать проверки. Хуки — это код, который запускается на события и заставляет их делать. Разберём, чем хуки отличаются от rules и когда какой выбирать.</p>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Внедрение ИИ в Стардогс · Блок 2 · Урок 4 из 11 · 23 апреля 2026
+  </div>
+</footer>
+
+</body>
+</html>
