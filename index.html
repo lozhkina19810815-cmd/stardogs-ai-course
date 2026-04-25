@@ -207,64 +207,6 @@
   }
   .tl-point.now .tl-date { color: var(--accent); }
 
-  /* ORG STEPS */
-  .org-steps {
-    padding: 100px 0;
-    background: var(--white);
-  }
-  .org-steps .section-title h2 { color: var(--navy); }
-  .steps-flow {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 12px;
-    margin-top: 20px;
-    position: relative;
-  }
-  .step-item {
-    background: var(--navy-bg);
-    border-top: 4px solid var(--navy);
-    padding: 24px 18px;
-    border-radius: 10px;
-    position: relative;
-    text-align: center;
-  }
-  .step-num {
-    position: absolute;
-    top: -18px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 32px;
-    height: 32px;
-    background: var(--navy);
-    color: var(--white);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 14px;
-    border: 3px solid var(--white);
-  }
-  .step-item h4 {
-    color: var(--navy);
-    font-size: 14px;
-    font-weight: 700;
-    margin: 16px 0 8px;
-    min-height: 36px;
-  }
-  .step-item p {
-    color: var(--gray);
-    font-size: 11px;
-    line-height: 1.4;
-  }
-  .steps-note {
-    text-align: center;
-    margin-top: 32px;
-    color: var(--gray);
-    font-size: 14px;
-  }
-  .steps-note strong { color: var(--navy); }
-
   /* BLOCKS */
   .blocks { padding: 100px 0; }
   .section-title { text-align: center; margin-bottom: 60px; }
@@ -425,6 +367,44 @@
     margin-top: 14px;
   }
 
+  /* CHECKLISTS */
+  .checklists { background: var(--white); padding: 100px 0; border-top: 1px solid var(--border); }
+  .checklists .section-title h2 { color: var(--navy); }
+  .cl-theme { margin-top: 50px; }
+  .cl-theme:first-of-type { margin-top: 0; }
+  .cl-theme-title {
+    font-size: 22px;
+    color: var(--navy);
+    font-weight: 800;
+    margin-bottom: 18px;
+    padding-left: 14px;
+    border-left: 4px solid var(--navy);
+  }
+  .cl-list { list-style: none; }
+  .cl-list li {
+    padding: 14px 0 14px 28px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 14px;
+    position: relative;
+  }
+  .cl-list li:last-child { border-bottom: none; }
+  .cl-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .cl-list li .sub {
+    display: block;
+    color: var(--gray);
+    font-size: 13px;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
   /* LAIFHACKS */
   .lifehacks { background: var(--navy-bg); padding: 100px 0; }
   .lifehacks .section-title h2 { color: var(--navy); }
@@ -455,6 +435,16 @@
     margin-bottom: 8px;
   }
   .lh-card p { color: var(--gray); font-size: 13px; }
+  .lh-category { margin-top: 50px; }
+  .lh-category:first-of-type { margin-top: 0; }
+  .lh-cat-title {
+    font-size: 22px;
+    color: var(--navy);
+    font-weight: 800;
+    margin-bottom: 20px;
+    padding-left: 14px;
+    border-left: 4px solid var(--accent);
+  }
 
   /* RESOURCES */
   .resources { padding: 80px 0; }
@@ -578,6 +568,7 @@
     <nav>
       <a href="#intro">О курсе</a>
       <a href="#blocks">Программа</a>
+      <a href="#checklists">Чек-листы</a>
       <a href="agent-architecture.html" style="background: rgba(232,139,0,0.2); padding: 4px 10px; border-radius: 4px;">Архитектура агента</a>
       <a href="#lifehacks">Лайфхаки</a>
       <a href="#faq">FAQ</a>
@@ -669,54 +660,6 @@
   </div>
 </section>
 
-<!-- ORG STEPS -->
-<section class="org-steps" id="org-steps">
-  <div class="container">
-    <div class="section-title">
-      <h2>Орг-подготовка — 6 шагов</h2>
-      <p>Что нужно собрать до начала курса. Порядок важен: каждый следующий шаг опирается на предыдущий.</p>
-    </div>
-
-    <div class="steps-flow">
-      <div class="step-item">
-        <div class="step-num">1</div>
-        <h4>Иностранный телефон</h4>
-        <p>SIM или виртуальный номер для SMS</p>
-      </div>
-      <div class="step-item">
-        <div class="step-num">2</div>
-        <h4>Иностранная почта</h4>
-        <p>Gmail через новый номер</p>
-      </div>
-      <div class="step-item">
-        <div class="step-num">3</div>
-        <h4>Иностранная карта</h4>
-        <p>Банки СНГ, дистанционно</p>
-      </div>
-      <div class="step-item">
-        <div class="step-num">4</div>
-        <h4>Регистрация и оплата Claude</h4>
-        <p>Max 5x, €110/мес</p>
-      </div>
-      <div class="step-item">
-        <div class="step-num">5</div>
-        <h4>Claude Desktop + VPN</h4>
-        <p>Установка и проверка</p>
-      </div>
-      <div class="step-item">
-        <div class="step-num">6</div>
-        <h4>Порядок в файлах</h4>
-        <p>Рабочая папка для агента</p>
-      </div>
-    </div>
-
-    <p class="steps-note">
-      ⏱ <strong>Срок:</strong> 2–3 недели. Зависит от того, с чего стартуешь. У кого-то что-то уже есть.<br>
-      На каждый шаг — <strong>отдельный чек-лист внутри Блока 1</strong> программы.
-    </p>
-  </div>
-</section>
-
 <!-- BLOCKS -->
 <section class="blocks" id="blocks">
   <div class="container">
@@ -771,7 +714,7 @@
         <div class="block-title">
           <div class="label">ШАГ 2 • ПОНИМАНИЕ</div>
           <h3>Базовые правила и архитектура</h3>
-          <div class="meta">⏱ 3 недели • 11 уроков × 25 мин (10 мин чтения + 15 мин практики)</div>
+          <div class="meta">⏱ 3 недели • 12 уроков × 25 мин (10 мин чтения + 15 мин практики)</div>
         </div>
       </div>
 
@@ -780,8 +723,8 @@
       </div>
 
       <div class="block-body">
-        <div class="col">
-          <h4><span class="icon">11</span> Уроки (10 мин чтения + 15 мин практики)</h4>
+        <div class="col col-single">
+          <h4><span class="icon">12</span> Уроки (10 мин чтения + 15 мин практики)</h4>
           <ul class="item-list">
             <li><a href="lesson1.html"><strong>Урок 1. Агент vs чат-бот. CLAUDE.md</strong></a><span class="date-badge done">16 апр чт ✓</span><span class="sub">Разница с ChatGPT. Почему CLAUDE.md главнее инструкций в чате. Карта агента целиком — где в ней лежит CLAUDE.md</span></li>
             <li><a href="lesson2.html"><strong>Урок 2. Контекст, компакт, handoff</strong></a><span class="date-badge done">17 апр пт ✓</span><span class="sub">Почему агент «забывает» после закрытия сессии. Что такое компакт. Как писать handoff для передачи между сессиями. Как не терять работу</span></li>
@@ -792,26 +735,12 @@
             <li><a href="lesson6.html"><strong>Урок 6. Карта агента: расширение через коннекторы</strong></a><span class="date-badge done">23 апр чт ✓</span><span class="sub">Агент живёт в своих файлах. Чтобы стал рабочим инструментом — соединяем с Google, почтой, задачником, CRM. Карта из 4 слоёв: интерфейсы, знания, скиллы, коннекторы. Как подключить первый — через API, MCP или обёртку</span></li>
             <li><a href="lesson7.html"><strong>Урок 7. Создание и подключение задачника</strong></a><span class="date-badge done">24 апр пт ✓</span><span class="sub">Подключаем первый коннектор на практике. Почему Plane, как подключить через обёртку без ИТ-специалиста, как разложить задачи по проектам, как сделать чтобы агент сам вспоминал о задачнике при старте сессии</span></li>
             <li><strong>Урок 8. Постановка задач. Автономность. Стадии</strong><span class="date-badge later">1 мая пт</span><span class="sub">4 элемента задачи. 5 уровней автономии. Стадии S1–S7</span></li>
-            <li><strong>Урок 9. Агент в команде</strong><span class="date-badge later">3 мая вс</span><span class="sub">Сверки, объединения, shadow AI. Разбор своей задачи. Финальный разбор</span></li>
-            <li><strong>Урок 10. Архитектура папок и тегирование</strong><span class="date-badge later">5 мая вт</span><span class="sub">Как устроена рабочая папка агента: memory/, .claude/skills/, .claude/rules/, .claude/hooks/. Система тегов. Без архитектуры память превращается в кучу</span></li>
-            <li><strong>Урок 11. Безопасность данных</strong><span class="date-badge later">7 мая чт</span><span class="sub">Что можно/нельзя отдавать агенту: персональные данные, финансы, договоры. Как настроить правила, чтобы агент сам отказывался от чувствительного</span></li>
-            <li><strong>Урок 12. Сценарии — автоматизации 24/7</strong><span class="date-badge later">13 мая ср</span><span class="sub">Как склеивать коннекторы в автоматические процессы. Разбор наших 6 сценариев: автоответы на отзывы, отчёт по отзывам, отчёт программы лояльности, дайджест AI, бэкап. Как работает расписание и триггеры по событию. Практика — спроектировать свой первый сценарий</span></li>
-            <li><strong>Урок 13. Самоаудит агента — готов ли он работать сам</strong><span class="date-badge later">17 мая сб</span><span class="sub">Финальная ревизия: все правила на месте, память связна, нет противоречий. Карта артефактов зрелого агента, чек-лист самоаудита, живой кейс нашей еженедельной ревизии. Регулярный инструмент для сверки вместо теоретического «прошёл курс»</span></li>
+            <li><strong>Урок 9. Архитектура папок и тегирование</strong><span class="date-badge later">5 мая вт</span><span class="sub">Как устроена рабочая папка агента: memory/, .claude/skills/, .claude/rules/, .claude/hooks/. Система тегов. Без архитектуры память превращается в кучу</span></li>
+            <li><strong>Урок 10. Безопасность данных</strong><span class="date-badge later">7 мая чт</span><span class="sub">Что можно/нельзя отдавать агенту: персональные данные, финансы, договоры. Как настроить правила, чтобы агент сам отказывался от чувствительного</span></li>
+            <li><strong>Урок 11. Сценарии — автоматизации 24/7</strong><span class="date-badge later">13 мая ср</span><span class="sub">Как склеивать коннекторы в автоматические процессы. Разбор наших 6 сценариев: автоответы на отзывы, отчёт по отзывам, отчёт программы лояльности, дайджест AI, бэкап. Как работает расписание и триггеры по событию. Практика — спроектировать свой первый сценарий</span></li>
+            <li><strong>Урок 12. Самоаудит агента — готов ли он работать сам</strong><span class="date-badge later">17 мая сб</span><span class="sub">Финальная ревизия: все правила на месте, память связна, нет противоречий. Карта артефактов зрелого агента, чек-лист самоаудита, живой кейс нашей еженедельной ревизии. Регулярный инструмент для сверки вместо теоретического «прошёл курс»</span></li>
           </ul>
-        </div>
-
-        <div class="col">
-          <h4><span class="icon">✓</span> Практические чек-листы</h4>
-          <ul class="item-list">
-            <li><strong>2.1 Мой минимальный CLAUDE.md</strong><span class="date-badge later">7 мая чт</span><span class="sub">Шаблон + примеры. Заполнить за 20 минут</span></li>
-            <li><strong>2.2 Задача по 4 элементам</strong><span class="date-badge later">7 мая чт</span><span class="sub">Как описать любую задачу так, чтобы агент понял</span></li>
-            <li><strong>2.3 Прогон задачи по S1–S7</strong><span class="date-badge later">7 мая чт</span><span class="sub">Пошаговая карта: от классификации до архивации</span></li>
-            <li><strong>2.4 Ошибка → правило</strong><span class="date-badge later">7 мая чт</span><span class="sub">Как превратить провал в постоянную защиту агента. Описать ошибку → найти причину → создать правило в CLAUDE.md → проверить что не повторяется</span></li>
-            <li><strong>2.5 Стартовый комплект</strong><span class="date-badge later">7 мая чт</span><span class="sub">Готовый архив: базовые CLAUDE.md, rules, skills, hooks. Распаковать, поднять у себя, проверить что работает</span></li>
-            <li><strong>2.6 TG-оповещения о лимите сессии</strong><span class="date-badge later">7 мая чт</span><span class="sub">Настроить уведомления в Telegram о подходе к лимиту контекста сессии — чтобы не терять работу при переполнении</span></li>
-            <li><strong>2.7 Безопасность перед отправкой</strong><span class="date-badge later">7 мая чт</span><span class="sub">Перед каждой передачей данных агенту: нет PII? нет паролей и токенов? нет конфиденциальных данных клиентов? нет коммерческой тайны?</span></li>
-            <li><strong>2.8 Мой первый рабочий день с агентом</strong><span class="date-badge later">7 мая чт</span><span class="sub">Сквозной чек-лист от настройки до первого результата. Что открыть, что проверить, какую первую задачу дать, как принять</span></li>
-          </ul>
+          <p style="margin-top:18px; font-size:13px; color:var(--gray);">Чек-листы практики — в <a href="#checklists" style="color:var(--accent); font-weight:600;">отдельной секции «Чек-листы»</a> ниже.</p>
         </div>
       </div>
 
@@ -836,7 +765,7 @@
       </div>
 
       <div class="block-body">
-        <div class="col">
+        <div class="col col-single">
           <h4><span class="icon">4</span> Уроки</h4>
           <ul class="item-list">
             <li><strong>Работа с задачами</strong><span class="date-badge later">9 мая сб</span><span class="sub">Постановка, приёмка, разбор провалов</span></li>
@@ -844,19 +773,7 @@
             <li><strong>Еженедельная рефлексия как гигиена</strong><span class="date-badge later">13 мая ср</span><span class="sub">Что анализировать в пятницу: что работает, что нет, куда эволюционирует агент</span></li>
             <li><strong>Подготовка к командной сверке</strong><span class="date-badge later">15 мая пт</span><span class="sub">Как рассказать за 5 минут: что отдал, что получилось, где ошибка</span></li>
           </ul>
-        </div>
-
-        <div class="col">
-          <h4><span class="icon">✓</span> Ритуальные чек-листы</h4>
-          <ul class="item-list">
-            <li><strong>3.1 Ежедневный ритуал</strong><span class="date-badge later">15 мая пт</span><span class="sub">Что делать с агентом в начале и в конце дня</span></li>
-            <li><strong>3.2 Еженедельная рефлексия (пятница)</strong><span class="date-badge later">15 мая пт</span><span class="sub">Главный чек-лист — вопросы для анализа работы системы</span></li>
-            <li><strong>3.3 Приёмка длинной задачи у агента</strong><span class="date-badge later">15 мая пт</span><span class="sub">Как проверить прежде чем сказать «готово». Пошаговая проверка результата: на что смотреть, что сверять с источником, как ловить пропуски и галлюцинации</span></li>
-            <li><strong>3.4 Подготовка к ежемесячному объединению</strong><span class="date-badge later">15 мая пт</span><span class="sub">Что передавать в общий CLAUDE.md компании</span></li>
-            <li><strong>3.5 Когда playbook / rule / skill</strong><span class="date-badge later">15 мая пт</span><span class="sub">Дерево решений: что создавать в каких случаях</span></li>
-            <li><strong>3.6 Когда обновлять CLAUDE.md</strong><span class="date-badge later">15 мая пт</span><span class="sub">Триггеры обновления: после инцидента, после нового правила, еженедельный аудит. Что добавлять, что выносить в rules/skills</span></li>
-            <li><strong>3.7 Аудит памяти агента</strong><span class="date-badge later">15 мая пт</span><span class="sub">Раз в 2–4 недели: дубли по имени, файлы не в тех папках, сиротские артефакты, устаревшее, дыры в памяти. Как не превратить память в кучу</span></li>
-          </ul>
+          <p style="margin-top:18px; font-size:13px; color:var(--gray);">Ритуальные чек-листы — в <a href="#checklists" style="color:var(--accent); font-weight:600;">отдельной секции «Чек-листы»</a> ниже.</p>
         </div>
       </div>
 
@@ -868,54 +785,161 @@
   </div>
 </section>
 
+<!-- CHECKLISTS -->
+<section class="checklists" id="checklists">
+  <div class="container">
+    <div class="section-title">
+      <h2>Чек-листы</h2>
+      <p>10 чек-листов в 4 темах — от первого рабочего дня до еженедельной рефлексии. Возвращаешься, когда нужно.</p>
+    </div>
+
+    <div class="cl-theme">
+      <h3 class="cl-theme-title">1. Мой первый рабочий день</h3>
+      <ul class="cl-list">
+        <li><strong>1.1 Минимальный CLAUDE.md + стартовый комплект</strong><span class="date-badge later">7 мая чт</span><span class="sub">Шаблон CLAUDE.md + готовый архив базовых rules, skills, hooks. Распаковать, поднять у себя, заполнить за 20 минут, проверить что работает.</span></li>
+        <li><strong>1.2 Безопасность перед отправкой</strong><span class="date-badge later">7 мая чт</span><span class="sub">Перед каждой передачей данных агенту: нет PII? нет паролей и токенов? нет конфиденциальных данных клиентов? нет коммерческой тайны?</span></li>
+        <li><strong>1.3 Мой первый рабочий день с агентом</strong><span class="date-badge later">7 мая чт</span><span class="sub">Сквозной чек-лист от настройки до первого результата. Что открыть, что проверить, какую первую задачу дать, как принять.</span></li>
+      </ul>
+    </div>
+
+    <div class="cl-theme">
+      <h3 class="cl-theme-title">2. Старт и окончание сессии</h3>
+      <ul class="cl-list">
+        <li><strong>2.1 Ежедневный ритуал</strong><span class="date-badge later">15 мая пт</span><span class="sub">Что делать с агентом в начале и в конце дня. Старт: открыть, проверить состояние, выбрать задачу. Окончание: handoff, обновить заметки.</span></li>
+        <li><strong>2.2 TG-оповещения о лимите сессии</strong><span class="date-badge later">7 мая чт</span><span class="sub">Настроить уведомления в Telegram о подходе к лимиту контекста — чтобы не терять работу при переполнении.</span></li>
+      </ul>
+    </div>
+
+    <div class="cl-theme">
+      <h3 class="cl-theme-title">3. Постановка задачи и приём результата</h3>
+      <ul class="cl-list">
+        <li><strong>3.1 Задача по 4 элементам и прогон S1–S7</strong><span class="date-badge later">7 мая чт</span><span class="sub">Как описать любую задачу так, чтобы агент понял (4 элемента: что / материал / ограничения / готово когда). Как агент проводит её через 7 стадий — от классификации до архивации.</span></li>
+        <li><strong>3.2 Приёмка длинной задачи у агента</strong><span class="date-badge later">15 мая пт</span><span class="sub">Как проверить прежде чем сказать «готово». Пошаговая проверка результата: на что смотреть, что сверять с источником, как ловить пропуски и галлюцинации.</span></li>
+      </ul>
+    </div>
+
+    <div class="cl-theme">
+      <h3 class="cl-theme-title">4. Рефлексия</h3>
+      <ul class="cl-list">
+        <li><strong>4.1 Еженедельная рефлексия + аудит памяти</strong><span class="date-badge later">15 мая пт</span><span class="sub">Главный чек-лист пятницы: что работает, что нет, куда эволюционирует агент. Раз в 2–4 недели включает аудит памяти — дубли, файлы не в папках, сиротские артефакты, устаревшее.</span></li>
+        <li><strong>4.2 Когда playbook / rule / skill / CLAUDE.md</strong><span class="date-badge later">15 мая пт</span><span class="sub">Дерево решений: какой артефакт когда создавать. Триггеры обновления CLAUDE.md (после инцидента, после нового правила, еженедельный аудит). Когда выносить в rules или skills.</span></li>
+        <li><strong>4.3 Подготовка к ежемесячному объединению</strong><span class="date-badge later">15 мая пт</span><span class="sub">Что передавать в общий CLAUDE.md компании.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <!-- LIFEHACKS -->
 <section class="lifehacks" id="lifehacks">
   <div class="container">
     <div class="section-title">
       <h2>Лайфхаки из нашей практики</h2>
-      <p>20+ коротких паттернов из 2 месяцев и 160+ сессий. Справочник, к которому возвращаются.</p>
+      <p>15 коротких паттернов из 2 месяцев и 170+ сессий. Справочник, к которому возвращаются. Раздел растёт — каждую субботу пополняется из практики.</p>
     </div>
 
-    <div class="lifehacks-grid">
-      <div class="lh-card">
-        <div class="category">Память</div>
-        <h4>Всегда проверяй extracted-tasks до того как спрашивать</h4>
-        <p>Ответы команды из чатов загружаются автоматически. В 80% случаев ответ уже там.</p>
-      </div>
-      <div class="lh-card">
-        <div class="category">Задачи</div>
-        <h4>Задача без 4 элементов — не задача</h4>
-        <p>Что / материал / ограничения / готово когда. Если чего-то нет — уточняй до начала.</p>
-      </div>
-      <div class="lh-card">
-        <div class="category">Ошибки</div>
-        <h4>Две неудачи подряд = СТОП</h4>
-        <p>Не повторять третий раз тем же способом. Переформулируй: «какая конечная цель?»</p>
-      </div>
-      <div class="lh-card">
-        <div class="category">Коммуникация</div>
-        <h4>Перед отправкой в чат команды — двойной фильтр</h4>
-        <p>Орфография + факты из источника. Репутация зарабатывается медленно, теряется быстро.</p>
-      </div>
-      <div class="lh-card">
-        <div class="category">Память</div>
-        <h4>Handoff обязателен после 40 минут сессии</h4>
-        <p>Дольше — деградирует внимание. Перезаход со свежим контекстом даёт больше чем час усталого.</p>
-      </div>
-      <div class="lh-card">
-        <div class="category">Архитектура</div>
-        <h4>Задача повторилась 3 раза → playbook</h4>
-        <p>Не пытайся запомнить — запиши. Следующий раз агент сделает по алгоритму за минуты.</p>
-      </div>
-      <div class="lh-card">
-        <div class="category">Память</div>
-        <h4>Уходишь от задачи → спроси «как ты вспомнишь это в новой сессии?»</h4>
-        <p>Планируешь вернуться через день или неделю — не ограничивайся «ок, закончили». Попроси агента показать КУДА он сохранил контекст и договорённости: файл, раздел, задача в трекере. Проверка: открой новый чат и задай тот же вопрос — если агент восстановит всё, запись реальная. Если «не помню» — значит в прошлый раз агент соврал, переделывай сразу.</p>
+    <div class="lh-category">
+      <h3 class="lh-cat-title">Память</h3>
+      <div class="lifehacks-grid">
+        <div class="lh-card">
+          <div class="category">Память</div>
+          <h4>Всегда проверяй extracted-tasks до того как спрашивать</h4>
+          <p>Ответы команды из чатов загружаются автоматически. В 80% случаев ответ уже там.</p>
+        </div>
+        <div class="lh-card">
+          <div class="category">Память</div>
+          <h4>Handoff обязателен после 40 минут сессии</h4>
+          <p>Дольше — деградирует внимание. Перезаход со свежим контекстом даёт больше чем час усталого.</p>
+        </div>
+        <div class="lh-card">
+          <div class="category">Память</div>
+          <h4>Уходишь от задачи → «как ты вспомнишь это в новой сессии?»</h4>
+          <p>Планируешь вернуться через день или неделю — не ограничивайся «ок, закончили». Попроси агента показать КУДА он сохранил контекст: файл, раздел, задача в трекере. Проверка: открой новый чат и задай тот же вопрос — если агент восстановит всё, запись реальная.</p>
+        </div>
       </div>
     </div>
 
-    <div style="text-align:center; margin-top:40px;">
-      <div class="placeholder">⚠ Показаны 7 из 20+. Полный справочник в разработке</div>
+    <div class="lh-category">
+      <h3 class="lh-cat-title">Контекст</h3>
+      <div class="lifehacks-grid">
+        <div class="lh-card">
+          <div class="category">Контекст</div>
+          <h4>Краткое название задачи ≠ её содержание</h4>
+          <p>Перед оценкой/решением подними историю задачи — оригинальное обсуждение, реплики команды, прошлые сессии. Название = ярлык, контекст в файлах. По одному названию агент додумает не то.</p>
+        </div>
+        <div class="lh-card">
+          <div class="category">Контекст</div>
+          <h4>Фрагмент в брифинге ≠ полный handoff</h4>
+          <p>Стартовый отчёт показывает обрезки полей — это указатели, не источник. Прочитай handoff целиком файлом, иначе работаешь с осколками. Восстанавливай контекст до первого действия.</p>
+        </div>
+        <div class="lh-card">
+          <div class="category">Контекст</div>
+          <h4>Список без действия = шум</h4>
+          <p>Дайджест, отчёт, итог — это <strong>фильтр</strong>, не накопление. Если из 8 пунктов 0 действий — это норма. Не уравновешивай количеством. Каждый пункт проверяй вопросом «что делаем с этим?»</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="lh-category">
+      <h3 class="lh-cat-title">Задачи</h3>
+      <div class="lifehacks-grid">
+        <div class="lh-card">
+          <div class="category">Задачи</div>
+          <h4>Задача без 4 элементов — не задача</h4>
+          <p>Что / материал / ограничения / готово когда. Если чего-то нет — уточняй до начала.</p>
+        </div>
+        <div class="lh-card">
+          <div class="category">Задачи</div>
+          <h4>Закрой задачу в трекере до перехода к следующей</h4>
+          <p>Сделал работу — закрой тикет, потом иди дальше. Это касается и «задачи-контейнера» (ревизия, аудит) — она не «само поймут», её тоже надо закрыть. Иначе через день агент покажет её как просроченную.</p>
+        </div>
+        <div class="lh-card">
+          <div class="category">Задачи</div>
+          <h4>«Зачем?» — главный фильтр предложений агента</h4>
+          <p>Перед каждым «делаем X» спроси «зачем именно нам?». Если ответ «попробовать», «быть в курсе», «полезно вообще» — выкидывай. Действие = ответ на конкретную нашу боль, а не на абстрактную возможность.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="lh-category">
+      <h3 class="lh-cat-title">Проверка</h3>
+      <div class="lifehacks-grid">
+        <div class="lh-card">
+          <div class="category">Проверка</div>
+          <h4>Две неудачи подряд = СТОП</h4>
+          <p>Не повторять третий раз тем же способом. Переформулируй: «какая конечная цель?», «есть ли другой путь?»</p>
+        </div>
+        <div class="lh-card">
+          <div class="category">Проверка</div>
+          <h4>Перед отправкой в чат команды — двойной фильтр</h4>
+          <p>Орфография + факты из источника. Репутация зарабатывается медленно, теряется быстро.</p>
+        </div>
+        <div class="lh-card">
+          <div class="category">Проверка</div>
+          <h4>Цифры в материалах для людей — только из источника</h4>
+          <p>Любая цифра (цена, %, количество) в отчёте, задании, презентации — из проверенного файла. Пометки «условные/ориентировочные» не оправдывают отсутствие источника. Лучше без цифр, чем с ложными.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="lh-category">
+      <h3 class="lh-cat-title">Архитектура</h3>
+      <div class="lifehacks-grid">
+        <div class="lh-card">
+          <div class="category">Архитектура</div>
+          <h4>Задача повторилась 3 раза → playbook</h4>
+          <p>Не пытайся запомнить — запиши. Следующий раз агент сделает по алгоритму за минуты.</p>
+        </div>
+        <div class="lh-card">
+          <div class="category">Архитектура</div>
+          <h4>Артефакт &gt;30 строк → файл, не чат</h4>
+          <p>Промпты, брифы, ТЗ, инструкции длиннее 30 строк — в отдельный .md файл. В чате — только ссылка. Иначе диалог захламляется, копировать неудобно, контекст теряется.</p>
+        </div>
+        <div class="lh-card">
+          <div class="category">Архитектура</div>
+          <h4>AI для человека ≠ AI для агента</h4>
+          <p>Инструмент для человека (Copilot Excel) и инструмент для агента (API, скрипты) — разные сущности. То что помогает тебе руками, не обязательно решает проблему агента. Не путай при оценке внедрений.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1004,7 +1028,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="container">
-    Внедрение ИИ в Стардогс • Учебный курс • Версия 0.3 (черновик) • Апрель 2026
+    Внедрение ИИ в Стардогс • Учебный курс • Версия 0.3 • Обновлено 25.04.2026
   </div>
 </footer>
 

@@ -175,6 +175,17 @@
     font-weight: 700;
   }
 
+  .map-svg {
+    display: block;
+    width: 100%;
+    max-width: 760px;
+    height: auto;
+    margin: 28px auto;
+    background: var(--navy-bg);
+    border-radius: 14px;
+    padding: 16px;
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;
@@ -359,7 +370,96 @@
       </div>
     </div>
 
-    <h2>Как элементы связаны</h2>
+    <h2>Карта связей</h2>
+
+    <p>Иерархическая схема выше показывает <strong>уровни</strong>. Карта ниже — <strong>цепочки</strong>: что куда подключено, как работает защитная петля, где замыкаются циклы.</p>
+
+    <svg class="map-svg" viewBox="0 0 760 560" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arch-arr-navy" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#1E3A5F"/>
+        </marker>
+        <marker id="arch-arr-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#2E7D4F"/>
+        </marker>
+        <marker id="arch-arr-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#C8332A"/>
+        </marker>
+      </defs>
+
+      <!-- Долгая память → ядро (вход контекста, синие сплошные) -->
+      <line x1="170" y1="270" x2="308" y2="270" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arch-arr-navy)"/>
+      <text x="200" y="260" font-family="Arial" font-size="11" font-weight="700" fill="#1E3A5F">CLAUDE.md загружается</text>
+
+      <!-- Короткая память → ядро (вход контекста, синие сплошные) -->
+      <line x1="590" y1="270" x2="452" y2="270" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arch-arr-navy)"/>
+      <text x="475" y="260" font-family="Arial" font-size="11" font-weight="700" fill="#1E3A5F">handoff читается</text>
+
+      <!-- Ядро → Короткая память (выход, ядро записывает handoff/STATE) -->
+      <line x1="452" y1="285" x2="590" y2="285" stroke="#1E3A5F" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arch-arr-navy)"/>
+      <text x="475" y="305" font-family="Arial" font-size="11" font-weight="700" fill="#1E3A5F">handoff пишется в конце</text>
+
+      <!-- Ядро ↔ Задачник (зелёная сплошная) -->
+      <line x1="380" y1="342" x2="380" y2="400" stroke="#2E7D4F" stroke-width="3" marker-end="url(#arch-arr-green)"/>
+      <text x="395" y="375" font-family="Arial" font-size="11" font-weight="700" fill="#2E7D4F">ставит/закрывает</text>
+
+      <!-- Хуки → ядро (защитная цепочка, красная пунктирная — блокирует) -->
+      <line x1="380" y1="140" x2="380" y2="198" stroke="#C8332A" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arch-arr-red)"/>
+      <text x="395" y="172" font-family="Arial" font-size="11" font-weight="700" fill="#C8332A">блокирует действие</text>
+
+      <!-- Защитная петля: Долгая память → Хуки (guards подгружаются в hooks) -->
+      <path d="M 95,235 Q 95,140 290,105" stroke="#C8332A" stroke-width="1.5" stroke-dasharray="4,3" fill="none" marker-end="url(#arch-arr-red)"/>
+      <text x="100" y="180" font-family="Arial" font-size="10" fill="#C8332A">guards питают</text>
+      <text x="100" y="194" font-family="Arial" font-size="10" fill="#C8332A">хуки</text>
+
+      <!-- Ядро (центр) -->
+      <circle cx="380" cy="270" r="72" fill="#FFF9EC" stroke="#E88B00" stroke-width="3"/>
+      <text x="380" y="262" text-anchor="middle" font-family="Arial" font-size="15" font-weight="700" fill="#1E3A5F">Сессия</text>
+      <text x="380" y="284" text-anchor="middle" font-family="Arial" font-size="13" fill="#5A5A5A">Claude Code · ядро</text>
+
+      <!-- Хуки (top) -->
+      <rect x="290" y="70" width="180" height="70" rx="8" fill="#FBE9E7" stroke="#C8332A" stroke-width="2"/>
+      <text x="380" y="100" text-anchor="middle" font-family="Arial" font-size="15" font-weight="700" fill="#C8332A">Хуки</text>
+      <text x="380" y="122" text-anchor="middle" font-family="Arial" font-size="12" fill="#5A5A5A">автоматический контроль</text>
+
+      <!-- Долгая память (left) -->
+      <rect x="20" y="225" width="150" height="90" rx="8" fill="#F2F4F8" stroke="#1E3A5F" stroke-width="2"/>
+      <text x="95" y="252" text-anchor="middle" font-family="Arial" font-size="15" font-weight="700" fill="#1E3A5F">Долгая память</text>
+      <text x="95" y="273" text-anchor="middle" font-family="Arial" font-size="12" fill="#5A5A5A">CLAUDE.md · guards</text>
+      <text x="95" y="289" text-anchor="middle" font-family="Arial" font-size="12" fill="#5A5A5A">memory · skills · rules</text>
+      <text x="95" y="305" text-anchor="middle" font-family="Arial" font-size="11" fill="#5A5A5A">растёт с каждой сессией</text>
+
+      <!-- Короткая память (right) -->
+      <rect x="590" y="225" width="150" height="90" rx="8" fill="#F2F4F8" stroke="#1E3A5F" stroke-width="2"/>
+      <text x="665" y="252" text-anchor="middle" font-family="Arial" font-size="15" font-weight="700" fill="#1E3A5F">Короткая память</text>
+      <text x="665" y="273" text-anchor="middle" font-family="Arial" font-size="12" fill="#5A5A5A">handoff · STATE</text>
+      <text x="665" y="289" text-anchor="middle" font-family="Arial" font-size="11" fill="#5A5A5A">передача смены</text>
+      <text x="665" y="305" text-anchor="middle" font-family="Arial" font-size="11" fill="#5A5A5A">между сессиями</text>
+
+      <!-- Задачник (bottom) -->
+      <rect x="280" y="400" width="200" height="70" rx="8" fill="#E8F4EC" stroke="#2E7D4F" stroke-width="2"/>
+      <text x="380" y="430" text-anchor="middle" font-family="Arial" font-size="15" font-weight="700" fill="#2E7D4F">Задачник</text>
+      <text x="380" y="452" text-anchor="middle" font-family="Arial" font-size="12" fill="#5A5A5A">Plane — внешняя память</text>
+
+      <!-- Защитная петля: блок справа (текст-объяснение) -->
+      <rect x="540" y="395" width="200" height="80" rx="8" fill="#FBE9E7" stroke="#C8332A" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="640" y="418" text-anchor="middle" font-family="Arial" font-size="13" font-weight="700" fill="#C8332A">Защитная цепочка</text>
+      <text x="640" y="440" text-anchor="middle" font-family="Arial" font-size="11" fill="#5A5A5A">ошибка → guard → hook</text>
+      <text x="640" y="458" text-anchor="middle" font-family="Arial" font-size="11" fill="#5A5A5A">каждая сессия = +1 защита</text>
+
+      <!-- Легенда -->
+      <rect x="20" y="510" width="720" height="40" rx="6" fill="#FFFFFF" stroke="#E1E5EC" stroke-width="1"/>
+      <line x1="35" y1="530" x2="65" y2="530" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arch-arr-navy)"/>
+      <text x="75" y="534" font-family="Arial" font-size="12" fill="#1A1A1A">контекст в сессию</text>
+      <line x1="220" y1="530" x2="250" y2="530" stroke="#2E7D4F" stroke-width="3" marker-end="url(#arch-arr-green)"/>
+      <text x="260" y="534" font-family="Arial" font-size="12" fill="#1A1A1A">работа с задачником</text>
+      <line x1="430" y1="530" x2="460" y2="530" stroke="#C8332A" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arch-arr-red)"/>
+      <text x="470" y="534" font-family="Arial" font-size="12" fill="#1A1A1A">защитная цепочка (хуки)</text>
+      <line x1="630" y1="530" x2="660" y2="530" stroke="#1E3A5F" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arch-arr-navy)"/>
+      <text x="670" y="534" font-family="Arial" font-size="12" fill="#1A1A1A">запись в конце</text>
+    </svg>
+
+    <p>Пять типичных ситуаций — как карта работает в реальной сессии:</p>
 
     <table>
       <thead>
