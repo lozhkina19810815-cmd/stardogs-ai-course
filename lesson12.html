@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 12. Под капотом Claude Code</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --green: #2E7D4F;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: var(--text); background: var(--white); line-height: 1.65; font-size: 16px; }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+  header { background: var(--navy); color: var(--white); padding: 20px 0; }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--white); padding: 70px 0 50px; text-align: center; }
+  .hero .label { color: var(--accent); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
+  .hero h1 { font-size: 38px; font-weight: 800; max-width: 720px; margin: 0 auto 14px; line-height: 1.15; }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+  .hero .meta strong { color: var(--accent); }
+  main { padding: 50px 0 100px; }
+  h2 { font-size: 26px; color: var(--navy); font-weight: 800; margin: 52px 0 18px; scroll-margin-top: 80px; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 18px; color: var(--navy); font-weight: 700; margin: 28px 0 12px; }
+  h4 { font-size: 15px; color: var(--navy); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  p { margin-bottom: 16px; }
+  p.lead { font-size: 17px; color: var(--gray); padding: 20px 24px; background: var(--navy-bg); border-left: 4px solid var(--navy); border-radius: 8px; margin-bottom: 32px; }
+  ul, ol { padding-left: 24px; margin-bottom: 16px; }
+  ul li, ol li { margin-bottom: 8px; }
+  strong { color: var(--navy); }
+  .toc { background: var(--navy-bg); padding: 24px; border-radius: 10px; margin-bottom: 36px; }
+  .toc h4 { color: var(--navy); margin-bottom: 12px; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc a { color: var(--navy-light); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .analogy { background: var(--accent-bg); border-left: 4px solid var(--accent); padding: 20px 24px; border-radius: 8px; margin: 24px 0; }
+  .analogy h4 { color: var(--accent); margin-bottom: 8px; }
+  .red-warning { background: #FFF2F0; border-left: 4px solid var(--red); padding: 20px 24px; border-radius: 8px; margin: 24px 0; }
+  .red-warning .label { color: var(--red); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
+  .red-warning h3 { color: var(--red); margin-top: 0; }
+  .case { background: var(--navy-bg); border-radius: 10px; padding: 24px; margin: 24px 0; }
+  .case h4 { color: var(--navy); margin-bottom: 12px; }
+  .case .ask { background: var(--white); border-left: 3px solid var(--gray); padding: 12px 16px; border-radius: 6px; margin: 10px 0; font-style: italic; color: var(--gray); }
+  .case .ans { background: var(--white); border-left: 3px solid var(--green); padding: 12px 16px; border-radius: 6px; margin: 10px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--navy-bg); color: var(--navy); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td code { background: var(--navy-bg); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; color: var(--navy); }
+  code.inline { background: var(--navy-bg); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', Monaco, monospace; font-size: 14px; color: var(--navy); }
+  pre { background: var(--navy); color: var(--white); padding: 20px 24px; border-radius: 8px; overflow-x: auto; margin: 20px 0; font-family: 'SF Mono', Monaco, monospace; font-size: 14px; line-height: 1.5; }
+  .checklist { background: var(--accent-bg); padding: 24px; border-radius: 10px; margin: 24px 0; }
+  .checklist h4 { color: var(--accent); margin-bottom: 12px; }
+  .checklist ul { list-style: none; padding-left: 0; }
+  .checklist ul li { padding-left: 28px; position: relative; margin-bottom: 10px; }
+  .checklist ul li::before { content: '☐'; position: absolute; left: 0; color: var(--accent); font-weight: bold; font-size: 18px; }
+  .summary-box { background: var(--navy); color: var(--white); padding: 28px 32px; border-radius: 10px; margin: 32px 0; }
+  .summary-box h3 { color: var(--accent); margin-top: 0; }
+  .summary-box ul { padding-left: 20px; }
+  .summary-box ul li { margin-bottom: 10px; }
+  .summary-box strong { color: var(--white); }
+  footer { background: var(--navy-bg); padding: 30px 0; text-align: center; font-size: 14px; color: var(--gray); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Блок 2 · Урок 12 · Встроенные механизмы</div>
+    <h1>Под капотом<br>Claude Code</h1>
+    <div class="meta"><strong>11 минут читать · 15 минут делать</strong></div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">В предыдущих уроках встроенные механизмы Claude Code (CLAUDE.md, slash-команды, разрешения) и наши надстройки (guards, skills, playbooks, хуки, on_demand_rules) разбирались <strong>вместе — по теме урока</strong>: про память — и встроенное Auto-memory, и наша on_demand_rules; про автоматические проверки — и встроенные permissions, и наши хуки. Это правильно для практики: в работе они тоже работают вместе. Сегодня — <strong>другой срез: резюме именно по встроенному</strong>, чтобы вы видели, что у Anthropic под капотом как отдельный список, а не вперемешку с нашими надстройками. Какие группы инструментов есть из коробки, что из этого главное (и где это уже встречалось в курсе), а что — на будущее (важно знать что есть и где смотреть полный список). Отдельная мысль урока — <strong>как защититься от ситуации, когда встроенное у вас уже работает, а вы его не знаете</strong> и пытаетесь построить надстройку поверх. Пример из нашей практики — Auto-memory: 38 дней её вёл сам агент, я не знала и учила в курсе делать руками. Подробности — в кейсе ниже.</p>
+
+    <p class="lead"><strong>После урока вы сможете:</strong> различать что встроено в Claude Code и что мы добавили сверху; включить план-режим перед сложной задачей; разгрузить контекст через под-агента; понять, какие папки настроек у вас уже есть и зачем; не пугаться, если на Mac агент пишет «работаю в worktree».</p>
+
+    <div class="red-warning">
+      <div class="label">Уточнение про «инструмент»</div>
+      <h3>Здесь речь про Claude Code, не про Claude вообще.</h3>
+      <p>«Claude» — это <strong>семейство продуктов</strong> Anthropic. У них есть <strong>claude.ai</strong> — браузерный чат, как ChatGPT. У них есть <strong>Claude API</strong> — программный доступ для разработчиков. И у них есть <strong>Claude Code</strong> — продукт для работы с кодом и проектами через несколько интерфейсов: <strong>терминал</strong> (CLI), <strong>Desktop-приложение</strong> для Mac/Windows, плагины для <strong>VS Code и JetBrains</strong>, <strong>web-режим</strong> claude.ai/code, <strong>мобильный мост</strong>. Я работаю с Ириной в основном через терминал и Desktop, по корпоративной подписке <strong>Cowork</strong> (она даёт нам особенности вроде автоматического worktree). Это разные продукты с разными интерфейсами и возможностями. Когда в этом уроке мы говорим «под капотом» — речь именно про Claude Code, не про браузерный claude.ai. И уж точно не про устройство языковых моделей: это другая тема.</p>
+    </div>
+
+    <div class="toc">
+      <h4>В этом уроке</h4>
+      <ol>
+        <li><a href="#why">Зачем заглядывать под капот. Модель: рельсы Anthropic + наше наполнение</a></li>
+        <li><a href="#map">Карта: 15 категорий встроенных рельс + кейс «Backup как осознанный выбор своего»</a></li>
+        <li><a href="#memory">Память: Auto-memory как контраст с нашей надстройкой</a></li>
+        <li><a href="#permissions">Permissions — разрешения на действия</a></li>
+        <li><a href="#subagents">Под-агенты — отдельный мозг под тяжёлую задачу</a></li>
+        <li><a href="#modes">Plan Mode и Worktrees — режимы работы</a></li>
+        <li><a href="#mistakes">Камни: чего не делать с этими механизмами</a></li>
+        <li><a href="#practice">Практика: 15 минут на инвентаризацию</a></li>
+        <li><a href="#claudemd">Закрепить в CLAUDE.md</a></li>
+        <li><a href="#summary">Шпаргалка</a></li>
+      </ol>
+    </div>
+
+    <!-- ========== 1. WHY ========== -->
+
+    <h2 id="why">1. Зачем заглядывать под капот</h2>
+
+    <p>2 мая 2026 года я (Ирина) обнаружила, что у Claude Code на моём компьютере уже два месяца работает <strong>Auto-memory</strong> — встроенная память агента про меня, которая ведёт сам Claude Code в фоне. Я о ней не знала. Параллельно вела свой ручной файл-оглавление памяти и учила в курсе делать так же. Этот случай показал важную вещь: <strong>можно использовать Claude Code каждый день и не знать половины того, что в нём встроено</strong>. И это нормально — Anthropic не каждую новинку громко рекламирует, документация раскидана. Просто стоит хотя бы раз пройтись по карте, чтобы знать, какие кнопки есть на приборной панели. Подробный разбор этого кейса с Auto-memory — в <a href="lesson5plus.html">Уроке 5+ «Карта памяти агента»</a>.</p>
+
+    <p><strong>Системный фикс — ежедневный мониторинг обновлений Anthropic.</strong> После случая с Auto-memory мы поставили простой скрипт-наблюдатель, который раз в день в 9:00 утра автоматически проверяет 5 источников: GitHub releases Claude Code, anthropic.com/news, claude.com/blog, страницу changelog в продукте, support release notes. Если появились новые записи — присылает уведомление в Telegram коротким списком. Если новинок нет — молча выходит, не спамит (например, сегодня 3 мая ничего нового не было — и сообщения не пришло). Так мы больше не пропустим следующее «новое из коробки» на 38 дней. Скрипт у нас называется <code class="inline">anthropic-changelog-watch.mjs</code>, запускается через <code class="inline">launchd</code> (системный планировщик macOS) — это и есть пример сценария «системный фикс по корневой причине», который мы разбирали в <a href="lesson11.html">Уроке 11 «Сценарии — автоматический режим»</a>.</p>
+
+    <h3>Главная модель урока: рельсы Anthropic + наше наполнение</h3>
+
+    <p>Когда я говорю «встроенное в Claude Code» — это <strong>не отдельные кнопки</strong>, которые работают сами. Это <strong>рельсы, на которых едут наши поезда</strong>. Anthropic даёт <em>механизм</em>, мы наполняем его <em>содержимым</em>:</p>
+
+    <ul>
+      <li><strong>Хуки</strong> — рельсы: триггеры PreToolUse / PostToolUse / UserPromptSubmit / SessionStart и формат настройки в <code class="inline">settings.json</code>. <em>Наше наполнение:</em> 47 наших sh-скриптов вроде <code class="inline">protect-settings.sh</code>, которые ловят моменты и проверяют</li>
+      <li><strong>Skills</strong> — рельсы: формат папки <code class="inline">.claude/skills/&lt;name&gt;/SKILL.md</code> с frontmatter. <em>Наше наполнение:</em> наши skills типа <code class="inline">/reviews-weekly</code>, <code class="inline">/telegram-messaging</code></li>
+      <li><strong>Auto-memory</strong> — рельсы: типизированные карточки + индекс в <code class="inline">~/.claude/projects/.../memory/</code>. <em>Наше наполнение:</em> карточки про Ирину (Auto-memory ведёт сама — это редкий случай, когда наполнение не наше)</li>
+      <li><strong>Permissions</strong> — рельсы: формат allow/deny в <code class="inline">settings.json</code>. <em>Наше наполнение:</em> наши списки запретов (<code class="inline">git push --force</code>, <code class="inline">rm -rf</code>, <code class="inline">values.clear()</code>)</li>
+      <li><strong>Backup</strong> — рельсы: встроенный <code class="inline">.claude/backups/</code> (последние сессии для <code class="inline">/rewind</code>). <em>Наше наполнение:</em> <strong>не используем встроенное</strong> — написали свой <code class="inline">scripts/backup-to-drive.mjs</code>, потому что встроенное локальное (Mac полетит — теряем), а наше внешнее, на Google Drive, расширенное. Это редкий случай, когда мы <em>осознанно отказались</em> от встроенного наполнения</li>
+    </ul>
+
+    <p>Без рельс наша надстройка <strong>нигде бы не жила</strong>. Хуки работают, потому что Claude Code их вызывает в нужные моменты. Skills работают, потому что Claude Code их подключает. Курс до сих пор шёл по нашим <em>поездам</em> (наше наполнение в каждой категории). Сегодня — карта <em>рельс</em>: что вообще доступно у Anthropic, и где у нас уже что-то едет, а где — пока пусто или мы выбрали своё.</p>
+
+    <div class="analogy">
+      <h4>Аналогия</h4>
+      <p>Представьте офис, где Anthropic построил <strong>здание</strong>: коридоры, переговорные, кухню, кабинеты, ресепшен, серверную. <strong>Мы</strong> заехали, расставили мебель, повесили регламенты на стены, наняли людей — это наше наполнение. Урок 12 — экскурсия по самому <em>зданию</em>: какие есть помещения, что в каждом можно делать. Не «что мы туда поставили» (это были предыдущие уроки), а «что Anthropic вообще предоставил».</p>
+    </div>
+
+    <!-- ========== 2. MAP ========== -->
+
+    <h2 id="map">2. Карта: 15 категорий встроенных рельс</h2>
+
+    <p>В апреле–мае мы провели полный аудит инструментов Anthropic и сравнили с нашей надстройкой. Вышла карта из <strong>15 категорий рельс</strong>. Часть мы детально разбирали в предыдущих уроках, часть детально разберём здесь, часть — пока «знаем что есть, не пользуемся, отдельный материал в будущем».</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Категория (рельсы Anthropic)</th>
+          <th>Что внутри</th>
+          <th>Наше наполнение</th>
+          <th>Где в курсе</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Память</strong></td>
+          <td>Auto-memory: типизированные карточки + индекс в <code class="inline">~/.claude/projects/.../memory/</code></td>
+          <td>Карточки про Ирину (Auto-memory ведёт сама)</td>
+          <td><a href="lesson5plus.html">Урок 5+</a> детально + <a href="#memory">Секция 3</a> здесь — связь со слоями</td>
+        </tr>
+        <tr>
+          <td><strong>2. Skills</strong></td>
+          <td>Готовые навыки Anthropic + формат <code class="inline">.claude/skills/&lt;name&gt;/SKILL.md</code> для своих</td>
+          <td>10+ наших skills: <code class="inline">/reviews-weekly</code>, <code class="inline">/telegram-messaging</code>, <code class="inline">/xlsx-operations</code>, <code class="inline">/lesson-create</code>…</td>
+          <td>Косвенно в Уроке 4. Отдельно не разбирали</td>
+        </tr>
+        <tr>
+          <td><strong>3. Под-агенты</strong></td>
+          <td>Изолированный мини-агент в отдельном контексте</td>
+          <td>Используем встроенные (Explore, Plan, general-purpose). Кастомных в работе нет</td>
+          <td><a href="#subagents">Секция 5</a> здесь</td>
+        </tr>
+        <tr>
+          <td><strong>4. Хуки</strong></td>
+          <td>Триггеры Pre/Post/UserPromptSubmit/SessionStart/Stop/PreCompact и формат в <code class="inline">settings.json</code></td>
+          <td>47 наших sh-скриптов в <code class="inline">.claude/hooks/</code></td>
+          <td><a href="lesson5.html">Урок 5</a> детально</td>
+        </tr>
+        <tr>
+          <td><strong>5. Slash-команды</strong></td>
+          <td>Встроенные: <code class="inline">/help</code>, <code class="inline">/context</code>, <code class="inline">/compact</code>, <code class="inline">/clear</code>, <code class="inline">/rewind</code>, <code class="inline">/memory</code>, <code class="inline">/security-review</code>…</td>
+          <td>Использую <code class="inline">/context</code> и <code class="inline">/compact</code> регулярно. Своих slash-команд пока нет</td>
+          <td>Отдельно не разбирали — отдельный материал в будущем</td>
+        </tr>
+        <tr>
+          <td><strong>6. Расписания и автоматизация</strong></td>
+          <td>Scheduled tasks, фоновые скрипты, <code class="inline">launchd</code> на macOS</td>
+          <td>3 активные: monthly-security-audit, weekly-ai-digest, weekly-backup-check + наш <code class="inline">claude_loop</code>, <code class="inline">anthropic-changelog-watch</code></td>
+          <td><a href="lesson11.html">Урок 11 «Сценарии»</a> детально</td>
+        </tr>
+        <tr>
+          <td><strong>7. Plan Mode</strong></td>
+          <td>Режим «сначала план, потом действие» (Shift+Tab)</td>
+          <td>Не использую отдельно — у меня встроено в хук стадий S1–S7</td>
+          <td><a href="#modes">Секция 6</a> здесь</td>
+        </tr>
+        <tr>
+          <td><strong>8. Plugins</strong></td>
+          <td>Plugin marketplace Anthropic — устанавливаемые расширения</td>
+          <td>Не используем (изучали 02.05)</td>
+          <td>Не разбирали — отдельный материал когда найдём кейс</td>
+        </tr>
+        <tr>
+          <td><strong>9. MCP / коннекторы</strong></td>
+          <td>Mост к стороннему API через сервер MCP (Plane, Telegram, custom)</td>
+          <td>Используем Plane MCP, Telegram-бот через MCP-обёртку</td>
+          <td><a href="lesson6.html">Урок 6 «Коннекторы»</a> детально</td>
+        </tr>
+        <tr>
+          <td><strong>10. IDE / интерфейсы</strong></td>
+          <td>Терминал, Desktop, Web-режим (claude.ai/code), мобильный мост, IDE-плагины</td>
+          <td>Терминал основной + Desktop. Мобильный мост — не пробовали</td>
+          <td>Не разбирали — отдельный материал</td>
+        </tr>
+        <tr>
+          <td><strong>11. Модели</strong></td>
+          <td>Opus / Sonnet / Haiku — разные по силе и цене</td>
+          <td>Я работаю на Opus. Под-агенты на Haiku где можно</td>
+          <td>Не разбирали — отдельный материал по экономии лимита</td>
+        </tr>
+        <tr>
+          <td><strong>12. Tool use</strong></td>
+          <td>Встроенные инструменты: Read, Bash, Edit, Write, Glob, Grep, WebSearch, WebFetch, TodoWrite</td>
+          <td>Используем все, для каждого есть свои правила в CLAUDE.md/guards.md</td>
+          <td>Косвенно в Уроке 1 (CLAUDE.md). Отдельно не разбирали</td>
+        </tr>
+        <tr>
+          <td><strong>13. Project structure</strong></td>
+          <td>Конвенции <code class="inline">CLAUDE.md</code>, скрытая папка <code class="inline">.claude/</code> (rules, hooks, skills, agents, settings)</td>
+          <td>Полностью используем — это «дом» нашего агента</td>
+          <td><a href="lesson1.html">Урок 1</a> (CLAUDE.md), <a href="lesson4.html">Урок 4</a> (.claude/rules), <a href="#permissions">Секция 4</a> здесь (Permissions)</td>
+        </tr>
+        <tr>
+          <td><strong>14. Backup &amp; Security</strong></td>
+          <td>Встроенный <code class="inline">.claude/backups/</code> (для <code class="inline">/rewind</code>) + slash <code class="inline">/security-review</code></td>
+          <td><strong>Backup — выбрали своё</strong> (см. подсекцию ниже). Security-review — используем</td>
+          <td><a href="lesson10.html">Урок 10 «Безопасность»</a> детально + кейс ниже</td>
+        </tr>
+        <tr>
+          <td><strong>15. Экосистема Anthropic</strong></td>
+          <td>claude.ai (браузер), Claude API, Cowork (наша подписка), Anthropic Skills marketplace</td>
+          <td>Cowork основной канал. claude.ai в браузере — для просмотра</td>
+          <td>Lead 1 этого урока (уточнение про разницу)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Worktrees</strong> — отдельная фича категории 13 (Project structure), особенность Cowork-Desktop. Разберём в <a href="#modes">Секции 5</a> вместе с Plan Mode как «режимы работы».</p>
+
+    <p><strong>В этом уроке детально</strong> разберём 4 категории: <strong>Память</strong> (Секция 3, как контраст с нашей надстройкой), <strong>Permissions</strong> (Секция 4, как часть Project structure), <strong>Под-агенты</strong> (Секция 5) и <strong>Plan Mode + Worktrees</strong> (Секция 6). Их выбрали по двум критериям: (а) не имели своего отдельного урока; (б) важны для повседневной работы. Остальные 11 категорий — карта выше + ссылки на уроки, где они уже разбирались, либо помечены как «отдельный материал в будущем».</p>
+
+    <p>Полный и актуальный список Anthropic держит у себя: <strong>anthropic.com/news</strong>, <strong>claude.com/blog</strong>, <strong>раздел Release Notes</strong> в продукте. Наш <code class="inline">anthropic-changelog-watch</code> следит за всеми этими источниками ежедневно (см. начало урока).</p>
+
+    <h3>Кейс: Backup — когда мы осознанно отказались от встроенного наполнения</h3>
+
+    <p>Из 15 категорий рельс — в 14-й мы сделали редкий выбор: <strong>отказались от встроенного наполнения и положили своё</strong>. Это полезный паттерн.</p>
+
+    <p><strong>Что предлагает Anthropic из коробки.</strong> Папка <code class="inline">.claude/backups/</code> — Claude Code сам сохраняет туда последние сессии, чтобы команда <code class="inline">/rewind</code> могла откатить файл к предыдущему состоянию. Это полезно внутри одной сессии: «отмени последнее действие». Хранится локально на вашем Mac.</p>
+
+    <p><strong>Чего нам не хватало.</strong> Встроенный backup решает короткую задачу (отменить шаг внутри сессии). Но он <em>не закрывает</em> длинную задачу: «если Mac полетит, у меня осталась резервная копия рабочей папки на внешнем носителе». Локальный бэкап на самом же Mac — не страховка от потери Mac.</p>
+
+    <p><strong>Что сделали.</strong> Написали свой скрипт <code class="inline">scripts/backup-to-drive.mjs</code>, который раз в неделю (суббота 11:00 через <code class="inline">launchd</code>) архивирует ядро рабочей папки и заливает на <strong>Google Drive</strong> в отдельную папку. Архив включает: scripts/, memory/ (без транскриптов), telegram-bot/ без node_modules, .claude/rules + .claude/hooks, Auto-memory из <code class="inline">~/.claude/projects/.../memory/</code>. Размер архива ~1.2 ГБ, версия каждой недели остаётся отдельным файлом — можно откатиться на месяц назад.</p>
+
+    <p><strong>Что не делали и почему.</strong> Встроенный <code class="inline">.claude/backups/</code> мы не отключали — пусть работает для команды <code class="inline">/rewind</code>, она ничему не мешает. Просто не полагаемся на неё как на единственный backup. Это тонкость осознанного выбора: <em>встроенное оставляем работать в его задаче, а свою — закрываем своим решением</em>.</p>
+
+    <p><strong>Урок паттерна для вас.</strong> Когда смотрите на встроенную рельсу: (1) поняли её задачу — что Anthropic решал? (2) совпадает ли с вашей задачей? (3) если совпадает — наполняйте встроенное, не плодите дубль. (4) если не совпадает — пишите своё, но осознанно, понимая что встроенное закрывает. Иначе получите два конкурирующих решения, которые расходятся со временем (Камень 2 в <a href="lesson5plus.html">Уроке 5+</a>).</p>
+
+    <!-- ========== 3. AUTO-MEMORY ========== -->
+
+    <h2 id="memory">3. Auto-memory — личная память агента про вас</h2>
+
+    <p><strong>Что это.</strong> Встроенная папка-память на вашем Mac (<code class="inline">~/.claude/projects/&lt;путь-проекта&gt;/memory/</code>), в которую Claude Code сам пишет факты о вас, ваших правилах, проектах. Память переживает закрытие сессии — агент помнит, кто вы и какие у вас предпочтения, без вашего участия.</p>
+
+    <p><strong>Подробный разбор</strong> — что и куда пишется, кто ведёт, как меняется, плюс <strong>наша история «38 дней не знала»</strong> с полным таймлайном — в <a href="lesson5plus.html">Уроке 5+ «Карта памяти агента»</a> (Глава 2 + врезка «Наш опыт»). Здесь, в Уроке 12, — только то, что специфично для нашей темы: место Auto-memory среди пяти встроенных механизмов и контраст с нашей надстройкой регламентов.</p>
+
+    <h3>Что было бы без Auto-memory и без вашей системы регламентов</h3>
+
+    <p>Auto-memory — про <em>вас</em>. on_demand_rules + skills + playbooks — про <em>работу</em>. Это разные слои, и без каждого ломается своё:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Что было бы без Auto-memory</th>
+          <th>Что было бы без on_demand_rules / skills / playbooks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Каждое утро агент заново узнаёт, кто вы и какие у вас предпочтения. Лечится одним стартовым промптом: «привет, я CMO, не люблю длинные ответы»</td>
+          <td>Skills (<code class="inline">/reviews-weekly</code>, <code class="inline">/telegram-messaging</code>) не запускались бы — каждую процедуру пришлось бы объяснять с нуля</td>
+        </tr>
+        <tr>
+          <td>Невозможно «забудь, что я тебе говорил про X»: разговор есть, но не зафиксирован как факт. Лечится явным «запомни»</td>
+          <td>Playbooks (как делать недельный отчёт, как разбирать встречу) — не было бы алгоритма, каждая задача шла бы как первая</td>
+        </tr>
+        <tr>
+          <td>Между сессиями теряется тонкая обратная связь («не упоминай руководителей в ответах на отзывы»). Лечится повторением правки 1-2 раза</td>
+          <td>on_demand_rules.md — каждое утро вы бы заново объясняли «что делать с отзывами», «как готовится дайджест»</td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align: center; font-style: italic; color: var(--ink-light);">STATE.yaml и handoff — слой между сессиями (Урок 2), они ортогональны и Auto-memory, и регламентам. Без них теряется передача смены</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Связь с темой урока.</strong> Именно с Auto-memory у нас случился кейс 38-дневного незнания: встроенная рельса работала в фоне, я о ней не знала, учила учеников делать руками поверх. Этот класс ошибок — «строить надстройку поверх того, что уже встроено» — и есть главная боль, от которой защищает Урок 12. Карта 15 категорий рельс в Секции 2 — чтобы вы хотя бы раз прошлись и знали, что у вас уже есть из коробки и где наполнение Anthropic, а где ваше.</p>
+
+    <!-- ========== 4. PERMISSIONS ========== -->
+
+    <h2 id="permissions">4. Permissions — разрешения на действия</h2>
+
+    <p><strong>Что это.</strong> Когда агент хочет сделать что-то на вашем компьютере (открыть файл, запустить команду в терминале, обратиться к внешней системе), Claude Code спрашивает разрешение: «можно?». Без этой защиты агент мог бы сделать что угодно за миллисекунду. Permissions — это списки <strong>«разрешено по умолчанию»</strong> и <strong>«запрещено навсегда»</strong>, чтобы вы не нажимали «да-да-да» на каждый шаг.</p>
+
+    <p><strong>Где живёт.</strong> В вашей рабочей папке есть скрытая папка <code class="inline">.claude/</code>. Внутри — два файла настроек:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Файл</th>
+          <th>Назначение</th>
+          <th>Кто видит</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>settings.json</code></td>
+          <td>Общие настройки команды или проекта</td>
+          <td>Все, кто работает с этой папкой</td>
+        </tr>
+        <tr>
+          <td><code>settings.local.json</code></td>
+          <td>Личные настройки только для вашего компьютера</td>
+          <td>Только вы (не уходит в общий доступ)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Внутри каждого — три блока: <strong>permissions</strong> (что можно/нельзя), <strong>hooks</strong> (мы их разбирали в Уроке 5), <strong>env</strong> (переменные окружения, например пути к внешним программам).</p>
+
+    <p><strong>Как пощупать.</strong> Скажите агенту: «открой файл <code class="inline">.claude/settings.local.json</code> и покажи блок permissions». Вы увидите два списка: <code class="inline">allow</code> (разрешено без вопросов) и <code class="inline">deny</code> (запрещено всегда, даже если попросите). Например, у меня в <code class="inline">deny</code> стоит запрет на <code class="inline">git push --force</code> — это не отменишь без явного редактирования файла, и это правильно: такие операции необратимы.</p>
+
+    <h3>Когда возникают запросы и кто ставит правила</h3>
+
+    <p>Запрос на разрешение появляется в трёх случаях: (а) агент хочет запустить <strong>команду в терминале</strong> (открыть файл, выполнить скрипт, поработать с системой), (б) агент хочет обратиться к <strong>внешнему сервису</strong> через коннектор — мост к стороннему API или базе через MCP-сервер (подробно про коннекторы — в <a href="lesson6.html">Уроке 6</a>), (в) агент хочет <strong>изменить файл</strong>, который раньше не трогал. Если действие в списке <code class="inline">allow</code> — выполняется молча. Если в <code class="inline">deny</code> — отказ без обсуждения. Если ни там, ни там — открывается окно «можно?» с кнопками «разрешить раз», «всегда разрешать», «никогда не разрешать».</p>
+
+    <p><strong>Кто формирует эти списки</strong> — четыре источника, в порядке приоритета:</p>
+
+    <ol>
+      <li><strong>Anthropic</strong> кладёт базовые запреты по умолчанию (опасные системные команды) — это вшито в Claude Code, не редактируется</li>
+      <li><strong>Cowork</strong> при установке добавляет свои правила — наши общие настройки безопасности для всех, кто работает через нашу подписку</li>
+      <li><strong>Мы с вами</strong> добавляем при настройке агента — это и есть содержимое <code class="inline">settings.json</code> в рабочей папке</li>
+      <li><strong>Вы лично</strong> через кнопку «всегда разрешать» в момент запроса — это попадает в <code class="inline">settings.local.json</code> (видите только вы)</li>
+    </ol>
+
+    <p><strong>Как это устроено в нашей рабочей папке:</strong> в <code class="inline">deny</code> — операции, после которых работу не вернёшь (<code class="inline">git push --force</code>, <code class="inline">rm -rf</code>, <code class="inline">values.clear()</code> для Google Sheets — последняя добавлена после катастрофы 19.03, когда я случайно затёрла лист с формулами Ирины). В <code class="inline">allow</code> — частые рабочие команды, которые не опасны (<code class="inline">git status</code>, чтение файлов проекта, запуск наших скриптов в папке <code class="inline">scripts/</code>). Когда у вас появится свой агент — стартовый набор будет похожим, и вы будете дополнять под свои задачи: разрешать частое, запрещать необратимое.</p>
+
+    <div class="red-warning">
+      <div class="label">Опасная кнопка</div>
+      <h3>Флаг <code>--dangerously-skip-permissions</code></h3>
+      <p>У Claude Code есть флаг запуска, который отключает все разрешения сразу — агент не спрашивает ни о чём и делает всё подряд. Он нужен для автоматических сценариев, где разговаривать некому (например, наш <code class="inline">claude_loop</code>, см. ниже). <strong>В обычной интерактивной работе он не нужен и опасен.</strong> Если кто-то решит «давайте включим, чтобы не отвлекало» — это значит человек не понял, зачем permissions существуют. Запускать с этим флагом можно только то, что заранее ограничено deny-списком и работает в изолированной папке.</p>
+      <p><strong>Где у нас используется флаг.</strong> Только в одном месте — в <code class="inline">claude_loop</code> у Ли. Это bash-скрипт, который запускает Claude CLI с этим флагом в фоне, чтобы Telegram-бот «Ли» мог сам отвечать на сообщения. Никто из людей в этот режим руками не лезет — туда уходят только сообщения через бот, и работает он в той же рабочей папке с ограничениями (запрещены <code class="inline">git push --force</code>, <code class="inline">rm -rf</code>, перетирание Google Sheets). В терминальной работе со мной флаг не используется — я каждый раз спрашиваю разрешение или беру его из <code class="inline">allow</code>-списка.</p>
+    </div>
+
+    <!-- ========== 5. SUB-AGENTS ========== -->
+
+    <h2 id="subagents">5. Под-агенты — отдельный мозг под тяжёлую задачу</h2>
+
+    <p><strong>Что это.</strong> Иногда задача требует прочитать 50 файлов или сделать большой веб-поиск. Если делать это в основном разговоре — вся прочитанная информация остаётся в памяти текущей сессии и забивает контекст: лимит токенов кончается быстрее, ответы становятся медленнее. Под-агент — это способ <strong>выделить тяжёлую часть в отдельный «контейнер»</strong>, где он сделает работу, вернёт короткий ответ — и забудет всё лишнее.</p>
+
+    <div class="analogy">
+      <h4>Аналогия</h4>
+      <p>Представьте, что у вас на столе один блокнот, и в нём вы держите все рабочие задачи. Если попросить коллегу «найди мне в архиве все договоры за 2024 год и скажи общую сумму» — он принесёт цифру, а не целый шкаф архива на стол. Под-агент работает так же: уходит в отдельную комнату, делает грязную работу, возвращается с результатом.</p>
+    </div>
+
+    <p><strong>Готовые типы под-агентов в реальной работе.</strong> Это ревизия — список с пояснением, чтобы вы видели полную картину. Все они <strong>встроенные</strong>: либо из коробки Claude Code, либо из плагинов Anthropic. Своих кастомных в активной работе у нас сейчас нет (про это — честно ниже).</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Под-агент</th>
+          <th>Откуда</th>
+          <th>Когда вызывается</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Explore</strong></td>
+          <td>Anthropic, из коробки</td>
+          <td>Быстрый поиск в коде или папке: «найди все упоминания Камилы в правилах»</td>
+        </tr>
+        <tr>
+          <td><strong>Plan</strong></td>
+          <td>Anthropic, из коробки</td>
+          <td>Построение плана работы перед сложной задачей</td>
+        </tr>
+        <tr>
+          <td><strong>general-purpose</strong></td>
+          <td>Anthropic, из коробки</td>
+          <td>Универсальный исследователь — для веб-поиска и многошаговых задач</td>
+        </tr>
+        <tr>
+          <td><strong>claude-code-guide</strong></td>
+          <td>Плагин Anthropic Skills</td>
+          <td>Ответы на вопросы про сам Claude Code: фичи, хуки, slash-команды</td>
+        </tr>
+        <tr>
+          <td><strong>statusline-setup</strong></td>
+          <td>Плагин Anthropic Skills</td>
+          <td>Настройка строки статуса (нижняя панель терминала)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="case">
+      <h4>Честно про кастомных под-агентов: пока не получилось</h4>
+      <p>Мы делали два эксперимента — <code class="inline">content-director</code> под лендинг курса и <code class="inline">smm-manager</code> под SMM-задачи. Оба не прижились в практике. Первый отключили как неэффективный, второй ни разу не вызвали в реальной работе.</p>
+      <p><strong>Почему.</strong> Кастомный под-агент полезен в паттерне «отдай ТЗ → получи готовый артефакт». А наша реальная работа — итеративная: я правлю → Ирина читает → даёт фидбек → я правлю снова. Под-агенту в этом потоке места нет — он не видит наш диалог в реальном времени, и каждый раз передавать ему контекст вручную неудобнее, чем работать напрямую.</p>
+      <p><strong>Когда найдём паттерн, в котором кастомный под-агент даст реальную пользу — поделимся опытом отдельным материалом.</strong> Создание своих под-агентов — большая отдельная тема, и без живых кейсов рассказывать о ней — теория ради теории. Пока что у вас на старте достаточно встроенных пяти.</p>
+    </div>
+
+    <p><strong>Как посмотреть что есть у вас.</strong> Откройте своего агента и попросите: «покажи список доступных под-агентов и где они лежат». Часть будет в <code class="inline">.claude/agents/</code> в рабочей папке (это локальные, специально под ваши задачи), часть — в глобальной папке <code class="inline">~/.claude/agents/</code> (доступны всем сессиям), часть — встроенные Claude Code и плагины. Если список длиннее пяти-шести пунктов, и вы не помните, что они делают, — это сигнал провести ревизию: оставить нужное, остальное архивировать.</p>
+
+    <p><strong>Как вызвать.</strong> Имена под-агентов знать не нужно — формулируйте задачу естественно: «найди у нас правила про отзывы», «сделай ресёрч на тему X», «прочитай этот файл и верни сводку». Агент сам решает, нужен ли тут под-агент и какой именно. Ваше дело — задача и критерии. Если хотите принудительно — можно сказать «отдай это под-агенту», но обычно агент справляется без подсказок.</p>
+
+    <p><strong>Когда вызывать.</strong> Три признака, что задача — для под-агента:</p>
+
+    <ol>
+      <li>Нужно <strong>прочитать много файлов</strong> и вернуть короткий вывод</li>
+      <li>Нужно <strong>веб-исследование</strong> (несколько сайтов, статьи, документация)</li>
+      <li>Нужна <strong>отдельная пара глаз</strong> на готовый результат — например, ревизор перед публикацией</li>
+    </ol>
+
+    <!-- ========== 6. MODES ========== -->
+
+    <h2 id="modes">6. Plan Mode и Worktrees — режимы работы</h2>
+
+    <h3>Plan Mode — план перед действием</h3>
+
+    <p><strong>Что это.</strong> Встроенный в Claude Code режим, в котором агент <strong>сначала пишет план</strong> по задаче — что собирается сделать, в каком порядке, какие файлы тронет — и только после вашего «ок» начинает работать. Без Plan Mode агент может броситься делать сразу: иногда правильно, иногда нет, и тогда вы ловите проблему уже в готовом результате.</p>
+
+    <p><strong>Как включать.</strong> Сочетанием Shift+Tab в окне терминала Claude Code — нажимаете и переключаетесь между обычным режимом, Auto-accept и Plan Mode. Текущий режим виден внизу терминала. Пока Plan Mode активен — перед каждым действием появляется пауза с планом и кнопкой «approve».</p>
+
+    <h4>Plan Mode и наши стадии S1–S7 — в чём разница</h4>
+
+    <p>В Уроке 8 мы разобрали наши <strong>стадии S1–S7</strong> (классификатор → критик-вход → планировщик → вспоминатель → исполнитель → критик-выход → архиватор). Plan Mode тоже про «подумать перед действием», но это <strong>другой инструмент</strong>:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Plan Mode (встроенный)</th>
+          <th>Наши стадии S1–S7</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Глубина</strong></td>
+          <td>Один план перед действием</td>
+          <td>Семь шагов с раздельной ответственностью каждого</td>
+        </tr>
+        <tr>
+          <td><strong>Принудительность</strong></td>
+          <td>Включаешь сам, можно забыть</td>
+          <td>Хук блокирует действие если стадии не заполнены — забыть нельзя</td>
+        </tr>
+        <tr>
+          <td><strong>След</strong></td>
+          <td>План в чате, исчезает с историей</td>
+          <td>Стадии в файле <code class="inline">/tmp/li-stages.json</code> — можно посмотреть позже</td>
+        </tr>
+        <tr>
+          <td><strong>Кому подходит</strong></td>
+          <td>Любой пользователь Claude Code, с первого дня</td>
+          <td>Зрелая система с хуками — у энтузиаста появляется на втором месяце работы</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Как использую сама.</strong> Я в обычной работе <strong>не включаю</strong> Plan Mode отдельно. Каждая значимая задача у меня принудительно проходит через хук <code class="inline">pre-task-stages-check.sh</code>: если я не заполнила <code class="inline">/tmp/li-stages.json</code> с описанием S1–S4 (постановка, риски, автономия, контекст) — следующее действие блокируется. Plan Mode у меня встроен в этот хук на более глубоком уровне, поэтому отдельная команда не нужна.</p>
+
+    <p><strong>Что значит для энтузиаста.</strong> Пока ваша система ещё растёт и хуков нет — Plan Mode даёт <strong>минимальную</strong> защиту от «бросилась делать». Включайте на сложных задачах: правка нескольких файлов, действия в Sheets, отправка в групповой чат. Когда наработаете опыт и поставите свои хуки — переключитесь на полную систему стадий, как у нас.</p>
+
+    <h3>Worktrees — песочница для одной сессии (только Desktop)</h3>
+
+    <p><strong>Что это и для чего.</strong> Когда вы запускаете в Claude Code Desktop большую и рискованную задачу (правка многих файлов, эксперимент с новой структурой), есть страх «вдруг агент сломает текущую работу». Worktree — это <strong>отдельная копия</strong> вашей рабочей папки, в которой агент работает <strong>как будто в песочнице</strong>. Пока вы там — оригинал не меняется. Если эксперимент удался — переносите изменения в основную папку (это и есть «мерж» — слияние двух веток в одну). Если нет — закрываете и оригинал не пострадал.</p>
+
+    <p><strong>Где встретить.</strong> При запуске сессии в Claude Code Desktop у некоторых версий есть выбор: «обычный режим» / «работать в worktree». Это и есть тот самый момент, в который легко промахнуться: видите две кнопки, не понимаете разницу, выбираете worktree — и оказываетесь в копии папки, не в оригинале.</p>
+
+    <div class="case">
+      <h4>Если вы случайно выбрали worktree и не поняли что происходит</h4>
+      <p><strong>Не паникуйте — оригинальная папка не тронута.</strong> Что бы агент ни сделал в worktree, всё это в копии. Просто закройте сессию и откройте новую в обычном режиме — увидите свою прежнюю папку нетронутой. Это и есть смысл worktree: песочница, в которой <em>не страшно</em> что-то сломать.</p>
+    </div>
+
+    <p><strong>Когда стоит выбирать worktree сознательно.</strong> Когда задача рискованная и вы хотите попробовать <strong>«как будто»</strong> — переименовать структуру папок, поменять архитектуру, провести большой рефакторинг. Если результат нравится — переносите в оригинал. Если нет — выкидываете worktree, ничего не теряете.</p>
+
+    <p><strong>Когда не стоит.</strong> В обычной ежедневной работе с привычными правками. Worktree усложняет: после сессии файлы лежат в копии, и нужно отдельно решать «забирать в оригинал или выкинуть». Для энтузиаста на старте — обычный режим без worktree, и так всё хорошо.</p>
+
+    <p><strong>Особенность нашей подписки Cowork.</strong> У меня (Ирининого агента Ли в Cowork) Claude Code Desktop <strong>всегда</strong> создаёт worktree для каждой сессии — это отключить нельзя, особенность Cowork. Поэтому в нашем CLAUDE.md есть правило «работай через абсолютные пути»: в копии папки нет наших файлов в привычных местах, все пути нужно указывать полностью от корня. Если вы работаете НЕ через Cowork (например, через обычную подписку Claude Code) — у вас worktree включается только когда вы сами его выбрали.</p>
+
+    <!-- ========== 7. MISTAKES ========== -->
+
+    <h2 id="mistakes">7. Камни: чего не делать с этими механизмами</h2>
+
+    <h3>Камень 1. Включить «опасную кнопку» permissions без подготовки</h3>
+    <p>Самая частая ошибка — раздражение «снова спрашивает» и включение <code class="inline">--dangerously-skip-permissions</code> «чтобы не отвлекало». В этот момент агент перестаёт быть управляемым: один неаккуратный запрос — и вы потеряли важный файл. <strong>Правильный путь:</strong> добавить часто разрешаемое в <code class="inline">allow</code>-список (тогда не будет запрашивать, но опасные команды останутся под защитой), а не отключать защиту целиком.</p>
+
+    <h3>Камень 2. Запускать пять под-агентов на тяжёлой модели подряд</h3>
+    <p>Каждый под-агент — отдельная мини-сессия, которая жжёт ваш токен-лимит. Шесть под-агентов на самой мощной модели за час однажды стоили мне рабочего вечера: лимит закончился, нужно было ждать. <strong>Правильный путь:</strong> группируйте задачи под одного под-агента, ставьте простые задачи на быструю/дешёвую модель, под-агентов на самой мощной модели держите для действительно сложных задач.</p>
+    <p><strong>Как технически переключить под-агента на дешёвую модель — пригодится, когда у вас появится свой кастомный.</strong> В файле кастомного под-агента (<code class="inline">.claude/agents/&lt;имя&gt;.md</code>) сверху есть «шапка» с настройками — там поле <code class="inline">model</code>:</p>
+    <pre>---
+name: мой-под-агент
+model: sonnet      # вот это поле
+tools: Read, Bash
+---</pre>
+    <p>Поставили <code class="inline">sonnet</code> — все вызовы этого агента пойдут на Sonnet (по сравнению с Opus примерно в пять раз дешевле). Можно поставить <code class="inline">haiku</code> для совсем простых поисковых задач — ещё дешевле. Если поле не указано — берётся модель родительской сессии. Для встроенных под-агентов (Explore, Plan, general-purpose) Anthropic сам ставит разумные дефолты — обычно не самую тяжёлую модель.</p>
+
+    <h3>Камень 3. Не понимать, что Plan Mode и стадии — об одном</h3>
+    <p>Иногда у новичков складывается ощущение «вот наша система стадий, а Plan Mode — это другое, его тоже надо учить». На самом деле обе вещи решают одну задачу: <strong>заставить агента подумать перед действием</strong>. Plan Mode — встроенная упрощённая версия, наши стадии S1–S7 — расширенная и принудительная через хуки. Они сосуществуют, не конкурируют. На простой задаче хватит Plan Mode; на регулярной рабочей — наша система стадий с записью bugs-log.</p>
+
+    <h3>Камень 4. Думать, что Auto-memory заменит нашу систему регламентов</h3>
+    <p>Auto-memory — про <strong>вас</strong>: ваш стиль, ваши правила общения, ваши проекты на уровне фактов. Наша система регламентов (CLAUDE.md, on_demand_rules.md, skills, playbooks) — про <strong>работу</strong>: процессы, чек-листы, защиту от ошибок. Это разные слои. Не пытайтесь перенести бизнес-процессы в Auto-memory — там они потеряются среди личных записей. И наоборот: не записывайте «мне нравится короткий тон» в наш CLAUDE.md — это не правило процесса.</p>
+
+    <!-- ========== 8. PRACTICE ========== -->
+
+    <h2 id="practice">8. Практика: 15 минут на инвентаризацию</h2>
+
+    <p>Цель — пощупать руками 4 категории, которые мы детально разобрали в этом уроке (Auto-memory, Permissions, Под-агенты, Plan Mode). Worktree пощупать нельзя «вручную», он работает в фоне.</p>
+
+    <div class="checklist">
+      <h4>Если у вас уже есть свой агент</h4>
+      <ul>
+        <li>Спросите агента: «Покажи мою папку <code class="inline">~/.claude/projects/</code>». Откройте в файловом менеджере. Найдите подпапку <code class="inline">memory/</code> внутри своего проекта. Посмотрите, какие там файлы и что в них</li>
+        <li>Скажите агенту: «Открой <code class="inline">.claude/settings.local.json</code> и покажи блок <code class="inline">permissions</code>». Прочитайте список <code class="inline">allow</code> и <code class="inline">deny</code>. Спросите себя: что-то здесь кажется лишним или опасным?</li>
+        <li>Дайте агенту простую задачу: «Через под-агента Explore найди все упоминания моего имени в моих правилах». Заметьте, что обычная сессия не загружается результатами поиска — пришёл только короткий ответ</li>
+        <li>На следующей сложной задаче (правка нескольких файлов или новый отчёт) включите Plan Mode: «Сделай план перед действием». Сравните ощущение с обычным режимом</li>
+      </ul>
+    </div>
+
+    <div class="checklist">
+      <h4>Если агента ещё нет</h4>
+      <ul>
+        <li>Откройте на компьютере папку <code class="inline">~/.claude/</code> (через Finder, Shift+Cmd+G). Если её нет — это нормально, она появится после первого запуска Claude Code</li>
+        <li>Запишите на отдельной странице, какие из 15 категорий рельс (карта в Секции 2) вам особенно нужны на старте. Например: «у меня много сложных задач — начну с Plan Mode», «не хочу терять заметки между сессиями — посмотрю на Auto-memory в первый день», «нужно подключить Telegram — копну MCP / коннекторы»</li>
+        <li>Когда будете запускать первого агента — на первом часе работы пройдитесь по этому уроку и пощупайте каждое</li>
+      </ul>
+    </div>
+
+    <!-- ========== 9. CLOSURE ========== -->
+
+    <div class="checklist" style="background: #FFF2F0; border-left: 4px solid var(--red); margin: 32px 0;">
+      <h4 id="claudemd" style="color: var(--red); margin-bottom: 12px;">✅ Закрепить в CLAUDE.md</h4>
+      <p>Знание из урока становится правилом агента только когда записано в CLAUDE.md. Без этого шага вы продолжите включать опасные флаги «потому что отвлекает», а под-агентов будете запускать вслепую — и потеряете лимит за час.</p>
+      <p><strong>Действие на 2 минуты.</strong> Откройте своего агента и скажите:</p>
+      <div class="case" style="margin: 12px 0; padding: 14px 18px;">
+        <p class="ask" style="margin: 0;">«Я прошёл Урок 12 "Под капотом Claude Code". Добавь в CLAUDE.md правило: (1) флаг --dangerously-skip-permissions использовать только в автоматических сценариях, не в интерактивной работе; (2) тяжёлые задачи (чтение многих файлов, веб-поиск) — через под-агента, не в основном контексте; (3) перед сложной задачей с правкой нескольких файлов — включать Plan Mode или проходить наши стадии S1–S2.»</p>
+      </div>
+      <p><strong>Проверка:</strong> откройте CLAUDE.md, убедитесь что правило добавлено. Если нет — повторите запрос конкретнее.</p>
+    </div>
+
+    <!-- ========== 10. SUMMARY ========== -->
+
+    <h2 id="summary">10. Шпаргалка</h2>
+
+    <div class="summary-box">
+      <h3>Три вещи, которые обязательно уйдут с вами из урока</h3>
+      <ul>
+        <li><strong>15 категорий рельс Anthropic — карта того, что у вас уже есть из коробки.</strong> Память (Auto-memory), Skills, Под-агенты, Хуки, Slash-команды, Расписания, Plan Mode, Plugins, MCP, IDE, Модели, Tool use, Project structure, Backup &amp; Security, Экосистема. Не все сразу нужны, но знать, что они есть — обязательно. Иначе риск 38-дневного незнания, как у нас с Auto-memory.</li>
+        <li><strong>Модель «рельсы + наполнение».</strong> Anthropic даёт механизм (рельсы), мы кладём содержимое (поезда). Хуки — рельсы, наши 47 sh-скриптов — поезда. Skills — рельсы, наш <code class="inline">/reviews-weekly</code> — поезд. Прежде чем строить надстройку — посмотрите, нет ли рельсы под вашу задачу. Если есть — наполняйте её, не плодите дубль. Если решаете уйти от встроенного — делайте осознанно (как мы с Backup, см. кейс в Секции 2).</li>
+        <li><strong>Опасные кнопки трогать только осознанно.</strong> Флаг <code>--dangerously-skip-permissions</code>, прямое редактирование Auto-memory, запуск пяти тяжёлых под-агентов подряд — всё это работающие механизмы, но без понимания они стоят денег и времени.</li>
+      </ul>
+      <h3>Как проверить что урок усвоен</h3>
+      <p>Если вы (а) знаете, в какой папке на вашем компьютере живёт Auto-memory; (б) умеете показать в settings свой <code>allow</code>-список; (в) на следующей сложной задаче включили Plan Mode сами без напоминания — урок усвоен.</p>
+      <h3>Следующий урок</h3>
+      <p>Урок 13 — <strong>Самоаудит агента: готов ли он работать сам</strong>, 17 мая. Финальная ревизия системы плюс наша главная надстройка для отката — git. Все правила на месте, память связна, изменения отслежены — это и есть точка, после которой агент действительно работает с вами на равных.</p>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Внедрение ИИ в Стардогс · Блок 2 · Урок 12 из 13 · 13 мая 2026
+  </div>
+</footer>
+
+</body>
+</html>
