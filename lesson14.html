@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 1 Блока 3. Работа с задачами: первая сессия</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --green: #2E7D4F;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: var(--text); background: var(--white); line-height: 1.6; font-size: 16px; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  header { background: var(--navy); color: var(--white); padding: 20px 0; }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--white); padding: 60px 0 40px; text-align: center; }
+  .hero .label { color: var(--accent); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  .hero h1 { font-size: 32px; font-weight: 800; max-width: 680px; margin: 0 auto 12px; line-height: 1.15; }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+  .hero .meta strong { color: var(--accent); }
+  main { padding: 40px 0 80px; }
+  h2 { font-size: 22px; color: var(--navy); font-weight: 800; margin: 36px 0 14px; scroll-margin-top: 70px; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 16px; color: var(--navy); font-weight: 700; margin: 18px 0 8px; }
+  p { margin-bottom: 12px; }
+  p.lead { font-size: 16px; color: var(--text); padding: 16px 20px; background: var(--navy-bg); border-left: 4px solid var(--navy); border-radius: 6px; margin-bottom: 28px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  ul li, ol li { margin-bottom: 6px; }
+  strong { color: var(--navy); }
+  .ref { color: var(--gray); font-size: 13px; font-style: italic; display: block; margin-top: 8px; }
+  .step { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 6px; padding: 16px 20px; margin: 14px 0; }
+  .step .num { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .step .title { font-size: 17px; font-weight: 700; color: var(--navy); margin: 4px 0 10px; }
+  .step .time { color: var(--gray); font-size: 13px; font-weight: normal; }
+  .step ul, .step ol { margin-bottom: 0; }
+  .ask { background: var(--navy-bg); border-left: 3px solid var(--navy-light); padding: 10px 14px; border-radius: 4px; margin: 10px 0; font-style: italic; color: var(--navy); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--navy-bg); color: var(--navy); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td code { background: var(--navy-bg); padding: 2px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; color: var(--navy); }
+  code.inline { background: var(--navy-bg); padding: 2px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 14px; color: var(--navy); }
+  pre { background: var(--navy); color: var(--white); padding: 14px 18px; border-radius: 6px; overflow-x: auto; margin: 12px 0; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; line-height: 1.5; }
+  .summary-box { background: var(--navy); color: var(--white); padding: 22px 26px; border-radius: 8px; margin: 28px 0; }
+  .summary-box h3 { color: var(--accent); margin-top: 0; font-size: 16px; }
+  .summary-box ul { padding-left: 18px; }
+  .summary-box ul li { margin-bottom: 6px; }
+  .summary-box strong { color: var(--white); }
+  .next-session { background: var(--accent-bg); border-left: 4px solid var(--accent); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
+  .next-session h3 { color: var(--accent); margin-top: 0; font-size: 16px; }
+  .claudemd-box { background: #FFF2F0; border-left: 4px solid var(--red); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
+  .claudemd-box h3 { color: var(--red); margin-top: 0; font-size: 16px; }
+  footer { background: var(--navy-bg); padding: 24px 0; text-align: center; font-size: 13px; color: var(--gray); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Блок 3 · Урок 1 · Первая сессия</div>
+    <h1>Работа с задачами:<br>первая сессия по шагам</h1>
+    <div class="meta"><strong>5 минут читать · 30 минут делать</strong></div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">Блок 2 закончился — вы знаете архитектуру агента. Этот урок — <strong>10 физических шагов первой сессии</strong>: что делать руками от создания папки до закрытия Claude. Без воды. Каждый шаг — короткая инструкция с готовой фразой агенту и ссылкой на источник.</p>
+
+    <h2>Перед стартом — что должно быть установлено</h2>
+
+    <p>До первой сессии нужны две программы. Если что-то из этого у вас уже стоит — пропустите.</p>
+
+    <div class="step">
+      <div class="num">УСТАНОВКА 1</div>
+      <div class="title">Claude Cowork (Desktop) <span class="time">· 5 мин</span></div>
+      <ul>
+        <li>Скачайте с <a href="https://claude.ai/download" target="_blank" style="color: var(--navy-light);">claude.ai/download</a> — выберите версию для своей системы (Mac или Windows).</li>
+        <li>Установите как обычное приложение, войдите под своей рабочей подпиской.</li>
+        <li>Проверка: иконка Claude в Dock (Mac) или в меню Пуск (Windows). Открывается — видите окно Cowork.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <div class="num">УСТАНОВКА 2</div>
+      <div class="title">git — история файлов <span class="time">· 5 мин</span></div>
+      <p>git — это программа которая ведёт историю всех изменений в вашей рабочей папке. Без неё нельзя откатить случайную правку, нельзя безопасно работать с токенами (нужен <code class="inline">.gitignore</code>) и нельзя синхронизироваться с командой. Это базовый инструмент работы с файлами на компьютере — пригодится не только для агента.</p>
+      <p style="margin-bottom: 8px; font-size: 14px;"><strong>Сначала проверка:</strong> откройте терминал (Mac: Spotlight → «Terminal» → Enter; Windows: «Командная строка» или «PowerShell» в меню Пуск), наберите <code class="inline">git --version</code>. Если показалась версия (например <code class="inline">git version 2.43.0</code>) — всё уже стоит, переходите к ШАГу 1. Если выдало ошибку — установите ниже.</p>
+      <ul>
+        <li><strong>Mac:</strong> после ошибки macOS сама предложит установить «Xcode Command Line Tools». Соглашайтесь, нажмите «Install». ~5 минут, никаких настроек. Потом повторите <code class="inline">git --version</code> — увидите версию.</li>
+        <li><strong>Windows:</strong> у Windows-пользователей git обычно уже стоит (он часто идёт в комплекте с инструментами разработки). Если случайно нет — скачайте с <a href="https://git-scm.com/download/win" target="_blank" style="color: var(--navy-light);">git-scm.com/download/win</a>, запустите установщик, во всех окнах оставляйте настройки по умолчанию (Next → Next → Install). После установки откройте новый терминал и проверьте <code class="inline">git --version</code>.</li>
+      </ul>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Зачем именно сейчас:</strong> в Уроке 2 Блока 3 (через 2 дня) вы будете подключать Telegram-бот и Gmail. У них есть токены — их нельзя сохранять в общий доступ. Защита от утечки строится через <code class="inline">.gitignore</code>, который требует git. Поставите сейчас — потом не отвлекаетесь.</p>
+    </div>
+
+    <h2>Шаги первой сессии</h2>
+
+    <div class="step">
+      <div class="num">ШАГ 1</div>
+      <div class="title">Создай папку для работы с агентом <span class="time">· 1 мин</span></div>
+      <ul>
+        <li><strong>Принципиально — на локальном жёстком диске, НЕ в облачной папке.</strong> Не кладите туда, где работает облачная синхронизация: на Mac — <code class="inline">~/Documents/</code> или <code class="inline">~/Desktop/</code> при включённом iCloud Drive (Documents &amp; Desktop sync); на Windows — <code class="inline">Documents</code>, <code class="inline">Desktop</code> или любая папка внутри OneDrive/Google Drive Stream. Синхронизация с облаком ломает работу агента: файлы «уходят в облако» и пропадают локально, токены могут утечь, всплывают конфликты версий.</li>
+        <li><strong>Где можно:</strong> Mac — <code class="inline">~/work/agent/</code> или <code class="inline">~/Code/agent/</code>; Windows — <code class="inline">C:\work\agent\</code> или <code class="inline">C:\Code\agent\</code> (главное — НЕ внутри папки OneDrive). Главная проверка: откройте Finder / Проводник, посмотрите на иконку папки — у облачной рядом значок облака или синей стрелочки. Должна быть обычная папка без значков синхронизации.</li>
+        <li>Назовите папку по-человечески (русским/английским — без разницы) — это «дом», где будет жить агент: вся ваша работа, все файлы, всё что вы ему доверите.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 2</div>
+      <div class="title">Создай в этой папке файл CLAUDE.md <span class="time">· 5 мин</span></div>
+      <ul>
+        <li><strong>Сначала придумайте имя для своего агента</strong> — например «Ли», «Алёша», «Помощник», «Костя». Имя нужно чтобы вам было легче с ним общаться: вместо «эй Claude напиши» получается «Ли, напиши отчёт». Чем человечнее звучит обращение — тем естественнее идёт работа. Запишете имя первой строкой шаблона.</li>
+        <li>Открой текстовый редактор (TextEdit, Notepad, что есть)</li>
+        <li>Сохрани файл с именем <code class="inline">CLAUDE.md</code> (точно так — заглавными, расширение <code class="inline">.md</code>) в папку из ШАГа 1</li>
+        <li>Заполни <strong>минимум 7 секций</strong> по шаблону ниже (секция 0 — имя)</li>
+      </ul>
+      <pre># CLAUDE.md
+
+## 0. Имя агента
+Тебя зовут [впишите своё: Ли, Алёша, Помощник…]. Когда я обращаюсь по имени — это команда тебе. Подписывайся именем в финальных результатах.
+
+## 1. Кто я и что у меня за бизнес
+Имя, роль, компания, что делаю в неделю.
+
+## 2. Рабочая директория
+Корень: ~/Документы/работа-с-Claude/
+Подпапки: проекты/, handoffs/, журнал/
+
+## 3. Что нельзя делать
+- Не отправлять ничего в чаты без моего согласия
+- Не удалять файлы без явного «удали»
+- Не утверждать цифры без проверки источника
+
+## 4. Где живут мои постоянные знания
+- проекты/ — папки по проектам
+- handoffs/ — передача смены между сессиями
+- журнал/ — что я делаю каждый день
+
+## 5. Старт сессии (важно!)
+При открытии новой сессии:
+1. Прочитай последний файл в папке handoffs/ —
+   там что было в прошлой сессии.
+2. Если папка пуста — это первая сессия, скажи об этом.
+3. Напомни мне на чём остановились.
+
+## 6. Язык
+Отвечай на русском. Технические термины — как в оригинале.</pre>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Зачем секция «Старт сессии»:</strong> агент по умолчанию читает только CLAUDE.md, но не handoffs. Без этого правила завтра он не вспомнит вчерашнее.</p>
+      <span class="ref">Источник: <a href="lesson1.html" style="color: var(--navy-light);">Урок 1</a> теории + Чек-лист 1.1 «Минимальный CLAUDE.md»</span>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 3</div>
+      <div class="title">Открой Claude Cowork <span class="time">· 30 сек</span></div>
+      <ul>
+        <li>Запусти приложение (иконка Claude в Dock или Spotlight → «Claude»)</li>
+        <li>В верхней панели выбери вкладку <strong>«Код»</strong> (в некоторых версиях называется <strong>«Local»</strong>) — это режим работы с файлами на компьютере</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 4</div>
+      <div class="title">Подключи свою папку к Claude <span class="time">· 30 сек</span></div>
+      <ul>
+        <li>Нажми «Open Folder» (или похожую кнопку)</li>
+        <li>Выбери папку из ШАГа 1</li>
+        <li>Claude автоматически прочитает <code class="inline">CLAUDE.md</code> — теперь он знает кто вы и какие у вас правила</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 5</div>
+      <div class="title">Поздоровайся и проверь связь <span class="time">· 2 мин</span></div>
+      <p>Первая фраза агенту — копируй и отправь:</p>
+      <div class="ask">«Открой CLAUDE.md и расскажи кто я, что у меня за бизнес и какие правила работы у тебя со мной».</div>
+      <p>Прочитай ответ. Совпадает с тем что вы написали в файле? Если расходится — скажите агенту чем именно, и попросите учесть на будущее.</p>
+      <p style="margin: 0; font-size: 14px;"><strong>Это первая сверка</strong> — проверка что агент действительно «видит» ваш CLAUDE.md и понимает его правильно.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 6</div>
+      <div class="title">Дай первую задачу по 4 элементам <span class="time">· 5 мин</span></div>
+      <p style="margin-bottom: 6px;"><strong>Какую задачу брать:</strong></p>
+      <ul>
+        <li>Реальную из вашей недели — не тестовую, не критическую</li>
+        <li>Среднюю по сложности, низкую по риску (если выйдет плохо — ничего не сломается)</li>
+        <li>Например: «свести цены конкурентов из 3 файлов в одну таблицу», «сделать черновик письма поставщику», «проверить таблицу с расходами на ошибки в формулах»</li>
+      </ul>
+      <p style="margin-bottom: 6px;"><strong>Формат — 4 элемента:</strong></p>
+      <ol>
+        <li><strong>Задача</strong> — глагол + объект</li>
+        <li><strong>Материал</strong> — какие файлы/данные используем</li>
+        <li><strong>Ограничения</strong> — что нельзя менять</li>
+        <li><strong>Готово когда</strong> — конкретный критерий приёмки</li>
+      </ol>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Проверка:</strong> агент задал уточняющий вопрос? Нет — почти всегда что-то додумал. Перепроверьте двусмысленность.</p>
+      <span class="ref">Источник: <a href="lesson8.html" style="color: var(--navy-light);">Урок 8</a> теории — «Постановка задач. Автономность. Стадии»</span>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 7</div>
+      <div class="title">Прими результат сверкой с критерием <span class="time">· 5 мин</span></div>
+      <p>Никогда не закрывай задачу только на слове «готово» от агента. Открой результат и проверь:</p>
+      <ul>
+        <li>Критерий «готово когда» из ШАГа 6 — выполнен полностью?</li>
+        <li>Если есть цифры — выборочная сверка 2–3 случайных строк с источником</li>
+        <li>Формат и читаемость — оформлено? заголовки есть?</li>
+        <li>Что не сделано — агент сам назвал или умолчал? Если умолчал — спросите: <em>«всё ли из задачи сделано? что осталось?»</em></li>
+      </ul>
+      <span class="ref">Чек-лист 3.2 «Приёмка длинной задачи»</span>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 8</div>
+      <div class="title">Если результат не подошёл — определи тип провала <span class="time">· 3 мин</span></div>
+      <table>
+        <thead>
+          <tr><th style="width:30%">Тип</th><th>Действие</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Галлюцинация</strong> — придумал данные</td><td>Указать на расхождение, спросить источник</td></tr>
+          <tr><td><strong>Сделал не то</strong> — понял задачу по-своему</td><td>Не повторять — переформулировать по 4 элементам, особенно «готово когда»</td></tr>
+          <tr><td><strong>Сделал криво</strong> — формат слабый</td><td>Указать конкретно: «в столбце B повторы». Просить точечно</td></tr>
+          <tr><td><strong>«Готово», а сделано частично</strong></td><td>Сверить со списком из постановки. Спросить: «остальное? почему?»</td></tr>
+          <tr><td><strong>Зациклился</strong> — пробует одно и то же</td><td>СТОП на второй неудаче. Esc. Переформулировать: «какая конечная цель? есть ли другой путь?»</td></tr>
+        </tbody>
+      </table>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Если ошибка повторилась дважды одинаково</strong> — допиши правило в раздел 3 CLAUDE.md «Что нельзя делать». Завтра агент его учтёт.</p>
+      <span class="ref">Источник: <a href="lesson3.html" style="color: var(--navy-light);">Урок 3</a> теории — «Ошибка → правило. Guards»</span>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 9</div>
+      <div class="title">Попроси агента записать handoff <span class="time">· 2 мин</span></div>
+      <p>Прежде чем закрыть Claude — отправь агенту команду (копируй):</p>
+      <div class="ask">«Запиши handoff текущей сессии в файл <code class="inline">handoffs/[сегодняшняя_дата].md</code>. Если папки <code class="inline">handoffs/</code> нет — создай её. Что включить: что сделано, что начато но не закончено, какие решения я приняла, что планирую делать завтра».</div>
+      <p style="margin: 0; font-size: 14px;">Агент создаст файл и заполнит его. Завтра он сам прочитает этот файл при старте — благодаря секции «Старт сессии» в CLAUDE.md (ШАГ 2).</p>
+      <span class="ref">Источник: <a href="lesson2.html" style="color: var(--navy-light);">Урок 2</a> теории — «Контекст, компакт, handoff»</span>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 10</div>
+      <div class="title">Закрой Claude <span class="time">· 30 сек</span></div>
+      <ul>
+        <li>Cmd+Q или закрыть окно</li>
+        <li>Ваша работа сохранена — все файлы лежат в папке из ШАГа 1, handoff сохранён в <code class="inline">handoffs/</code></li>
+      </ul>
+    </div>
+
+    <h2>Следующая сессия — что произойдёт</h2>
+
+    <div class="next-session">
+      <h3>Утро. Открыли Claude и ту же папку</h3>
+      <ol style="margin-bottom: 0;">
+        <li>Claude автоматически читает <code class="inline">CLAUDE.md</code> при старте.</li>
+        <li>В <code class="inline">CLAUDE.md</code> секция «Старт сессии» (вы её добавили в ШАГе 2) — она велит агенту прочитать последний файл из <code class="inline">handoffs/</code>.</li>
+        <li>Агент читает <code class="inline">handoffs/[дата_первой_сессии].md</code> и пишет вам: «Вчера мы делали X, начато но не закончено Y, планировали Z. С чего начнём?»</li>
+        <li>Вы говорите с чего начать. Дальше — повторяете цикл с ШАГа 6 (новая задача → приёмка → handoff в конце дня).</li>
+      </ol>
+    </div>
+
+    <p style="font-size: 14px; color: var(--gray);"><strong>Важно про первую сессию:</strong> папка <code class="inline">handoffs/</code> ещё не существовала, агент создал её вместе с первым handoff. На следующее утро ему уже есть что прочитать. Цикл замкнут.</p>
+
+    <h2>Что меняется через 5–7 сессий</h2>
+
+    <ul>
+      <li>Постановка по 4 элементам — автоматически, без чек-листа в голове</li>
+      <li>Появляются повторяющиеся задачи → первый плейбук (<a href="lesson4.html" style="color: var(--navy-light);">Урок 4</a> теории)</li>
+      <li><code class="inline">CLAUDE.md</code> растёт: 3 правила «не делать» → 7–8</li>
+      <li>«Готово» от агента уже не принимается на веру — привычка проверять</li>
+      <li>Готов(а) к <a href="lesson15.html" style="color: var(--navy-light);">Уроку 2 Блока 3</a> — подключение коннекторов</li>
+    </ul>
+
+    <div class="claudemd-box">
+      <h3>✅ Закрепить в CLAUDE.md (если ещё не добавили в ШАГе 2)</h3>
+      <p>Знание из урока становится правилом агента только когда записано в CLAUDE.md.</p>
+      <p style="margin-bottom: 6px;">Откройте агента и скажите:</p>
+      <div class="ask">«Я прошёл(ла) Урок 1 Блока 3. Допиши в CLAUDE.md правило: <em>"Перед статусом 'готово' агент сам проверяет результат по критерию 'готово когда' из постановки задачи и явно сообщает что проверил. Если что-то не сделано — называет это явно, не молчит"</em>. И проверь что секция «Старт сессии» с чтением последнего handoff уже есть».</div>
+    </div>
+
+    <div class="summary-box">
+      <h3>Шпаргалка</h3>
+      <p style="margin-bottom: 8px;"><strong>Цикл одной сессии:</strong> Папка → CLAUDE.md → Открыл Claude → Подключил папку → Связь → Задача (4 элемента) → Приёмка (сверка) → [Если провал: тип + действие] → Handoff → Закрыл</p>
+      <ul>
+        <li>В CLAUDE.md обязательно секция «Старт сессии» — иначе handoff завтра не прочитается</li>
+        <li>Никогда не принимай «готово» без сверки с критерием</li>
+        <li>Две неудачи подряд тем же способом — СТОП. Переформулировать</li>
+        <li>Дважды одинаковая ошибка = правило в CLAUDE.md</li>
+      </ul>
+      <p style="margin-top: 14px; margin-bottom: 0;"><strong>Следующий урок (доступен сразу):</strong> <a href="lesson15.html" style="color: var(--accent);">Урок 2 Блока 3 — Подключаем 2 коннектора (Telegram-бот и Gmail/Google Диск)</a>. Выводим агента из «пузыря папки» наружу.</p>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Внедрение ИИ в Стардогс · Блок 3 · Урок 1 из 5 · 8 мая 2026
+  </div>
+</footer>
+
+</body>
+</html>

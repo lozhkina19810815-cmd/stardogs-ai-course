@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 2 Блока 3. Подключаем 2 коннектора: Telegram-бот и Gmail</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --red-bg: #FFF2F0;
+    --green: #2E7D4F;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: var(--text); background: var(--white); line-height: 1.6; font-size: 16px; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  header { background: var(--navy); color: var(--white); padding: 20px 0; }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--white); padding: 60px 0 40px; text-align: center; }
+  .hero .label { color: var(--accent); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  .hero h1 { font-size: 32px; font-weight: 800; max-width: 680px; margin: 0 auto 12px; line-height: 1.15; }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+  .hero .meta strong { color: var(--accent); }
+  main { padding: 40px 0 80px; }
+  h2 { font-size: 22px; color: var(--navy); font-weight: 800; margin: 36px 0 14px; scroll-margin-top: 70px; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 16px; color: var(--navy); font-weight: 700; margin: 18px 0 8px; }
+  p { margin-bottom: 12px; }
+  p.lead { font-size: 16px; color: var(--text); padding: 16px 20px; background: var(--navy-bg); border-left: 4px solid var(--navy); border-radius: 6px; margin-bottom: 28px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  ul li, ol li { margin-bottom: 6px; }
+  strong { color: var(--navy); }
+  .ref { color: var(--gray); font-size: 13px; font-style: italic; display: block; margin-top: 8px; }
+  .step { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 6px; padding: 16px 20px; margin: 14px 0; }
+  .step .num { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .step .title { font-size: 17px; font-weight: 700; color: var(--navy); margin: 4px 0 10px; }
+  .step .time { color: var(--gray); font-size: 13px; font-weight: normal; }
+  .step ul, .step ol { margin-bottom: 0; }
+  .ask { background: var(--navy-bg); border-left: 3px solid var(--navy-light); padding: 10px 14px; border-radius: 4px; margin: 10px 0; font-style: italic; color: var(--navy); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--navy-bg); color: var(--navy); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td code { background: var(--navy-bg); padding: 2px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; color: var(--navy); }
+  code.inline { background: var(--navy-bg); padding: 2px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 14px; color: var(--navy); }
+  pre { background: var(--navy); color: var(--white); padding: 14px 18px; border-radius: 6px; overflow-x: auto; margin: 12px 0; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; line-height: 1.5; }
+  .summary-box { background: var(--navy); color: var(--white); padding: 22px 26px; border-radius: 8px; margin: 28px 0; }
+  .summary-box h3 { color: var(--accent); margin-top: 0; font-size: 16px; }
+  .summary-box ul { padding-left: 18px; }
+  .summary-box ul li { margin-bottom: 6px; }
+  .summary-box strong { color: var(--white); }
+  .next-session { background: var(--accent-bg); border-left: 4px solid var(--accent); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
+  .next-session h3 { color: var(--accent); margin-top: 0; font-size: 16px; }
+  .claudemd-box { background: var(--red-bg); border-left: 4px solid var(--red); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
+  .claudemd-box h3 { color: var(--red); margin-top: 0; font-size: 16px; }
+  .case { background: var(--navy-bg); border-radius: 6px; padding: 14px 18px; margin: 14px 0; font-size: 14px; }
+  .case strong { color: var(--navy); }
+  .stone { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: 6px; padding: 14px 18px; margin: 12px 0; }
+  .stone .stone-title { font-weight: 700; color: var(--red); margin-bottom: 6px; font-size: 15px; }
+  footer { background: var(--navy-bg); padding: 24px 0; text-align: center; font-size: 13px; color: var(--gray); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Блок 3 · Урок 2 · Коннекторы</div>
+    <h1>Подключаем 2 коннектора:<br>Telegram-бот и Gmail</h1>
+    <div class="meta"><strong>10 минут читать · 45 минут делать</strong></div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">В <a href="lesson14.html" style="color: var(--navy-light);">Уроке 1 Блока 3</a> вы провели первую сессию: папка, CLAUDE.md, задача, handoff. Агент работает — но пока в пузыре собственной папки. Этот урок выводит его наружу: <strong>Telegram-бот</strong> чтобы агент мог писать вам сам (алёрты, готовые отчёты, вопросы), и <strong>Gmail и Google Диск</strong> чтобы он читал почту, искал файлы и работал с документами команды. Два коннектора по шагам, с готовыми фразами агенту и проверками после каждого этапа.</p>
+
+    <div style="background: #FFF9EC; border-left: 4px solid var(--accent); padding: 14px 18px; border-radius: 6px; margin: 16px 0; font-size: 14px;">
+      <p style="margin: 0;">💡 <strong>Если на каком-то шаге не понимаете куда нажать</strong> — сделайте скриншот экрана и покажите агенту. Скажите: «не понимаю что нажать дальше, я на этом экране». Агент посмотрит и точно подскажет: «жмите вот эту кнопку справа сверху», «выпадающее меню — три полоски слева». Работает и в Google Cloud Console, и в @BotFather, и в любом интерфейсе. 30 секунд на скрин экономят 20 минут поиска кнопки.</p>
+    </div>
+
+    <h2 id="why">Зачем именно эти 2 коннектора первыми</h2>
+
+    <p>В <a href="lesson6.html" style="color: var(--navy-light);">Уроке 6 Блока 2</a> мы говорили про карту коннекторов — Google, почта, задачник, CRM, мессенджеры. Из 12 возможных эти два дают больше всего пользы за минимум усилий:</p>
+
+    <ul>
+      <li><strong>Telegram-бот</strong> — канал «агент → вы». До этого вы должны открывать Claude чтобы узнать что-то от агента. Агент работает в фоне (сессия открыта на компьютере), а вы занимаетесь другими делами. Бот сам зовёт в Telegram когда есть что показать: «отчёт готов», «упал процесс», «новый отзыв 1 звезда», «вопрос по задаче». <strong>Важно:</strong> Telegram рекомендуем как <em>передатчик коротких алёртов</em>, не как канал для диалога с агентом. Полноценная работа с агентом — в окне Claude Cowork (там контекст, файлы, история). Бот нужен чтобы агент мог достучаться до вас за пределами окна.</li>
+      <li><strong>Gmail и Google Диск</strong> — канал «мир → агент». Под одним доступом к Google аккаунту агент получает почту, файлы на Диске и общие документы команды. 80% входящих рабочих материалов сюда и приходят: письма с договорами и прайсами от поставщиков, файлы от подрядчиков на Диске, общие таблицы и документы. Агент делает саммари переписки, находит нужный файл по описанию, читает свежий отчёт без вашей пересылки.</li>
+    </ul>
+
+    <p>Третий и четвёртый коннекторы (задачник, активная работа с Google Таблицами) — в следующих уроках. API Google Sheets в этом уроке тоже включаем (опционально), но «работа с таблицами» как процесс — отдельная тема. Этих двух хватит чтобы прочувствовать главную мысль: <em>агент перестаёт быть инструментом в окне, становится частью вашего рабочего пространства</em>.</p>
+
+    <h2>Часть 1. Telegram-бот <span style="color: var(--gray); font-weight: 600; font-size: 14px;">(20 минут)</span></h2>
+
+    <div class="step">
+      <div class="num">ШАГ 1</div>
+      <div class="title">Создайте своего бота через @BotFather <span class="time">· 3 мин</span></div>
+      <ol>
+        <li>В Telegram в поиске наберите <code class="inline">@BotFather</code>, откройте этот аккаунт (с синей галочкой).</li>
+        <li>Отправьте команду <code class="inline">/newbot</code>.</li>
+        <li>BotFather спросит имя бота (отображаемое) — например <em>«Мой Агент»</em>.</li>
+        <li>Затем спросит username — должен быть уникальным и заканчиваться на <code class="inline">_bot</code>. Например <code class="inline">ivanov_assistant_bot</code>. Если username занят — придумайте другой.</li>
+        <li>BotFather пришлёт сообщение с <strong>токеном</strong> — длинная строка вида <code class="inline">7891234567:AAEx-K9p...</code>. Это пароль вашего бота, держите в секрете.</li>
+      </ol>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Проверка:</strong> найдите своего бота в поиске Telegram по username, откройте, нажмите Start. Бот пока не отвечает (мы ещё не научили его) — но он есть.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 2</div>
+      <div class="title">Сохраните токен в файл <code class="inline">.env</code> <span class="time">· 3 мин</span></div>
+      <p>Токен нельзя класть в CLAUDE.md или в код — это пароль. Стандартное место — отдельный файл <code class="inline">.env</code>, который никогда не уходит в общий доступ.</p>
+      <p style="margin-bottom: 6px;">Скажите агенту:</p>
+      <div class="ask">«Создай в корне рабочей папки файл <code class="inline">.env</code> со строкой <code class="inline">TELEGRAM_BOT_TOKEN=сюда_токен</code>. И создай файл <code class="inline">.gitignore</code> со строкой <code class="inline">.env</code> — чтобы токен никогда не попал в репозиторий, если мы будем использовать git».</div>
+      <p style="margin: 8px 0 0; font-size: 14px;">Откройте <code class="inline">.env</code>, вставьте свой токен после знака равно (без пробелов и кавычек).</p>
+      <span class="ref">Подробнее про секреты — <a href="lesson10.html" style="color: var(--navy-light);">Урок 10 Блока 2</a> «Безопасность данных»</span>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 3</div>
+      <div class="title">Узнайте свой <code class="inline">chat_id</code> <span class="time">· 2 мин</span></div>
+      <p>Чтобы бот мог писать именно вам, ему нужно знать ID вашей с ним переписки. У каждого диалога свой номер. Технически это делается через запрос к Telegram API — этот шаг агент сделает за вас.</p>
+      <ol>
+        <li>В Telegram откройте своего бота, отправьте ему любое сообщение (например <code class="inline">привет</code>) — без этого диалог для API «не существует».</li>
+        <li>Скажите агенту:</li>
+      </ol>
+      <div class="ask">«Я только что отправил своему Telegram-боту первое сообщение. Возьми <code class="inline">TELEGRAM_BOT_TOKEN</code> из <code class="inline">.env</code>, через curl запроси <code class="inline">https://api.telegram.org/botТОКЕН/getUpdates</code>. В ответе найди мой <code class="inline">chat_id</code> личной переписки с ботом (положительное число). Допиши в <code class="inline">.env</code> строку <code class="inline">MY_CHAT_ID=число</code>. Покажи мне это число для проверки».</div>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Проверка:</strong> агент показал положительное число, оно записано в <code class="inline">.env</code>. Это идентификатор вашего личного диалога с ботом.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 4</div>
+      <div class="title">Тест — отправьте себе сообщение <span class="time">· 2 мин</span></div>
+      <p>Скажите агенту:</p>
+      <div class="ask">«Прочитай <code class="inline">.env</code>, возьми <code class="inline">TELEGRAM_BOT_TOKEN</code> и <code class="inline">MY_CHAT_ID</code>, и через curl отправь мне в Telegram сообщение "Привет от агента 👋". После отправки покажи мне ответ Telegram API — должно быть <code class="inline">"ok":true</code>».</div>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Проверка:</strong> в Telegram открыли бота и видите сообщение «Привет от агента 👋». Это значит цепочка работает: агент → токен → API Telegram → ваш телефон.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 5</div>
+      <div class="title">Скажите агенту когда писать вам <span class="time">· 4 мин</span></div>
+      <p>Канал работает. Теперь правило — <em>когда</em> агент должен использовать его сам. Без правила бот будет молчать.</p>
+      <p>Скажите агенту:</p>
+      <div class="ask">«Допиши в CLAUDE.md секцию "Telegram-бот":
+        <br>1. Токен — в <code class="inline">.env</code> (TELEGRAM_BOT_TOKEN), мой chat_id — в <code class="inline">.env</code> (MY_CHAT_ID).
+        <br>2. Когда отправлять мне сообщение в Telegram сам, без моего запроса:
+        <br>— длинная задача (более 30 минут) завершилась — короткое "готово, проверь";
+        <br>— что-то сломалось в скрипте или процессе — короткое "упал процесс X, причина Y";
+        <br>— нужно моё решение по развилке которую сам не можешь решить — вопрос с двумя вариантами».
+      </div>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Проверка:</strong> попросите агента написать тестовый длинный отчёт (минут на 5) и при готовности — сообщить вам в Telegram. Получили — связь живая, правило сработало.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 6</div>
+      <div class="title">Если бот должен писать в общий чат команды <span class="time">· 5 мин · опционально</span></div>
+      <p>Если хотите чтобы алёрты от агента видели коллеги (например: «новый отзыв 1 звезда на точке N», «отчёт за неделю готов, ссылка»), бота можно добавить в общий рабочий чат. У группы свой <code class="inline">chat_id</code> — отдельный от вашей лички.</p>
+      <ol>
+        <li>В Telegram откройте свой командный чат → меню → «Добавить участника» → найдите бота по username, добавьте.</li>
+        <li>В чате отправьте любое сообщение (после добавления бота — иначе getUpdates снова ничего не покажет).</li>
+        <li>Скажите агенту:</li>
+      </ol>
+      <div class="ask">«Запроси getUpdates ещё раз. В ответе найди chat_id группы куда я только что добавил бота (для группы — отрицательное число, для супергруппы — длинное отрицательное с префиксом <code class="inline">-100</code>). Допиши в <code class="inline">.env</code> как <code class="inline">TEAM_CHAT_ID=число</code>. Покажи мне это число».</div>
+      <ol start="4">
+        <li>Если хотите чтобы бот мог не только писать <em>в</em> группу, но и <em>видеть</em> сообщения в ней (например реагировать на команды от коллег) — откройте <code class="inline">@BotFather</code> → <code class="inline">/setprivacy</code> → выберите своего бота → <strong>Disable</strong>. По умолчанию privacy mode включён, бот видит только команды вида <code class="inline">/start</code>.</li>
+      </ol>
+      <p style="margin: 12px 0 0;"><strong>Что давать в командный чат, а что в личку:</strong></p>
+      <ul style="margin-bottom: 0;">
+        <li><strong>В командный чат</strong> — события общей зоны ответственности: бизнес-метрики, статусы крупных задач, аналитика недели, негативные сигналы по точкам.</li>
+        <li><strong>В личку</strong> — личные напоминания, развилки которые требуют только вашего решения, статус ваших персональных задач.</li>
+      </ul>
+      <p style="margin: 12px 0 0; font-size: 14px;"><strong>И ещё раз честно:</strong> для группового чата правило «передатчик, не диалог» работает ещё сильнее. Бот в чате — это «новостной канал от агента», а не место для обсуждения. Команда не должна пытаться вести с ботом переписку — она будет рваная и без контекста. Обсуждение задачи происходит у того человека за кем закреплена задача — в его Claude Cowork.</p>
+    </div>
+
+    <h2>Часть 2. Gmail и Google Диск <span style="color: var(--gray); font-weight: 600; font-size: 14px;">(30 минут)</span></h2>
+
+    <p>Google сложнее Telegram-бота — у Google своя система разрешений (OAuth) и больше шагов. Хорошая новость: один доступ открывает всё (Gmail + Диск + при желании Таблицы и Документы). Заведите 30 минут, не пытайтесь сделать «между делом».</p>
+
+    <div class="step">
+      <div class="num">ШАГ 1</div>
+      <div class="title">Создайте проект в Google Cloud <span class="time">· 5 мин</span></div>
+      <ol>
+        <li>Откройте <a href="https://console.cloud.google.com" target="_blank" style="color: var(--navy-light);">console.cloud.google.com</a>, войдите под почтой которую будем подключать.</li>
+        <li>Сверху рядом с логотипом Google Cloud — выпадающее меню проектов. Нажмите → <strong>New Project</strong>.</li>
+        <li>Имя проекта — например <em>«Мой Агент»</em>. Organization можно оставить по умолчанию. Нажмите <strong>Create</strong>.</li>
+        <li>Подождите 30 секунд → выберите свой новый проект в выпадающем меню сверху.</li>
+      </ol>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Зачем:</strong> Google Cloud — это «панель управления» для всех Google API. Доступ к Gmail настраивается внутри проекта.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 2</div>
+      <div class="title">Включите Gmail API и Google Drive API <span class="time">· 2 мин</span></div>
+      <ol>
+        <li>В левом меню (☰) → <strong>APIs &amp; Services</strong> → <strong>Library</strong>.</li>
+        <li>В поиске — <em>Gmail API</em>, откройте его, нажмите <strong>Enable</strong>.</li>
+        <li>Вернитесь в Library, найдите <em>Google Drive API</em>, нажмите <strong>Enable</strong>.</li>
+        <li>(Опционально, если работаете с таблицами и документами): <em>Google Sheets API</em> и <em>Google Docs API</em> — Enable.</li>
+      </ol>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Зачем сразу несколько:</strong> в одном проекте можно держать любое количество API. Включить заранее — потом не возвращаться. Доступ всё равно настраивается одним OAuth-окном на следующих шагах.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 3</div>
+      <div class="title">Настройте OAuth consent screen <span class="time">· 5 мин</span></div>
+      <p>Перед созданием доступа Google требует описать ваше приложение — даже если оно «для одного себя». OAuth — это стандарт «дать программе ограниченный доступ к моим данным без передачи пароля».</p>
+      <ol>
+        <li>Левое меню → <strong>APIs &amp; Services</strong> → <strong>OAuth consent screen</strong>.</li>
+        <li>User Type: <strong>External</strong> (Internal только для G Suite организаций) → Create.</li>
+        <li>App name: <em>«Мой Агент»</em>. User support email — ваша почта. Developer contact — ваша почта.</li>
+        <li>Scopes — пропустите (нажмите Save and Continue).</li>
+        <li>Test users — добавьте свою почту (ту, к которой подключаемся). Это разрешит вашему приложению использовать вашу же почту, пока приложение в «тестовом режиме».</li>
+        <li>Save and Continue → Back to Dashboard.</li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 4</div>
+      <div class="title">Создайте OAuth Client ID <span class="time">· 3 мин</span></div>
+      <ol>
+        <li>Левое меню → <strong>APIs &amp; Services</strong> → <strong>Credentials</strong>.</li>
+        <li>Сверху <strong>+ Create Credentials</strong> → <strong>OAuth client ID</strong>.</li>
+        <li>Application type: <strong>Desktop app</strong>. Name: <em>«Мой Агент»</em>.</li>
+        <li>Create → нажмите <strong>Download JSON</strong> в всплывающем окне.</li>
+        <li>Скачанный файл переименуйте в <code class="inline">gmail_credentials.json</code>, положите в рабочую папку (рядом с CLAUDE.md и <code class="inline">.env</code>).</li>
+      </ol>
+      <p style="margin: 8px 0 0; font-size: 14px;">Скажите агенту:</p>
+      <div class="ask">«Добавь в <code class="inline">.gitignore</code> строки: <code class="inline">gmail_credentials.json</code> и <code class="inline">gmail_token.json</code> — они никогда не должны уходить в общий доступ».</div>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 5</div>
+      <div class="title">Первая авторизация <span class="time">· 5 мин</span></div>
+      <p>Скажите агенту:</p>
+      <div class="ask">«Установи библиотеки <code class="inline">google-auth-oauthlib</code> и <code class="inline">google-api-python-client</code>. Напиши скрипт <code class="inline">gmail_auth.py</code> который при первом запуске откроет браузер для разрешения доступа, получит токен и сохранит его в файл <code class="inline">gmail_token.json</code> рядом с credentials. Scopes: <code class="inline">gmail.modify</code> (чтение + отправка почты) и <code class="inline">drive.readonly</code> (чтение файлов на Диске). Запусти скрипт».</div>
+      <p>Браузер откроется, выберите свой аккаунт. Google покажет предупреждение «приложение не верифицировано» — это нормально для тестового режима. Нажмите <em>«Дополнительно» → «Перейти в Мой Агент (небезопасно)»</em> → разрешите доступ.</p>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Проверка:</strong> в рабочей папке появился файл <code class="inline">gmail_token.json</code>. Это и есть ваш доступ — пока файл лежит рядом, агент может работать с почтой.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 6</div>
+      <div class="title">Тест и правило в CLAUDE.md <span class="time">· 4 мин</span></div>
+      <p>Скажите агенту:</p>
+      <div class="ask">«Сделай 2 теста подряд: (1) через Gmail API отправь мне на мой адрес тестовое письмо с темой "Тест от агента" и телом "Связь работает, дата [сегодня]"; (2) через Drive API покажи список из 5 последних файлов в моём Google Диске. Для каждого теста — ответ API со status 200».</div>
+      <p>Получили письмо у себя в почтовом ящике — связь работает.</p>
+      <p style="margin-bottom: 6px;">Допишите в CLAUDE.md секцию «Gmail»:</p>
+      <div class="ask">«Допиши в CLAUDE.md секцию "Google: Gmail и Диск":
+        <br>1. Доступы — <code class="inline">gmail_credentials.json</code> и <code class="inline">gmail_token.json</code> в рабочей папке (один доступ покрывает и почту, и Диск).
+        <br>2. Когда читать почту: при моём запросе "проверь что нового / найди письмо от X / сделай саммари последних писем".
+        <br>3. Когда работать с Диском: при моём запросе "найди файл / открой свежий отчёт от X / покажи что в папке Y".
+        <br>4. Когда отправлять письма: при моём явном "отправь письмо адресату X с темой Y" — но НИКОГДА сам, без моей просьбы. Письмо человеку — необратимое действие.
+        <br>5. Когда менять файлы на Диске: только по явному запросу. По умолчанию — только чтение».
+      </div>
+      <span class="ref">Принцип «никогда сам» — <a href="lesson8.html" style="color: var(--navy-light);">Урок 8 Блока 2</a> «Постановка задач. Автономность»</span>
+    </div>
+
+    <h2 id="stones">3 камня — на чём спотыкаются</h2>
+
+    <div class="stone">
+      <div class="stone-title">Камень 1. Токен попал в git</div>
+      <p>Самая частая ошибка — закоммитили <code class="inline">.env</code> или <code class="inline">credentials.json</code> в репозиторий до того как добавили в <code class="inline">.gitignore</code>. Дальше токен попадает в историю git навсегда — даже если потом удалить файл.</p>
+      <div class="case">
+        <strong>Наш случай (16.04.2026):</strong> мы использовали GitHub-токен для другого проекта и забыли сохранить его в <code class="inline">.env</code> сразу после создания. Через два дня при попытке push выяснилось — токен жил только в памяти сессии, найти его не удалось. Пришлось создавать новый, отзывать старый. Час потеряли.
+      </div>
+      <p><strong>Лечение:</strong> создавать <code class="inline">.gitignore</code> со строкой <code class="inline">.env</code> <em>до</em> первого <code class="inline">git add</code>. Если уже закоммитили — отозвать токен в Telegram (через @BotFather → <code class="inline">/revoke</code>) или в Google Cloud (Credentials → Reset client secret), потом получить новый.</p>
+    </div>
+
+    <div class="stone">
+      <div class="stone-title">Камень 2. Gmail и обязательная двухфакторка (2FA)</div>
+      <p>Если ваша почта — корпоративный аккаунт с обязательной 2FA (двухфакторной авторизацией: пароль + код с телефона), а телефон с подтверждением не у вас — вы упрётесь на ШАГе 5. Браузер запросит код с телефона, вы его получить не можете.</p>
+      <p style="margin: 8px 0 0; font-size: 14px; color: var(--gray);"><em>Это камень который мы пока не проходили на своём опыте — Gmail в нашей системе ещё не подключён. Описано на основе документации Google и общей логики OAuth.</em></p>
+      <p><strong>Лечение (если упёрлись):</strong></p>
+      <ul>
+        <li>Если ваш Google-аккаунт обычный (не G Suite организация) — можно создать <strong>App Password</strong> в настройках безопасности Google. Это отдельный «технический» пароль, который не требует 2FA-кода.</li>
+        <li>Если аккаунт корпоративный — попросите ИТ-администратора создать <strong>service account</strong> для вашего проекта (это не требует 2FA, но требует ИТ).</li>
+        <li>Альтернатива — подключить <em>другую</em> вашу почту (личный Gmail) для пилота. Агент научится работать с почтой, а корпоративную подключите позже когда будет доступ к телефону.</li>
+      </ul>
+    </div>
+
+    <div class="stone">
+      <div class="stone-title">Камень 3. Telegram-бот — это передатчик, не диалог</div>
+      <p>Самая частая ошибка после первого восторга «бот пишет!» — попытаться вести с агентом длинную переписку через Telegram. Бот не помнит вчерашний разговор, не видит ваши файлы, не может задавать встречные вопросы как Claude в Cowork.</p>
+      <p><strong>Правило:</strong></p>
+      <ul>
+        <li>Telegram — короткие алёрты, ссылки на готовые файлы, сводки в 1–2 строки.</li>
+        <li>Любая задача требующая контекста, размышления, итераций — в окне Claude Cowork.</li>
+      </ul>
+      <p style="margin: 8px 0 0; font-size: 14px;">Если ловите себя на «давай я объясню задачу боту в TG» — закройте чат с ботом, откройте Claude. Это сэкономит час переделок.</p>
+    </div>
+
+    <h2 id="next">Что меняется когда оба коннектора работают</h2>
+
+    <div class="next-session">
+      <h3>До коннекторов</h3>
+      <p style="margin-bottom: 0;">Чтобы узнать что делает агент — открыть Claude. Чтобы попросить отправить письмо — самой написать его в почте. Агент закрыт в окне.</p>
+    </div>
+
+    <div class="next-session" style="background: #E8F5E9; border-left-color: var(--green);">
+      <h3 style="color: var(--green);">После коннекторов</h3>
+      <ul style="margin-bottom: 0;">
+        <li>Агент пишет вам в Telegram сам когда что-то готово или сломалось — вам не нужно дёргать его проверками.</li>
+        <li>Агент читает вашу рабочую почту по запросу — за минуту делает саммари 50 писем за неделю.</li>
+        <li>Агент находит нужный файл на Google Диске по описанию («свежий прайс от поставщика X») — без вашей пересылки.</li>
+        <li>Агент отправляет письма от вашего имени по вашему явному поручению — экономит черновик и редактуру.</li>
+        <li>Появляется ощущение «агент в фоне» — не сидит в окне, но рядом.</li>
+      </ul>
+    </div>
+
+    <p style="font-size: 14px; color: var(--gray); margin-top: 14px;">Через неделю после подключения — агент знает кому вы пишете чаще, какие письма приходят регулярно (отчёты, рассылки), что хотите видеть в Telegram а что нет. Можно дать правило «не пиши в Telegram между 22:00 и 8:00» — будет копить и присылать утром.</p>
+
+    <div class="claudemd-box">
+      <h3>✅ Закрепить в CLAUDE.md</h3>
+      <p>Знание из урока становится правилом агента только когда записано в CLAUDE.md. Без этого шага агент будет молчать в Telegram (даже когда есть что сказать) и забудет про почту через сессию.</p>
+      <p><strong>Действие на 2 минуты.</strong> Откройте своего агента и скажите:</p>
+      <div class="ask">«Я прошёл(ла) Урок 2 Блока 3 "Подключаем 2 коннектора". Проверь что в CLAUDE.md есть две секции: "Telegram-бот" (когда писать мне сам — длинная задача готова, упал процесс, развилка требует моего решения) и "Google: Gmail и Диск" (читаю почту и файлы по запросу, отправляю письма и меняю файлы только по явной просьбе, никогда сам). Если секций нет — допиши их по правилам которые я тебе уже давал в этом уроке».</div>
+      <p><strong>Проверка:</strong> откройте CLAUDE.md, убедитесь что обе секции на месте. Если нет — повторите запрос конкретнее.</p>
+    </div>
+
+    <div class="summary-box">
+      <h3>Шпаргалка</h3>
+      <p style="margin-bottom: 8px;"><strong>Telegram-бот за 15 минут:</strong> @BotFather → токен в <code class="inline">.env</code> → ваш chat_id через getUpdates → curl-тест → правило в CLAUDE.md когда писать.</p>
+      <p style="margin-bottom: 8px;"><strong>Google (Gmail + Диск) за 30 минут:</strong> Google Cloud проект → Gmail API + Drive API enable → OAuth consent screen → Desktop client credentials → первая авторизация в браузере → правило в CLAUDE.md когда читать/отправлять/искать файлы.</p>
+      <ul>
+        <li>Любой токен/credentials — только в <code class="inline">.env</code> или отдельные файлы. Никогда в CLAUDE.md и никогда в коде</li>
+        <li><code class="inline">.gitignore</code> с <code class="inline">.env</code> — <em>до</em> первого коммита, не после</li>
+        <li>Telegram — агент пишет сам по правилу. Gmail — только по вашему явному запросу. Письмо человеку = необратимое действие</li>
+        <li>Упёрлись в 2FA для Gmail — попробуйте App Password или подключите личную почту для пилота</li>
+      </ul>
+      <p style="margin-top: 14px; margin-bottom: 0;"><strong>Следующий урок (11 мая):</strong> Урок 3 Блока 3 — Верификация и галлюцинации. Системная защита от того что агент уверенно врёт о цифрах и фактах.</p>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Внедрение ИИ в Стардогс · Блок 3 · Урок 2 из 5 · 8 мая 2026
+  </div>
+</footer>
+
+</body>
+</html>
