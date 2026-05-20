@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Стартовый комплект: защита от галлюцинаций</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --red-bg: #FFF2F0;
+    --green: #2E7D4F;
+    --green-bg: #E8F5E9;
+    --yellow: #B07900;
+    --yellow-bg: #FFF7E0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: var(--text); background: var(--white); line-height: 1.6; font-size: 16px; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  header { background: var(--navy); color: var(--white); padding: 20px 0; }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--white); padding: 60px 0 40px; text-align: center; }
+  .hero .label { color: var(--accent); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  .hero h1 { font-size: 32px; font-weight: 800; max-width: 680px; margin: 0 auto 12px; line-height: 1.15; }
+  .hero .meta { opacity: 0.9; font-size: 15px; max-width: 600px; margin: 0 auto; }
+  main { padding: 40px 0 80px; }
+  h2 { font-size: 22px; color: var(--navy); font-weight: 800; margin: 36px 0 14px; scroll-margin-top: 70px; }
+  h2:first-of-type { margin-top: 0; }
+  p { margin-bottom: 12px; }
+  p.lead { font-size: 16px; color: var(--text); padding: 16px 20px; background: var(--navy-bg); border-left: 4px solid var(--navy); border-radius: 6px; margin-bottom: 28px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  ul li, ol li { margin-bottom: 8px; }
+  strong { color: var(--navy); }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--navy-bg); color: var(--navy); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td code, code.inline { background: var(--navy-bg); padding: 2px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; color: var(--navy); }
+  pre { background: var(--navy); color: var(--white); padding: 14px 18px; border-radius: 6px; overflow-x: auto; margin: 12px 0; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; line-height: 1.5; }
+  .download-box { background: var(--green-bg); border: 1px solid #BFE3CB; border-radius: 8px; padding: 24px; margin: 24px 0; text-align: center; }
+  .download-btn { display: inline-block; background: var(--green); color: var(--white); font-size: 17px; font-weight: 700; text-decoration: none; padding: 14px 32px; border-radius: 8px; margin: 8px 0; }
+  .download-btn:hover { background: #256B43; }
+  .download-box .hint { font-size: 13px; color: var(--gray); margin-top: 8px; }
+  .step { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 6px; padding: 16px 20px; margin: 14px 0; }
+  .step .num { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .step .title { font-size: 16px; font-weight: 700; color: var(--navy); margin: 4px 0 10px; }
+  .ask { background: var(--navy-bg); border-left: 3px solid var(--navy-light); padding: 10px 14px; border-radius: 4px; margin: 10px 0; font-style: italic; color: var(--navy); font-size: 14px; }
+  .red-warning { background: var(--red-bg); border-left: 4px solid var(--red); padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 15px; }
+  .red-warning strong { color: var(--red); }
+  footer { background: var(--navy-bg); padding: 24px 0; text-align: center; font-size: 13px; color: var(--gray); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="../index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="container">
+    <div class="label">Стартовый комплект</div>
+    <h1>Защита от галлюцинаций: готовые файлы</h1>
+    <p class="meta">Спутник <a href="../lesson16.html" style="color: var(--accent);">Урока 3 Блока 3 «Верификация»</a>. Скачайте, скопируйте к себе, подключите — это и есть ШАГ 3 и ШАГ 4 из урока, не «скажи агенту настрой», а готовые рабочие файлы.</p>
+  </div>
+</div>
+
+<main>
+  <div class="container">
+
+    <div class="download-box">
+      <a href="verification-kit.zip" class="download-btn">⬇ Скачать комплект (.zip)</a>
+      <div class="hint">11 файлов: 2 хука + 2 скилла + пример settings + этот README. Нужен <code class="inline">jq</code> (проверка: <code class="inline">jq --version</code>).</div>
+    </div>
+
+    <h2>Что внутри</h2>
+    <table>
+      <tr><th>Файл</th><th>Что делает</th></tr>
+      <tr><td><code>hooks/pre-show-calculation.sh</code></td><td><strong>Хук CoVe-гейт.</strong> Не даёт записать/показать расчёт (отчёт, прогноз, .xlsx/.docx) без проверки <code>/falsify</code>.</td></tr>
+      <tr><td><code>hooks/source-check.sh</code></td><td><strong>Хук заземления.</strong> Не даёт утверждать факт по вашей теме (цены, меню…), если агент не открыл источник в этой сессии. <em>(Упрощённая версия — добавьте свои темы.)</em></td></tr>
+      <tr><td><code>skills/falsify/SKILL.md</code></td><td><strong>Скилл CoVe</strong> — проверка расчёта 5 вопросами с «чистого листа».</td></tr>
+      <tr><td><code>skills/grounding/SKILL.md</code></td><td><strong>Скилл заземления</strong> — отвечать только по источникам, с указанием откуда.</td></tr>
+      <tr><td><code>settings.example.json</code></td><td>Пример, как подключить хуки в <code>settings.json</code>.</td></tr>
+    </table>
+
+    <h2>Установка — 5 минут</h2>
+
+    <div class="step">
+      <div class="num">Шаг 1</div>
+      <div class="title">Скопируйте файлы к себе</div>
+      <p>Из папки <code class="inline">templates/</code> в вашу <code class="inline">.claude/</code>:</p>
+      <pre>cp templates/hooks/*.sh    ~/ВАШ-ПРОЕКТ/.claude/hooks/
+cp -r templates/skills/*   ~/ВАШ-ПРОЕКТ/.claude/skills/</pre>
+    </div>
+
+    <div class="step">
+      <div class="num">Шаг 2</div>
+      <div class="title">Сделайте хуки исполняемыми</div>
+      <pre>chmod +x ~/ВАШ-ПРОЕКТ/.claude/hooks/pre-show-calculation.sh
+chmod +x ~/ВАШ-ПРОЕКТ/.claude/hooks/source-check.sh</pre>
+    </div>
+
+    <div class="step">
+      <div class="num">Шаг 3</div>
+      <div class="title">Подключите хуки</div>
+      <p>Откройте <code class="inline">settings.example.json</code>, скопируйте блок <code class="inline">hooks</code> в свой <code class="inline">.claude/settings.json</code>. Если файл уже есть — добавьте записи внутрь, не перезатирая.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">Шаг 4</div>
+      <div class="title">Перезапустите сессию агента</div>
+      <p>Чтобы он подхватил настройки.</p>
+    </div>
+
+    <p>Или просто скажите агенту:</p>
+    <div class="ask">«Возьми файлы из этого комплекта, разложи по <code class="inline">.claude/hooks/</code> и <code class="inline">.claude/skills/</code>, сделай хуки исполняемыми и пропиши их в settings.json».</div>
+
+    <h2>Проверить, что работает</h2>
+    <ul>
+      <li>Попросите агента записать любой расчёт в <code class="inline">.xlsx</code> → хук должен <strong>заблокировать</strong> с просьбой пройти <code class="inline">/falsify</code>.</li>
+      <li>Пройдите <code class="inline">/falsify</code>, затем <code class="inline">touch /tmp/falsification-done</code> → повторите → пройдёт.</li>
+    </ul>
+
+    <h2>Под себя</h2>
+    <ul>
+      <li><strong><code>source-check.sh</code></strong> — в массиве <code class="inline">RULES</code> задайте свои темы и источники (по образцу: «цены → файл с прайсом»).</li>
+      <li><strong><code>pre-show-calculation.sh</code></strong> — при желании поправьте слова-признаки расчётного файла под свою зону.</li>
+    </ul>
+
+    <div class="red-warning">
+      <strong>Важно.</strong> Это <strong>упрощённый</strong> комплект для старта. Хуки ловят факт действия — это сильнее, чем правило в CLAUDE.md (его агент забывает). Но они не заменяют человека: юридические формулировки, финансы с последствиями, сложную аналитику проверяет эксперт (см. урок, раздел «Где нужен человек»).
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Внедрение ИИ в Стардогс · Стартовый комплект к Уроку 3 · обновлён 20 мая 2026
+  </div>
+</footer>
+
+</body>
+</html>

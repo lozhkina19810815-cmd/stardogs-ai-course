@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 4 Блока 3. Бэкап агента: пережить смерть Mac, блокировку аккаунта, переезд</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --red-bg: #FFF2F0;
+    --green: #2E7D4F;
+    --green-bg: #E8F5E9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: var(--text); background: var(--white); line-height: 1.6; font-size: 16px; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  header { background: var(--navy); color: var(--white); padding: 20px 0; }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--white); padding: 60px 0 40px; text-align: center; }
+  .hero .label { color: var(--accent); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  .hero h1 { font-size: 32px; font-weight: 800; max-width: 680px; margin: 0 auto 12px; line-height: 1.15; }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+  .hero .meta strong { color: var(--accent); }
+  main { padding: 40px 0 80px; }
+  h2 { font-size: 22px; color: var(--navy); font-weight: 800; margin: 36px 0 14px; scroll-margin-top: 70px; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 16px; color: var(--navy); font-weight: 700; margin: 18px 0 8px; }
+  p { margin-bottom: 12px; }
+  p.lead { font-size: 16px; color: var(--text); padding: 16px 20px; background: var(--navy-bg); border-left: 4px solid var(--navy); border-radius: 6px; margin-bottom: 28px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  ul li, ol li { margin-bottom: 6px; }
+  strong { color: var(--navy); }
+  .ref { color: var(--gray); font-size: 13px; font-style: italic; display: block; margin-top: 8px; }
+  .step { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 6px; padding: 16px 20px; margin: 14px 0; }
+  .step .num { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .step .title { font-size: 17px; font-weight: 700; color: var(--navy); margin: 4px 0 10px; }
+  .step .time { color: var(--gray); font-size: 13px; font-weight: normal; }
+  .step ul, .step ol { margin-bottom: 0; }
+  .ask { background: var(--navy-bg); border-left: 3px solid var(--navy-light); padding: 10px 14px; border-radius: 4px; margin: 10px 0; font-style: italic; color: var(--navy); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--navy-bg); color: var(--navy); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td code { background: var(--navy-bg); padding: 2px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; color: var(--navy); }
+  code.inline { background: var(--navy-bg); padding: 2px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 14px; color: var(--navy); }
+  pre { background: var(--navy); color: var(--white); padding: 14px 18px; border-radius: 6px; overflow-x: auto; margin: 12px 0; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; line-height: 1.5; }
+  .summary-box { background: var(--navy); color: var(--white); padding: 22px 26px; border-radius: 8px; margin: 28px 0; }
+  .summary-box h3 { color: var(--accent); margin-top: 0; font-size: 16px; }
+  .summary-box ul { padding-left: 18px; }
+  .summary-box ul li { margin-bottom: 6px; }
+  .summary-box strong { color: var(--white); }
+  .next-session { background: var(--accent-bg); border-left: 4px solid var(--accent); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
+  .next-session h3 { color: var(--accent); margin-top: 0; font-size: 16px; }
+  .claudemd-box { background: var(--red-bg); border-left: 4px solid var(--red); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
+  .claudemd-box h3 { color: var(--red); margin-top: 0; font-size: 16px; }
+  .case { background: var(--navy-bg); border-radius: 6px; padding: 14px 18px; margin: 14px 0; font-size: 14px; }
+  .case strong { color: var(--navy); }
+  .stone { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: 6px; padding: 14px 18px; margin: 12px 0; }
+  .stone .stone-title { font-weight: 700; color: var(--red); margin-bottom: 6px; font-size: 15px; }
+  .analogy { background: var(--accent-bg); border-left: 4px solid var(--accent); padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 15px; color: var(--text); }
+  .red-warning { background: var(--red-bg); border-left: 4px solid var(--red); padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 15px; }
+  .red-warning strong { color: var(--red); }
+  footer { background: var(--navy-bg); padding: 24px 0; text-align: center; font-size: 13px; color: var(--gray); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Блок 3 · Урок 4 · Бэкап</div>
+    <h1>Бэкап агента:<br>пережить смерть Mac, блокировку аккаунта, переезд</h1>
+    <div class="meta"><strong>10 минут читать · 30 минут делать</strong></div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">В <a href="lesson14.html" style="color: var(--navy-light);">Уроке 1 Блока 3</a> запустили первую сессию. В <a href="lesson15.html" style="color: var(--navy-light);">Уроке 2</a> подключили Telegram и Google. В <a href="lesson16.html" style="color: var(--navy-light);">Уроке 3</a> настроили верификацию. Сегодня — <strong>бэкап</strong>. Что бэкапить, куда, как часто, и главное — как <em>проверить что бэкап работает</em> до того как он понадобится.</p>
+
+    <div class="red-warning">
+      <p><strong>Главный риск этого урока — иллюзия защиты.</strong> Самый распространённый сценарий потери данных: «у меня всё бэкапится» → что-то случилось → разворачиваешь бэкап → не работает (что-то не попало, ключи не там, скрипт не запускается). И только тогда понимаешь что бэкап <strong>никогда не тестировался</strong>. Этот урок чтобы такого не произошло.</p>
+    </div>
+
+    <h2 id="scenarios">3 сценария, против которых бэкап</h2>
+
+    <p>Бэкап агента — это не «один сценарий смерти Mac». Это <strong>три разных сценария</strong>, каждый требует своих мер:</p>
+
+    <table>
+      <tr><th style="width: 28%;">Сценарий</th><th>Что происходит</th><th>Что нужно</th></tr>
+      <tr>
+        <td><strong>1. Поломка железа</strong><br>(Mac/PC умер, диск сдох, кража, пожар)</td>
+        <td>Физическая потеря компьютера. Файлы существуют только в облаке/на внешнем диске.</td>
+        <td>Бэкап файлов (мозг + поведение + инструменты). Восстановление на новой машине.</td>
+      </tr>
+      <tr>
+        <td><strong>2. Блокировка аккаунта Claude</strong><br>(Anthropic заблокировал, проблемы с оплатой, страна попала под санкции вендора)</td>
+        <td>Компьютер цел, файлы целы, <strong>но Claude Code не запускается</strong> — нет доступа к самой модели.</td>
+        <td>Альтернативная подписка / резервный аккаунт. Файлы агента переносятся в новый аккаунт за 30 минут (CLAUDE.md, memory/, .claude/skills/ — стандартный формат).</td>
+      </tr>
+      <tr>
+        <td><strong>3. Переезд на другой стек</strong><br>(переход с Mac на Windows, смена работодателя, новый сотрудник на роль)</td>
+        <td>Нужно перенести знания и настройки в другую среду — другая ОС, другой аккаунт, другой человек.</td>
+        <td>Документация процессов (CLAUDE.md, playbooks). Файлы — переносятся, но скрипты и launchd — пересобираются под новую ОС.</td>
+      </tr>
+    </table>
+
+    <p><strong>Главная мысль:</strong> сценарии 1 и 3 решаются «бэкап файлов + чек-лист миграции». Сценарий 2 решается <strong>не бэкапом</strong>, а наличием альтернативы (резервная подписка, понимание политики вендора, готовность переключиться). Этот урок покрывает все три.</p>
+
+    <h2 id="account-block">Что делать если аккаунт Claude заблокировали</h2>
+
+    <p>Это самый болезненный сценарий — компьютер цел, файлы целы, но <strong>агент не запускается</strong>. Бэкап тут не спасает (файлы и так у вас). Нужна <strong>альтернатива до того как она понадобится</strong>.</p>
+
+    <p><strong>За что может прилететь блокировка:</strong></p>
+    <ul>
+      <li><strong>Acceptable Use Policy</strong> — нарушение правил Anthropic (контент, который модель отказалась генерировать, попытка обхода ограничений). Реже бывает у бизнес-пользователей.</li>
+      <li><strong>Проблемы с оплатой</strong> — карта не прошла, подписка просрочена, валютные ограничения. Самый частый случай.</li>
+      <li><strong>Региональные ограничения</strong> — Anthropic не работает с рядом стран. Если изменится политика — доступ может пропасть.</li>
+      <li><strong>Технические инциденты на стороне Anthropic</strong> — массовые сбои бывают редко, но бывают (несколько часов до суток).</li>
+    </ul>
+
+    <p><strong>Что нужно подготовить заранее (один раз, по 15-30 минут):</strong></p>
+
+    <div class="step">
+      <div class="num">ЗАГОТОВКА 1</div>
+      <div class="title">Понимать что файлы агента — переносимы <span class="time">· 5 мин знаний</span></div>
+      <p>CLAUDE.md, папка <code class="inline">memory/</code>, скиллы, хуки — <strong>обычные текстовые файлы</strong> в стандартном формате Claude Code. Они работают в любом аккаунте Claude Cowork. Если завтра вам выдадут второй аккаунт — вы открываете в нём ту же рабочую папку, и агент продолжает с тех же знаний за минуту.</p>
+      <p>Это значит: <strong>файлы — не привязаны к аккаунту</strong>. Привязан только доступ к модели.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ЗАГОТОВКА 2</div>
+      <div class="title">Запасной способ оплаты <span class="time">· 10 мин</span></div>
+      <p>На основной подписке привязана одна карта. Если она перестанет работать (банк, валюта, срок) — доступ пропадёт через 1-2 дня. Заведите <strong>вторую карту/способ оплаты</strong> в настройках Anthropic. Бесплатно. Даёт буфер.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ЗАГОТОВКА 3</div>
+      <div class="title">Знать альтернативные среды для агентов <span class="time">· 15 мин для знакомства</span></div>
+      <p>На случай если Anthropic недоступен в принципе (региональная блокировка) — есть альтернативы, работающие с теми же или похожими моделями. Не нужно настраивать заранее, но знать что они существуют:</p>
+      <ul>
+        <li><strong>Cursor</strong> — редактор с встроенными ИИ-агентами. Поддерживает Claude через API, GPT, Gemini. Можно загрузить ту же папку и работать.</li>
+        <li><strong>Cline / Continue</strong> — открытые альтернативы Claude Code, работают через любой API ключ.</li>
+        <li><strong>OpenAI Codex / ChatGPT Projects</strong> — другая модель, но похожая идея агента с памятью.</li>
+      </ul>
+      <p>Это не «бэкап Claude», это <em>план Б на случай если основной канал недоступен месяц и больше</em>. Знать — достаточно. Настраивать заранее — необязательно.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ЗАГОТОВКА 4</div>
+      <div class="title">Второй аккаунт для критичных команд (опционально) <span class="time">· 30 мин</span></div>
+      <p>Для команды из 3-5 человек, где агент критичен для ежедневной работы — имеет смысл иметь <strong>второй корпоративный аккаунт</strong> Anthropic как горячий резерв. Стоит как ещё одна подписка, но окупается одним инцидентом блокировки. Для одиночного пользователя — избыточно.</p>
+    </div>
+
+    <p style="margin-top: 12px;"><strong>Главное правило:</strong> любая блокировка временная или окончательная — это <em>часы простоя, а не катастрофа</em>, если файлы у вас (что мы и обеспечиваем бэкапом). Без подготовленной альтернативы — пропадает не только агент, но и понимание что делать дальше. Подготовка — это знание о вариантах, а не настройка всех альтернатив сразу.</p>
+
+    <h2 id="why">Зачем бэкап агента — это не один файл</h2>
+
+    <div class="analogy">
+      <p style="margin: 0;">Представьте что у вас сотрудник, которого надо перевезти в другой офис. Что нужно собрать? Его рабочие папки (что он знает), его привычки и правила (как он работает), его пропуска и ключи (к чему имеет доступ), его инструменты (где сидит, чем пользуется). Если забыть хотя бы одно — он не сможет работать на новом месте, пока не восстановишь недостающее.</p>
+    </div>
+
+    <p>С агентом то же самое — он состоит из <strong>4 разных слоёв</strong>, каждый бэкапится по-своему:</p>
+
+    <table>
+      <tr><th style="width: 22%;">Слой</th><th>Что внутри</th><th>Где живёт</th></tr>
+      <tr>
+        <td><strong>Мозг</strong></td>
+        <td>Что агент знает: CLAUDE.md, папка <code class="inline">memory/</code>, ваша история сессий</td>
+        <td>Файлы на вашем Mac в рабочей папке агента</td>
+      </tr>
+      <tr>
+        <td><strong>Поведение</strong></td>
+        <td>Как агент действует: правила, скиллы, хуки (автоматические проверки)</td>
+        <td>Папка <code class="inline">.claude/</code> в рабочей папке + глобальная <code class="inline">~/.claude/</code></td>
+      </tr>
+      <tr>
+        <td><strong>Ключи</strong></td>
+        <td>К чему агент имеет доступ: токены Telegram, OAuth Google, пароли API</td>
+        <td>Файлы <code class="inline">.env</code> рядом с папкой</td>
+      </tr>
+      <tr>
+        <td><strong>Инструменты</strong></td>
+        <td>Где и чем работает: скрипты, расписание автозапусков (launchd на macOS)</td>
+        <td><code class="inline">scripts/</code> + <code class="inline">~/Library/LaunchAgents/</code></td>
+      </tr>
+    </table>
+
+    <p>Если забыть <strong>мозг</strong> — агент забудет все ваши решения, проекты, договорённости с командой. Если забыть <strong>поведение</strong> — он перестанет следовать вашим правилам и снова начнёт делать ошибки которые вы уже однажды поймали. Если забыть <strong>ключи</strong> — не сможет ни писать в Telegram, ни читать почту. Если забыть <strong>инструменты</strong> — ничего не запустится автоматически.</p>
+
+    <p><strong>Бэкап = все 4 слоя, не один.</strong> Большинство ошибок при миграции — это «у меня папка <code class="inline">memory/</code> на флешке, всё хорошо» — и потом обнаруживается, что забыли скопировать ключи или хуки.</p>
+
+    <h2 id="rule321">Правило 3-2-1 → 3-2-1-1-0 — современный стандарт</h2>
+
+    <p>Базовый принцип <strong>3-2-1</strong> придуман в 1990-х и до сих пор актуален. Но в 2024-2026 годах индустрия добавила <strong>ещё два пункта</strong> — для защиты от ransomware (вирусов-шифровальщиков). Сначала база, потом дополнения:</p>
+
+    <table>
+      <tr><th style="width: 18%;">Цифра</th><th>Что значит</th><th>Зачем</th></tr>
+      <tr>
+        <td><strong>3 копии</strong></td>
+        <td>Минимум 3 копии важных данных (оригинал + 2 бэкапа)</td>
+        <td>Одна копия = высокий риск. Два бэкапа закрывают вероятность что один из них сломается одновременно с оригиналом.</td>
+      </tr>
+      <tr>
+        <td><strong>2 разных носителя</strong></td>
+        <td>Не на одном диске и не на двух одинаковых SSD одной серии</td>
+        <td>Диски одной серии могут отказать синхронно (производственный брак, износ). Разные типы — например SSD + облако, или SSD + внешний жёсткий диск (HDD).</td>
+      </tr>
+      <tr>
+        <td><strong>1 не дома</strong></td>
+        <td>Минимум одна копия физически в другом месте — например в облаке</td>
+        <td>Пожар, кража, потоп — события которые забирают всё что в одной квартире. Облачная копия выживает.</td>
+      </tr>
+      <tr style="background: var(--accent-bg);">
+        <td><strong>+1 immutable</strong><br><span style="font-size: 12px; color: var(--gray);">(добавлено 2024)</span></td>
+        <td>Хотя бы одна копия — <strong>неперезаписываемая</strong>: ransomware (вирус-шифровальщик) не может её зашифровать или удалить</td>
+        <td>Если шифровальщик попадёт на Mac, он зашифрует и оригинал, и Time Machine (если диск подключён), и Google Drive (если синхронизация активна). Защищает только копия которую вирус физически не достанет.</td>
+      </tr>
+      <tr style="background: var(--accent-bg);">
+        <td><strong>+0 verified errors</strong><br><span style="font-size: 12px; color: var(--gray);">(добавлено 2026)</span></td>
+        <td>Каждый бэкап должен быть <strong>проверен восстановлением</strong> — иначе считать что его нет</td>
+        <td>Бэкап без теста = иллюзия защиты (см. учебная тревога ниже).</td>
+      </tr>
+    </table>
+
+    <p>Базовая защита 3-2-1 закрывает большинство бытовых сценариев (отказ диска, кража Mac, пожар). Дополнения <strong>1-immutable</strong> и <strong>0-verified</strong> закрывают современную угрозу — ransomware и фишинг. Малый бизнес сегодня — главная мишень шифровальщиков (атаки выросли заметно с 2024 года, малому бизнесу восстанавливаться дороже потому что нет ИТ-отдела).</p>
+
+    <p>Применительно к нашему агенту:</p>
+
+    <ul>
+      <li><strong>Копия 1 (оригинал):</strong> ваш Mac, рабочая папка агента</li>
+      <li><strong>Копия 2 (носитель А, облако):</strong> автоматический скрипт раз в неделю собирает архив и кладёт в облако (Google Drive / Dropbox / iCloud Drive)</li>
+      <li><strong>Копия 3 (носитель Б, локально):</strong> Time Machine на внешний SSD — снимок всего Mac каждый час</li>
+      <li><strong>Копия immutable:</strong> внешний SSD, который вы <em>убираете в ящик / сейф</em> после копирования (физический «воздушный зазор» — ransomware не дотянется до отключённого диска). ИЛИ облачное хранилище с <em>версионностью</em> на 30+ дней (Google Drive хранит версии 30 дней автоматически — это слабая immutability, но лучше чем ничего). Это <strong>+1</strong> из правила.</li>
+      <li><strong>Учебная тревога:</strong> раз в квартал восстанавливаешь архив на временную папку и проверяешь что агент запускается. Это <strong>+0</strong> из правила (раздел про тревогу — ниже).</li>
+    </ul>
+
+    <p>Параллельно <strong>ключи и пароли</strong> хранятся отдельно (об этом дальше).</p>
+
+    <h2 id="what-where">Что бэкапить и куда — 5 строк таблицы</h2>
+
+    <p>На пальцах:</p>
+
+    <table>
+      <tr><th style="width: 22%;">Что</th><th>Куда</th><th>Как часто</th><th>Кто настраивает</th></tr>
+      <tr>
+        <td><strong>Память агента</strong><br>(CLAUDE.md, memory/, ~/.claude/)</td>
+        <td>Автоматический скрипт → облако (Google Drive / Dropbox)</td>
+        <td>Раз в неделю</td>
+        <td>Один раз настраивается, дальше идёт сам</td>
+      </tr>
+      <tr>
+        <td><strong>Правила, скиллы, хуки</strong><br>(.claude/rules/, .claude/hooks/, .claude/skills/)</td>
+        <td>Тот же автоматический скрипт</td>
+        <td>Раз в неделю</td>
+        <td>В том же скрипте</td>
+      </tr>
+      <tr>
+        <td><strong>Ключи и пароли</strong><br>(.env*, OAuth credentials)</td>
+        <td>Отдельное хранилище: 1Password / Bitwarden / Apple Keychain. <strong>НЕ в общий архив на облако!</strong></td>
+        <td>Сразу при получении нового ключа</td>
+        <td>Вы вручную</td>
+      </tr>
+      <tr>
+        <td><strong>Рабочие файлы</strong><br>(Документы, Рабочий стол, важные папки)</td>
+        <td><strong>Mac:</strong> Time Machine на внешний диск + iCloud Drive для важных папок<br><strong>Windows:</strong> File History на внешний диск + OneDrive<br><strong>Linux:</strong> rsync на внешний диск + облако (rclone)</td>
+        <td>Час-два (системный бэкап) + при изменении (облако)</td>
+        <td>Включить один раз в настройках ОС</td>
+      </tr>
+      <tr>
+        <td><strong>Задачи и переписка</strong><br>(Plane, Telegram, почта)</td>
+        <td>Уже бэкапятся <em>у вендора</em> (на серверах сервиса). Ваш бэкап не нужен — только реестр «какими сервисами пользуюсь».</td>
+        <td>Постоянно (вендор)</td>
+        <td>Ничего не делать</td>
+      </tr>
+    </table>
+
+    <p style="font-size: 14px; color: var(--gray);"><em>Честно про наш собственный бэкап: у Ли работает только <strong>одна копия</strong> — еженедельный архив на Google Drive (скрипт <code class="inline">backup-to-drive.mjs</code>, 7 версий). По правилу 3-2-1-1-0 это <strong>недостаточно</strong>: нет Time Machine, нет immutable копии, частота «раз в неделю» означает что при поломке в пятницу теряется 4 дня работы. Знаем, признаём, в работе — Ирина определяется с Time Machine + immutable. Этот урок учит правильному подходу, а наша внутренняя инфраструктура догоняет.</em></p>
+
+    <h2 id="keys">Ключи — отдельная история. Почему нельзя класть в общий архив</h2>
+
+    <p>Самая распространённая ошибка — положить ключи в тот же архив что и память. Логика «всё в одном месте, удобнее восстанавливать». Это <strong>опасная экономия</strong>.</p>
+
+    <div class="case">
+      <strong>Что произойдёт:</strong> у вас архив на Google Drive с папкой <code class="inline">.env/</code> внутри. В этом файле — токены доступа к Telegram-боту, к Gmail, к VK, к Битриксу, ко всему что вы подключали в Уроке 2 Блока 3.
+      <br><br>
+      Если кто-то получит доступ к вашему Google аккаунту (фишинг, утечка пароля, забыли разлогиниться на чужом компьютере) — он получает <strong>не только архив</strong>, а <strong>все подключённые сервисы</strong>. Один взлом — катастрофа на всех контурах.
+      <br><br>
+      Если ключи лежат отдельно (1Password / Bitwarden / Apple Keychain) — взлом Google аккаунта даёт только архив с памятью. Это плохо, но восстановимо. Ключи остаются защищены отдельным паролем + двухфакторной авторизацией.
+    </div>
+
+    <p><strong>Что делать:</strong></p>
+    <ol>
+      <li><strong>Завести менеджер паролей</strong>, если ещё нет. Бесплатные: <em>Bitwarden</em>, <em>KeePassXC</em>, <em>Apple Keychain</em> (встроен в macOS). Платный — 1Password (~290 ₽/мес, удобный).</li>
+      <li><strong>Положить туда</strong> каждый токен/ключ/пароль который вы получали при настройке агента — Telegram Bot Token, Google OAuth credentials (или скриншот файла), API ключи Yandex/VK/Битрикс и т.д.</li>
+      <li><strong>Добавить заметку</strong> к каждому: где этот сервис, как перевыпустить ключ если утёк (URL панели администратора), что сломается без этого ключа.</li>
+      <li><strong>В архив на облако</strong> ключи <em>не класть</em>. Скрипт автоматического бэкапа должен <em>явно исключать</em> файлы <code class="inline">.env*</code> и <code class="inline">*-credentials.json</code> (мы у себя так и сделали — это одна правка в скрипте архивации).</li>
+    </ol>
+
+    <p style="margin-bottom: 6px;">Скажите агенту:</p>
+    <div class="ask">«Покажи мне список всех файлов с ключами/токенами в моей рабочей папке (ищи файлы вида <code class="inline">.env</code>, <code class="inline">*-token.json</code>, <code class="inline">*-credentials.json</code>). Для каждого — какой сервис, где этот ключ перевыпустить заново, что сломается без него. Я хочу скопировать эти данные в менеджер паролей».</div>
+
+    <h2 id="drill">Учебная тревога — раз в квартал</h2>
+
+    <p>Бэкап без проверенного восстановления — иллюзия защиты. Это <strong>главная мысль урока</strong>.</p>
+
+    <p>Раз в квартал (4 раза в год — например, в начале каждого нового сезона) — устроить себе учебную тревогу:</p>
+
+    <ol>
+      <li>Скачать последний архив из облака на временную папку (НЕ в рабочую — это тест, не миграция)</li>
+      <li>Распаковать, посмотреть глазами: все ли папки на месте? Все ли важные файлы там?</li>
+      <li>Достать из менеджера паролей один-два токена, попробовать положить рядом и запустить агента в этой временной папке</li>
+      <li>Проверить: видит ли агент свою память? Может ли он написать тестовое сообщение в Telegram? Прочитать тестовую почту?</li>
+      <li>Записать что сработало, что нет. Что нет — починить <strong>сейчас</strong>, в спокойной обстановке. Не когда Mac умер.</li>
+    </ol>
+
+    <p>15-20 минут раз в квартал. Стоит этого — потому что бэкапы которые никогда не проверялись, в момент истины часто не работают по неочевидным причинам (поменялся формат файла Claude Code, скрипт ссылается на путь которого больше нет, токен истёк).</p>
+
+    <div class="case">
+      <strong>Наш опыт.</strong> Наш скрипт автоматического бэкапа существует с лета 2025 года и каждую субботу собирает архив. На середине мая 2026, когда мы готовили этот урок, я (Ли) пошла проверять что туда попадает — и нашла <strong>4 пробела</strong>: не бэкапилась папка с моими скиллами, ключи попадали в архив в открытом виде, не было реестра «какие сервисы используем», не было плана миграции на новую машину. Все 4 проблемы залатали за день — но если бы мы пошли восстанавливаться без проверки, мы бы это узнали в худший момент. Учебная тревога — это и есть способ найти такие пробелы заранее.
+    </div>
+
+    <h2 id="checklist">Чек-лист миграции на новую машину за 1 день</h2>
+
+    <p>Если когда-нибудь придётся — вот пошагово. Целевое время: <strong>1 рабочий день</strong>.</p>
+
+    <div class="step">
+      <div class="num">ШАГ 1</div>
+      <div class="title">Установить Claude Code Desktop <span class="time">· 10 мин</span></div>
+      <p>Скачать с <a href="https://claude.ai/download" target="_blank" style="color: var(--navy-light);">claude.ai/download</a>. Войти под тем же аккаунтом Cowork/Max что и был.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 2</div>
+      <div class="title">Скачать последний архив из облака и распаковать <span class="time">· 15 мин</span></div>
+      <p>Открыть Google Drive / Dropbox → папка с бэкапами → скачать самый свежий zip. Распаковать в домашнюю папку.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 3</div>
+      <div class="title">Восстановить ключи из менеджера паролей <span class="time">· 20 мин</span></div>
+      <p>Открыть 1Password / Bitwarden / Keychain. По заметкам, которые делали при настройке: каждый <code class="inline">.env</code> файл воссоздать рядом с распакованной папкой агента. Каждый OAuth-файл — на своё место.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 4</div>
+      <div class="title">Установить Node.js и зависимости <span class="time">· 15 мин</span></div>
+      <p>Если в системе ещё нет — поставить через установщик с <a href="https://nodejs.org" target="_blank" style="color: var(--navy-light);">nodejs.org</a> (или через <code class="inline">nvm</code> для разработчиков). В папке агента сказать ему: «установи мне все зависимости из <code class="inline">package.json</code>».</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 5</div>
+      <div class="title">Восстановить расписание автозапусков <span class="time">· 10 мин</span></div>
+      <p>В архиве должна быть папка с launchd plist-ами (на macOS они живут в <code class="inline">~/Library/LaunchAgents/</code>). Скопировать их обратно туда. Скажите агенту: «загрузи все наши launchd plist'ы». Он сам запустит нужные команды.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 6</div>
+      <div class="title">Первая сессия Claude Code → проверка <span class="time">· 20 мин</span></div>
+      <p>Открыть Claude Code в восстановленной папке. Спросить агента:</p>
+      <div class="ask">«Это твой первый запуск на новой машине после миграции. Прочитай CLAUDE.md, проверь что у тебя есть доступ к памяти, к скриптам, и к нашим коннекторам. Отправь мне в Telegram короткое сообщение «связь восстановлена», прочитай 3 последних письма в Gmail и покажи их темы. Если что-то не работает — напиши какой компонент сломался».</div>
+      <p style="margin: 8px 0 0; font-size: 14px;"><strong>Если все 3 проверки прошли</strong> — миграция успешна. Если что-то сломалось — починить точечно, по сообщению агента.</p>
+    </div>
+
+    <p>Итого — 4-5 часов чистого времени. Полдня. Это то к чему стремимся: <em>смерть Mac не равна катастрофе</em>.</p>
+
+    <h2 id="stones">3 камня — на чём чаще всего спотыкаются</h2>
+
+    <div class="stone">
+      <div class="stone-title">Камень 1. «Бэкап есть» = «бэкап работает»</div>
+      <p>Самый частый и самый болезненный камень. Скрипт бэкапа отрабатывает, в Google Drive копится 7 архивов, всё кажется надёжным. Никто никогда не пробует восстановиться. В момент истины — обнаруживается что архивы открываются, но что-то не запускается, или что-то забыто скопировать.</p>
+      <p><strong>Лечение:</strong> учебная тревога раз в квартал. Не теоретически — а реально открыть архив, восстановить во временную папку, проверить агента. 20 минут.</p>
+    </div>
+
+    <div class="stone">
+      <div class="stone-title">Камень 2. Ключи в общем архиве</div>
+      <p>«Я положу всё в один zip — так проще восстанавливать». Удобство которое дорого обходится: один взлом облачного аккаунта = доступ ко всем сервисам сразу.</p>
+      <p><strong>Лечение:</strong> ключи — <em>всегда</em> в отдельном менеджере паролей. Скрипт автоматического бэкапа должен явно <em>исключать</em> файлы <code class="inline">.env*</code> и <code class="inline">*-credentials.json</code>. Это одна строка в скрипте, но она спасает от катастрофы.</p>
+    </div>
+
+    <div class="stone">
+      <div class="stone-title">Камень 3. Все копии одновременно подключены — ransomware зашифрует все</div>
+      <p>«У меня всё на Google Drive + Time Machine на постоянно подключённом SSD, чего ещё надо?» Если на Mac попадёт ransomware (вирус-шифровальщик), он зашифрует <strong>все диски которые видит</strong> — и оригинал, и Time Machine SSD, и синхронизированный Google Drive Desktop. Три копии — но все мертвы одновременно.</p>
+      <p><strong>Лечение:</strong> правило <strong>+1 immutable</strong>. Минимум одна копия которую вирус физически не достанет: либо внешний диск который вы <em>отключаете</em> после бэкапа (физический «воздушный зазор»), либо облачное хранилище с настоящей версионностью на 30+ дней (Google Drive хранит версии 30 дней — это даёт окно для отката, если заметили атаку быстро).</p>
+    </div>
+
+    <h2 id="practice">Практика — 30 минут на 4 шагах</h2>
+
+    <div class="step">
+      <div class="num">ШАГ 1</div>
+      <div class="title">Проверить что бэкапится сейчас <span class="time">· 5 мин</span></div>
+      <p>Скажите агенту:</p>
+      <div class="ask">«Покажи мне как у меня сейчас устроен бэкап моей рабочей папки. Есть ли автоматический скрипт? Куда он кладёт архив? Что попадает в архив, а что нет? Перечисли по списку, без воды».</div>
+      <p style="margin: 8px 0 0; font-size: 14px;">Если ответ «нет автоматического бэкапа» — это первое что нужно настроить (агент поможет в следующем шаге).</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 2</div>
+      <div class="title">Найти все файлы с ключами <span class="time">· 5 мин</span></div>
+      <p>Скажите агенту:</p>
+      <div class="ask">«Найди в моей рабочей папке все файлы вида <code class="inline">.env</code>, <code class="inline">*-token.json</code>, <code class="inline">*-credentials.json</code>, <code class="inline">*.pem</code>. Перечисли по одному с пометкой какой сервис. Я скопирую содержимое в менеджер паролей».</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 3</div>
+      <div class="title">Положить ключи в менеджер паролей <span class="time">· 15 мин</span></div>
+      <p>Если ещё нет менеджера паролей — поставьте Bitwarden (бесплатно) или Apple Keychain (уже встроен). Для каждого файла из шага 2:</p>
+      <ul>
+        <li>Создать запись с понятным названием («Telegram Bot — основной», «Google OAuth — Cowork»)</li>
+        <li>Вставить содержимое файла</li>
+        <li>В заметке: <em>где этот сервис</em>, <em>URL панели администратора для перевыпуска</em>, <em>что сломается без ключа</em></li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 4</div>
+      <div class="title">Запланировать учебную тревогу <span class="time">· 5 мин</span></div>
+      <p>В календаре поставить повторяющееся событие «Проверка бэкапа агента» — раз в квартал, 20 минут. Первое — на ближайший понедельник через неделю (не сегодня, дайте бэкапу собраться).</p>
+      <p>Скажите агенту:</p>
+      <div class="ask">«Запиши в CLAUDE.md правило: я раз в квартал делаю учебную тревогу — скачиваю последний бэкап, разворачиваю во временной папке, проверяю что ты можешь запуститься. Напоминай мне об этом если я долго не делал».</div>
+    </div>
+
+    <div class="claudemd-box">
+      <h3>✅ Закрепить в CLAUDE.md</h3>
+      <p>Знание из урока становится правилом агента только когда записано в CLAUDE.md. Без этого шага бэкап останется в категории «я знаю что надо бы сделать» и не превратится в работающую защиту.</p>
+      <p><strong>Действие на 2 минуты.</strong> Откройте своего агента и скажите:</p>
+      <div class="ask">«Я прошёл(ла) Урок 4 Блока 3 "Бэкап агента". Допиши в CLAUDE.md три правила: (1) автоматический бэкап моей рабочей папки в облако раз в неделю, явно <strong>исключая</strong> файлы <code class="inline">.env*</code> и <code class="inline">*-credentials.json</code>; (2) ключи и токены живут в менеджере паролей (1Password / Bitwarden / Keychain), не в архиве; (3) раз в квартал я делаю учебную тревогу — разворачиваю последний бэкап во временной папке и проверяю что ты можешь запуститься. Напоминай мне об этом если квартал прошёл».</div>
+      <p><strong>Проверка:</strong> откройте CLAUDE.md, убедитесь что все три правила записаны. Если нет — повторите запрос конкретнее.</p>
+    </div>
+
+    <div class="summary-box">
+      <h3>Шпаргалка</h3>
+      <ul>
+        <li><strong>Агент — 4 слоя:</strong> мозг (память), поведение (правила/скиллы/хуки), ключи (токены), инструменты (скрипты/launchd). Каждый бэкапится по-своему.</li>
+        <li><strong>Правило 3-2-1:</strong> 3 копии, 2 разных носителя, 1 не дома. Применительно к агенту: Mac + Time Machine + облачный архив.</li>
+        <li><strong>Ключи — отдельно.</strong> В менеджере паролей, не в общем архиве. Один взлом облака не должен открывать все сервисы.</li>
+        <li><strong>Учебная тревога раз в квартал.</strong> 20 минут реального теста восстановления. Без этого «бэкап есть» ≠ «бэкап работает».</li>
+        <li><strong>Одна копия immutable</strong> (отключаемый диск или облако с версионностью 30+ дней) — защита от ransomware. Если все 3 копии online одновременно, шифровальщик зашифрует все три.</li>
+      </ul>
+      <p style="margin-top: 14px; margin-bottom: 0;"><strong>Метрика успеха:</strong> вы знаете где лежат ваши 4 слоя, у вас есть менеджер паролей с ключами, в календаре стоит повторяющееся напоминание о квартальной проверке, и хотя бы одна копия архива защищена от ransomware (отключаемая или с версионностью). Плюс понимаете что делать если аккаунт Claude заблокируют (не бэкап файлов, а альтернативная подписка).</p>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Внедрение ИИ в Стардогс · Блок 3 · Урок 4 из 4 · 19 мая 2026
+  </div>
+</footer>
+
+</body>
+</html>

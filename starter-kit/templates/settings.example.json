@@ -1,0 +1,27 @@
+{
+  "_комментарий": "Пример подключения хуков комплекта. Скопируйте блок hooks в свой .claude/settings.json (или settings.local.json). Если settings.json уже есть — добавьте записи внутрь существующего hooks, не перезатирая.",
+
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/pre-show-calculation.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/source-check.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

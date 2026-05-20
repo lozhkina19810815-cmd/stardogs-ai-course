@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Чек-лист: защита от галлюцинаций ИИ-агента</title>
+<style>
+  :root {
+    --navy: #1E3A5F; --navy-light: #426B99; --navy-bg: #F2F4F8;
+    --accent: #E88B00; --text: #1A1A1A; --gray: #5A5A5A; --white: #FFFFFF;
+    --border: #E1E5EC; --red: #C8392A; --red-bg: #FFF2F0;
+    --green: #2E7D4F; --green-bg: #E8F5E9; --yellow: #B07900; --yellow-bg: #FFF7E0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: var(--text); background: var(--white); line-height: 1.55; font-size: 15px; }
+  .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+  header { background: var(--navy); color: var(--white); padding: 16px 0; }
+  header .container { display: flex; justify-content: space-between; align-items: center; }
+  header .logo { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 13px; opacity: 0.85; }
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--white); padding: 28px 0; text-align: center; }
+  .hero .label { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  .hero h1 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+  .hero .meta { opacity: 0.85; font-size: 13px; }
+  main { padding: 26px 0 60px; }
+  .sec { border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; border-left: 4px solid var(--navy-light); }
+  .sec h2 { font-size: 17px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+  .sec .when { font-size: 13px; color: var(--gray); font-style: italic; margin-bottom: 10px; }
+  .sec.setup { border-left-color: var(--accent); background: var(--accent-bg, #FFF9EC); }
+  .sec.setup h2 { color: var(--accent); }
+  .sec.s1 { border-left-color: var(--green); } .sec.s1 h2 { color: var(--green); }
+  .sec.s2 { border-left-color: var(--accent); } .sec.s2 h2 { color: var(--accent); }
+  .sec.s3 { border-left-color: var(--navy-light); }
+  .sec.s4 { border-left-color: var(--navy); }
+  .sec.s5 { border-left-color: var(--red); background: var(--red-bg); } .sec.s5 h2 { color: var(--red); }
+  ul { list-style: none; }
+  li.check { margin-bottom: 8px; padding-left: 28px; position: relative; }
+  li.check::before { content: "☐"; position: absolute; left: 0; top: -1px; color: var(--navy-light); font-size: 18px; }
+  li.check strong { color: var(--navy); }
+  li.num { margin-bottom: 10px; padding-left: 30px; position: relative; counter-increment: setup; }
+  li.num::before { content: counter(setup); position: absolute; left: 0; top: 0; width: 22px; height: 22px; background: var(--accent); color: var(--white); border-radius: 50%; font-size: 13px; font-weight: 700; text-align: center; line-height: 22px; }
+  ol.setup-list { counter-reset: setup; list-style: none; padding-left: 0; }
+  .say { background: var(--navy-bg); border-left: 3px solid var(--navy-light); padding: 7px 12px; border-radius: 4px; margin-top: 6px; font-style: italic; color: var(--navy); font-size: 13.5px; }
+  .rule { margin-top: 10px; padding: 8px 12px; background: var(--navy); color: var(--white); border-radius: 5px; font-size: 13px; font-weight: 600; }
+  .rule b { color: var(--accent); }
+  .intro { background: var(--navy-bg); border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; font-size: 14px; }
+  .divider { font-size: 13px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin: 22px 0 10px; }
+  footer { background: var(--navy-bg); padding: 18px 0; text-align: center; font-size: 12px; color: var(--gray); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="lesson16.html" class="back">← к уроку</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Спутник Урока 3 Блока 3 · Definition of Done</div>
+    <h1>Чек-лист: защита от галлюцинаций ИИ-агента</h1>
+    <div class="meta">Сначала настрой один раз, потом проверяй каждый результат</div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <div class="intro">Чек-лист из двух частей. <strong>Часть A — настроить агента один раз</strong> (тогда он защищает сам). <strong>Часть B — пройти перед тем как доверять конкретному результату.</strong> Всё — для агента на Cowork (Claude Code).</div>
+
+    <div class="divider">Часть A · Настроить один раз</div>
+
+    <div class="sec setup">
+      <h2>⚙ Что конкретно сделать (4 шага)</h2>
+      <div class="when">Скажи эти команды своему агенту — он сам всё настроит. Главное: одного правила в CLAUDE.md мало (агент забывает) — рычаг это хук. <strong>Готовые файлы:</strong> <a href="starter-kit/verification-kit.zip" style="color: var(--navy-light); font-weight: 700;">скачать комплект (.zip)</a> · <a href="starter-kit/starter-kit.html" style="color: var(--navy-light);">инструкция</a>.</div>
+      <ol class="setup-list">
+        <li class="num"><strong>Заземли на свои файлы.</strong> Положи рабочие документы (прайс, регламент, выгрузки) в папку проекта агента.
+          <div class="say">«Отвечай по данным только из файлов проекта или коннекторов. На каждую цифру указывай, из какого файла и строки она взята. Нет данных — пиши "в файлах нет", не придумывай».</div>
+        </li>
+        <li class="num"><strong>Дай 4 правила в CLAUDE.md.</strong>
+          <div class="say">«Допиши в CLAUDE.md 4 правила: (1) факт — только из файла/коннектора, с источником; (2) после расчёта — CoVe с проверкой «с чистого листа»; (3) при неопределённости — «не знаю» вместо догадки; (4) "готово" ставит человек, не ты».</div>
+        </li>
+        <li class="num"><strong>Поставь хук-проверку.</strong> <span style="color:var(--red); font-weight:700;">← рычаг</span>
+          <div class="say">«Поставь хук: перед утверждением с данными проверяй, открыл ли я источник в этой сессии (Read/коннектор) — если нет, блокируй. И хук, который не даёт показать расчёт без шага CoVe».</div>
+        </li>
+        <li class="num"><strong>Сохрани приёмы как скиллы.</strong>
+          <div class="say">«Сохрани два промпта как команды: (1) CoVe-проверка, (2) строгое заземление — чтобы не печатать каждый раз».</div>
+        </li>
+      </ol>
+      <div class="rule"><b>Правило:</b> настроил один раз → агент применяет сам. Текст без хука забывается.</div>
+    </div>
+
+    <div class="divider">Часть B · Проверять каждый результат</div>
+
+    <div class="sec s1">
+      <h2>1. Заземление сработало</h2>
+      <div class="when">Перед тем как доверять любому факту из ответа агента.</div>
+      <ul>
+        <li class="check">Нужные файлы лежат в проекте агента (или подключён коннектор к живой системе) и они <strong>актуальны</strong>.</li>
+        <li class="check">Агент реально открыл источник в этой сессии (Read / коннектор), а не ответил «по памяти».</li>
+        <li class="check">На каждый важный факт (цифра, дата, имя, ставка, KPI) агент указал: «источник — такой-то файл, строка».</li>
+        <li class="check">Если источник не указан — факт считается недостоверным и наружу не идёт.</li>
+      </ul>
+      <div class="rule"><b>Правило:</b> факт без понятного источника = галлюцинация по умолчанию.</div>
+    </div>
+
+    <div class="sec s2">
+      <h2>2. CoVe — для важных решений</h2>
+      <div class="when">Включаем для документов и расчётов с заметным влиянием (деньги, клиенты, стратегия, то что уходит наружу). На болтовню и черновики — не тратим.</div>
+      <ul>
+        <li class="check">Попросили: «Разбей ответ на 3–7 ключевых утверждений».</li>
+        <li class="check">На каждое утверждение сформулирован проверочный вопрос «как именно?» / «откуда это следует?».</li>
+        <li class="check">Агент ответил на вопросы <strong>с чистого листа</strong> — в новом запросе, без доступа к черновику.</li>
+        <li class="check">Получено сравнение: «что в черновике / что при проверке / где расходится».</li>
+        <li class="check">Все расхождения исправлены либо помечены как «оценка / гипотеза».</li>
+      </ul>
+      <div class="rule"><b>Правило:</b> без шага «с чистого листа» CoVe не считается выполненным.</div>
+    </div>
+
+    <div class="sec s3">
+      <h2>3. Политика «не знаю» вместо уверенного вранья</h2>
+      <div class="when">Поощряем отказ от ответа, а не умное угадывание.</div>
+      <ul>
+        <li class="check">При неопределённости агент пишет «не знаю» / «н/д» и запрашивает данные.</li>
+        <li class="check">Если в данных дыры — даёт диапазон с пометкой «оценка», а не одну точную цифру.</li>
+        <li class="check">Прогнозы без истории помечаются «недостаточно данных», а не «скорее всего X».</li>
+        <li class="check">Первые случаи честного «не знаю» — явно поощряются.</li>
+      </ul>
+      <div class="rule"><b>Правило:</b> догадка, оформленная как факт, — это баг процесса, а не помощь.</div>
+    </div>
+
+    <div class="sec s4">
+      <h2>4. Приёмщик-человек</h2>
+      <div class="when">Агент никогда не ставит точку в задаче сам. Приёмщик — не обязательно руководитель: владелец процесса или ревьюер.</div>
+      <ul>
+        <li class="check">Агент не ставит «готово / completed» без явного ОК человека.</li>
+        <li class="check">Для каждой задачи понятен приёмщик (кто говорит «принято»).</li>
+        <li class="check">Документы, письма, сообщения перед отправкой смотрит человек-приёмщик.</li>
+        <li class="check">Фразы «вроде готово», «должно работать», «по идее ок» без ОК = задача не готова.</li>
+      </ul>
+      <div class="rule"><b>Правило:</b> «Готово» — это действие человека, а не формулировка агента.</div>
+    </div>
+
+    <div class="sec s5">
+      <h2>5. Быстрый самоконтроль перед отправкой наружу</h2>
+      <div class="when">Перед тем как отправить результат клиенту / партнёру / в чат — три вопроса.</div>
+      <ul>
+        <li class="check">Я могу показать источники для всех ключевых фактов и цифр?</li>
+        <li class="check">Все оценки и допущения помечены как оценки, а не поданы как факты?</li>
+        <li class="check">Я готов(а) лично подписаться под этим текстом / расчётом?</li>
+      </ul>
+      <div class="rule">Любой ответ «нет» → вернуться на шаги 1–3 (заземление, CoVe, «не знаю») и доработать.</div>
+    </div>
+
+    <div class="intro" style="margin-top: 22px; margin-bottom: 0;"><strong>Помни границы:</strong> базового набора (части A+B) хватает для FAQ, регламентов, операционных расчётов. Юр. формулировки (168-ФЗ), финансы с последствиями, сложная аналитика — только с сильным человеком, агент там лишь помощник.</div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Внедрение ИИ в Стардогс · спутник Урока 3 Блока 3 · обновлён 20 мая 2026
+  </div>
+</footer>
+
+</body>
+</html>
