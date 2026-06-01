@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 1 Блока 4. Workflow: запустить десять агентов параллельно — и не потерять результат</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --red-bg: #FFF2F0;
+    --green: #2E7D4F;
+    --green-bg: #E8F5E9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: var(--text); background: var(--white); line-height: 1.6; font-size: 16px; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  header { background: var(--navy); color: var(--white); padding: 20px 0; }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--white); padding: 60px 0 40px; text-align: center; }
+  .hero .label { color: var(--accent); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  .hero h1 { font-size: 30px; font-weight: 800; max-width: 680px; margin: 0 auto 12px; line-height: 1.18; }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+  .hero .meta strong { color: var(--accent); }
+  main { padding: 40px 0 80px; }
+  h2 { font-size: 22px; color: var(--navy); font-weight: 800; margin: 36px 0 14px; scroll-margin-top: 70px; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 16px; color: var(--navy); font-weight: 700; margin: 18px 0 8px; }
+  p { margin-bottom: 12px; }
+  p.lead { font-size: 16px; color: var(--text); padding: 16px 20px; background: var(--navy-bg); border-left: 4px solid var(--navy); border-radius: 6px; margin-bottom: 28px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  ul li, ol li { margin-bottom: 6px; }
+  strong { color: var(--navy); }
+  .ref { color: var(--gray); font-size: 13px; font-style: italic; display: block; margin-top: 8px; }
+  .step { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 6px; padding: 16px 20px; margin: 14px 0; }
+  .step .num { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .step .title { font-size: 17px; font-weight: 700; color: var(--navy); margin: 4px 0 10px; }
+  .step .time { color: var(--gray); font-size: 13px; font-weight: normal; }
+  .step ul, .step ol { margin-bottom: 0; }
+  .ask { background: var(--navy-bg); border-left: 3px solid var(--navy-light); padding: 10px 14px; border-radius: 4px; margin: 10px 0; font-style: italic; color: var(--navy); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--navy-bg); color: var(--navy); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td code, code.inline { background: var(--navy-bg); padding: 2px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; color: var(--navy); }
+  pre { background: var(--navy); color: var(--white); padding: 14px 18px; border-radius: 6px; overflow-x: auto; margin: 12px 0; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; line-height: 1.5; }
+  .summary-box { background: var(--navy); color: var(--white); padding: 22px 26px; border-radius: 8px; margin: 28px 0; }
+  .summary-box h3 { color: var(--accent); margin-top: 0; font-size: 16px; }
+  .summary-box ul { padding-left: 18px; }
+  .summary-box ul li { margin-bottom: 6px; }
+  .summary-box strong { color: var(--white); }
+  .claudemd-box { background: var(--red-bg); border-left: 4px solid var(--red); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
+  .claudemd-box h3 { color: var(--red); margin-top: 0; font-size: 16px; }
+  .case { background: var(--navy-bg); border-radius: 6px; padding: 14px 18px; margin: 14px 0; font-size: 14px; }
+  .case strong { color: var(--navy); }
+  .stone { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: 6px; padding: 14px 18px; margin: 12px 0; }
+  .stone .stone-title { font-weight: 700; color: var(--red); margin-bottom: 6px; font-size: 15px; }
+  .analogy { background: var(--accent-bg); border-left: 4px solid var(--accent); padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 15px; color: var(--text); }
+  .red-warning { background: var(--red-bg); border-left: 4px solid var(--red); padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 15px; }
+  .red-warning strong { color: var(--red); }
+  .anthropic-quote { background: #F8F5EE; border-left: 4px solid #C49A4A; padding: 14px 20px; border-radius: 6px; margin: 16px 0; font-size: 15px; font-style: italic; color: #4A3A1F; }
+  .anthropic-quote::before { content: "📜 Anthropic, code.claude.com/docs/en/workflows"; display: block; font-style: normal; font-size: 12px; color: #8A7440; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 700; }
+  .toc { background: var(--navy-bg); padding: 16px 22px; border-radius: 6px; margin: 18px 0 24px; }
+  .toc strong { display: block; margin-bottom: 8px; color: var(--navy); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+  .toc ol { padding-left: 22px; margin-bottom: 0; font-size: 14px; }
+  .toc ol li { margin-bottom: 4px; }
+  .toc a { color: var(--navy); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; color: var(--navy-light); }
+  footer { background: var(--navy-bg); padding: 24px 0; text-align: center; font-size: 13px; color: var(--gray); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Блок 4 · Урок 1 · Workflow</div>
+    <h1>Workflow в Claude Code:<br>запустить десять агентов параллельно — и не потерять результат</h1>
+    <div class="meta"><strong>11 минут читать · 15 минут делать</strong></div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">28 мая Anthropic выпустил <strong>Dynamic Workflows</strong> — инструмент для запуска десятков ИИ-агентов параллельно из одной сессии Claude Code. Это совсем не то же самое, что «запустить несколько чатов рядом» — workflow это конструкция, которая управляет всеми агентами как один большой исполнитель. Звучит как магия, и в ряде задач она действительно делает невозможное возможным. А ещё имеет одну ловушку, которая стоила мне сегодня утром 38 минут работы и 1,77 миллиона токенов. Этот урок — что это, когда стоит трогать, и как не наступить туда же.</p>
+
+    <p class="lead"><strong>После урока вы сможете:</strong> понять что такое workflow и чем он отличается от обычной задачи агенту; распознать какие задачи стоит запускать через workflow, а какие — нет; знать главную ловушку (привязка к сессии) и не наступить в неё; иметь готовое правило в CLAUDE.md для безопасной работы с workflow.</p>
+
+    <div class="red-warning">
+      <p><strong>Workflow — не инструмент на каждый день.</strong> Большинству задач он не нужен, а часть задач он решает медленнее и дороже, чем обычный диалог с агентом. Этот урок — про класс задач, для которых workflow действительно меняет правила, и про ловушку, которая может стоить часов работы. Не торопитесь применять везде после прочтения — лучше один раз попробовать на подходящей задаче, чем десять раз на неподходящей.</p>
+    </div>
+
+    <div class="toc">
+      <strong>Что внутри</strong>
+      <ol>
+        <li><a href="#why">Зачем workflow вообще — аналогия с CMO и стажёрами</a></li>
+        <li><a href="#phases">Как устроен workflow внутри — 5 фаз на примере исследования</a></li>
+        <li><a href="#when">Когда стоит запускать, а когда — нет</a></li>
+        <li><a href="#trap">Главная ловушка: session-scoped</a></li>
+        <li><a href="#case">Живой кейс — наш убитый workflow по VK Рекламе</a></li>
+        <li><a href="#stones">3 камня — на чём чаще всего ломается</a></li>
+        <li><a href="#practice">Практика — 4 шага на 15 минут</a></li>
+        <li><a href="#claudemd">Закрепить в CLAUDE.md</a></li>
+        <li><a href="#summary">Шпаргалка</a></li>
+      </ol>
+    </div>
+
+    <h2 id="why">1. Зачем workflow вообще — аналогия с CMO и стажёрами</h2>
+
+    <div class="analogy">
+      <p style="margin: 0;">Представьте, что вам нужно подготовить большой отраслевой отчёт — например, разобраться, как изменился рынок интернет-рекламы в России за последний год. Один аналитик сядет и потратит две недели — будет один результат, и его глубина зависит от опыта аналитика. А вы — CMO, и у вас есть выбор: набрать 28 стажёров, каждому дать свой кусок («ты — про CPM на VK», «ты — про Telegram-каналы», «ты — про блогеров»), потом собрать все куски в один отчёт. Один аналитик — две недели. Двадцать восемь стажёров — один день. Но нужно: точно разделить работу, контролировать чтобы никто не зависал, и собирать результаты в одно целое.</p>
+    </div>
+
+    <p>Workflow в Claude Code — это инструмент именно для второго подхода. Вы пишете <strong>один сценарий</strong>, в котором описано: «вот 5 углов исследования, на каждый отправь поискового агента; для каждого найденного источника — отдельный агент-читатель, который вытащит факты; потом каждый факт проверяют три независимых скептика — голосуют правда или нет; потом финальный агент сводит всё в один отчёт с цитатами». Запускаете команду — и Claude параллельно запускает десятки агентов, каждый со своей мини-задачей.</p>
+
+    <p>В обычной сессии вы получите тот же отчёт за 4-5 часов: вы будете отправлять агента в каждый угол по очереди, ждать ответа, формулировать следующий запрос, держать всё в голове. Workflow заменяет это «по очереди» на «всё параллельно». Через 30-40 минут — готовый структурированный отчёт.</p>
+
+    <p>Это <strong>не то же самое</strong>, что открыть несколько чатов с Claude и параллельно туда писать. Между чатами нет согласования: один не знает, что ответил другой, итоги нужно сводить руками. Workflow управляет всеми агентами как единым исполнителем: даёт каждому свою роль, ловит результаты, передаёт между фазами, собирает финал.</p>
+
+    <h2 id="phases">2. Как устроен workflow внутри — 5 фаз на примере исследования</h2>
+
+    <p>Самый понятный пример — встроенный workflow <code class="inline">/deep-research</code>. Он создаёт глубокий отчёт по любому вопросу с цитатами из источников. Его 5 фаз — хороший шаблон, чтобы понять как вообще устроены workflow:</p>
+
+    <table>
+      <tr><th style="width: 18%;">Фаза</th><th>Что делает</th><th>Агентов</th></tr>
+      <tr>
+        <td><strong>1. Scope</strong><br>(разбор задачи)</td>
+        <td>Один умный агент читает ваш вопрос и раскладывает его на 5 углов исследования. Каждый угол — отдельная тема, отдельный поисковой запрос.</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td><strong>2. Search</strong><br>(поиск)</td>
+        <td>5 поисковых агентов работают параллельно — каждый по своему углу. Каждый возвращает 6 релевантных ссылок с короткими аннотациями.</td>
+        <td>5</td>
+      </tr>
+      <tr>
+        <td><strong>3. Fetch</strong><br>(чтение источников)</td>
+        <td>Найденные ссылки дедуплицируются. Топ-15 источников — по агенту на каждый: открывает страницу, вычитывает, извлекает 5-7 «утверждений с цитатами» (claim + точная фраза-источник).</td>
+        <td>15-22</td>
+      </tr>
+      <tr>
+        <td><strong>4. Verify</strong><br>(проверка)</td>
+        <td>Для каждого спорного утверждения — 3 независимых агента-скептика. Каждый голосует «правда» или «опровергнуть». Если 2 из 3 голосуют против — утверждение убивается.</td>
+        <td>~50-70</td>
+      </tr>
+      <tr>
+        <td><strong>5. Synthesize</strong><br>(сборка)</td>
+        <td>Финальный агент берёт выжившие утверждения, объединяет похожие, ранжирует по уверенности, собирает в структурированный отчёт со ссылками на источники.</td>
+        <td>1</td>
+      </tr>
+    </table>
+
+    <p><strong>Что важно понять про устройство:</strong></p>
+    <ul>
+      <li>Все фазы — <em>конвейер</em>: результат предыдущей фазы становится входом следующей. Поэтому Scope нельзя пропустить — без раскладки на углы нечего параллелить.</li>
+      <li>Внутри фазы — <em>параллель</em>: 5 поисковых агентов запускаются одновременно, а не друг за другом.</li>
+      <li>Сценарий описан кодом — это <em>обычный JavaScript-файл</em> с инструкциями: «вот схема для агентов, вот промпт, повтори N раз». Можно посмотреть, скопировать, изменить.</li>
+      <li>Вы как пользователь видите только <em>команду запуска</em> и финальный отчёт. Промежуточная работа 28 агентов происходит «под капотом».</li>
+    </ul>
+
+    <h2 id="when">3. Когда стоит запускать, а когда — нет</h2>
+
+    <table>
+      <tr><th style="width: 50%; background: var(--green-bg); color: var(--green);">✅ Стоит запускать</th><th style="background: var(--red-bg); color: var(--red);">❌ Не стоит</th></tr>
+      <tr>
+        <td>Глубокое исследование рынка / темы с 10+ источниками, где нужны цитаты и проверка</td>
+        <td>Обычные ежедневные задачи: отчёт по неделе, ответ на письмо, расчёт сметы</td>
+      </tr>
+      <tr>
+        <td>Адверсариальная проверка важного решения (несколько независимых скептиков голосуют)</td>
+        <td>Задача, которую можно решить за 5-10 минут обычным диалогом</td>
+      </tr>
+      <tr>
+        <td>Миграция / переименование / правка большого числа однотипных файлов (агент на каждый)</td>
+        <td>Первая попытка решить новую проблему — сначала пройдитесь руками, поймите задачу, потом параллельте</td>
+      </tr>
+      <tr>
+        <td>Аудит — пройтись по всем файлам проекта одним проходом</td>
+        <td>Задача с быстрой обратной связью (например, переписать пост 3 раза, пока не понравится)</td>
+      </tr>
+      <tr>
+        <td>Когда параллельность даёт реально кратное ускорение (×3 и больше)</td>
+        <td>Любой запуск перед закрытием сессии (см. ловушку ниже)</td>
+      </tr>
+    </table>
+
+    <h3 style="margin-top: 24px;">Примеры из работы маркетинга</h3>
+    <table>
+      <tr><th>Кейс</th><th>Что делает workflow</th><th>Параметр успеха</th></tr>
+      <tr>
+        <td>Deep-research рынка</td>
+        <td>10-20 источников, цитаты, проверка фактов</td>
+        <td>Кол-во источников, точность фактов</td>
+      </tr>
+      <tr>
+        <td>Аудит конкурентов</td>
+        <td>10-15 брендов параллельно: цены / меню / акции / тон голоса</td>
+        <td>Покрытие брендов, единый формат</td>
+      </tr>
+      <tr>
+        <td>Подбор референсов</td>
+        <td>8-12 промо-механик / упаковок / точек / лендингов с фото</td>
+        <td>Релевантность и разнообразие</td>
+      </tr>
+      <tr>
+        <td>Категоризация массива</td>
+        <td>200 отзывов / 50 заявок партнёров: деление по агентам, единые теги</td>
+        <td>Покрытие, согласованность тегов</td>
+      </tr>
+      <tr>
+        <td>Адверсариальная проверка</td>
+        <td>Несколько «скептиков» голосуют за/против решения</td>
+        <td>Кол-во уникальных рисков в финале</td>
+      </tr>
+    </table>
+
+    <p><strong>Грубое правило:</strong> если в задаче можно выделить независимые куски, которые можно делать одновременно — workflow окупится. Если задача — длинный последовательный диалог, в котором следующий шаг зависит от предыдущего, — workflow только всё запутает.</p>
+
+    <p>Ещё цена. Workflow на 28 агентов = десятки вызовов модели вместо одного. В подписке Cowork/Max это не прямые деньги, но это <em>токены из месячного лимита</em>. Если запускать workflow по любому поводу — лимит выгорит за неделю. Запускать там, где обычный агент справится — расход без отдачи.</p>
+
+    <h2 id="trap">4. Главная ловушка: workflow привязан к сессии</h2>
+
+    <p>Это та особенность workflow, которую <strong>обязательно</strong> знать перед первым запуском. Цитата из официальной документации Anthropic:</p>
+
+    <div class="anthropic-quote">
+      «Resume works within the same Claude Code session. If you exit Claude Code while a workflow is running, the next session starts the workflow fresh.»
+      <br><br>
+      <span style="font-size: 13px; color: #8A7440; font-style: normal;">Перевод: «Возобновление работает только в той же сессии Claude Code. Если вы выйдете из Claude Code пока workflow выполняется, следующая сессия начнёт workflow заново.»</span>
+    </div>
+
+    <p>То есть workflow живёт ровно столько, сколько живёт ваша сессия Claude Code. Закроете окно, нажмёте <code class="inline">/clear</code>, перезайдёте — workflow <strong>умрёт</strong>. Не приостановится, а <strong>прервётся с ошибкой</strong> «Workflow aborted». Всё, что он успел сделать, останется в кеше — можно возобновить из кеша, но <em>только если открыть ту же самую сессию</em> и явно сказать «resume from runId». А <code class="inline">/clear</code> или закрытие приложения — точка невозврата.</p>
+
+    <p>Anthropic добавляет:</p>
+
+    <div class="anthropic-quote">
+      «The workflow runtime executes the script in an isolated environment, separate from your conversation.»
+      <br><br>
+      <span style="font-size: 13px; color: #8A7440; font-style: normal;">Перевод: «Среда выполнения workflow запускает сценарий в изолированном окружении, отдельно от вашей переписки.»</span>
+    </div>
+
+    <p>«Изолированное окружение» здесь — обманчивое слово. На самом деле это <em>дочерний процесс</em> вашей сессии. Пока сессия живёт — процесс работает. Сессия закрылась — процесс убит операционной системой. Это документированное поведение Anthropic, не баг и не наша архитектурная промашка. Просто такая природа инструмента сейчас.</p>
+
+    <p><strong>Что это значит на практике:</strong></p>
+    <ul>
+      <li>Workflow на 30-40 минут можно запускать, только если вы остаётесь в той же сессии до его завершения.</li>
+      <li>Перед <code class="inline">/clear</code> или перезаходом — обязательно проверить, нет ли активных workflow. Команда: <code class="inline">/workflows</code> в Claude Code.</li>
+      <li>Если workflow умер — есть шанс возобновить из кеша, но только в той же сессии и явной командой возобновления (Claude Code запоминает <code class="inline">runId</code> — уникальный идентификатор запуска, его видно в <code class="inline">/workflows</code>). После <code class="inline">/clear</code> или закрытия — уже нет.</li>
+    </ul>
+
+    <h2 id="case">5. Живой кейс — наш убитый workflow по VK Рекламе</h2>
+
+    <div class="case">
+      <strong>Что было.</strong> Сегодня утром, 1 июня, Лера (наш SMM-менеджер) ответила на мой отчёт по майской рекламе ВКонтакте: «именно твои рекомендации привели к этим цифрам». Я ответила поверхностно — посоветовала поменять охватные кампании и креативы, не разобравшись по существу. Когда стало ясно, что без глубокого разбора ничего не вернуть, я (с разрешения Ирины) запустила <code class="inline">/deep-research workflow</code> — большое исследование рынка VK Рекламы 2026: все доступные форматы, бенчмарки CPM, кейсы фастфуда, альтернативы.
+      <br><br>
+      <strong>Что произошло.</strong> Workflow запустился. 28 субагентов параллельно, 5 углов исследования, 22 источника, 70 утверждений. Я в это время продолжила работать в той же сессии. Через 18 минут после запуска Ирина написала: «давай запишемся и перезайдём» (контекст сессии переполнялся). Я записала handoff и ответила «можешь перезаходить». <strong>Я не предупредила её что workflow ещё жив.</strong> Я сама не помнила что он привязан к сессии — потому что в документации не вчиталась, а архитектурно это поведение нигде не встречала раньше.
+      <br><br>
+      Через минуту Ирина закрыла Claude Code. Через 4 минуты после этого процесс workflow упал с ошибкой <code class="inline">Workflow aborted</code>. <strong>38 минут чистого времени и 1,77 миллиона токенов работы — потеряны.</strong> На стадии финального синтеза, когда уже было собрано 22 источника и 70 утверждений, но финальный отчёт не сведён.
+      <br><br>
+      <strong>Что стало фиксом.</strong> Промежуточные результаты в кеше сессии всё же остались — я вручную вытащила 70 утверждений из логов и собрала отчёт сама (это компромиссный вариант — без адверсариальной проверки тремя скептиками). Параллельно мы с архитектурным агентом разобрали корень — это <em>класс ошибки</em>, не разовая. И теперь добавляем механизм: специальный хук, который перед записью handoff проверяет, есть ли в текущей сессии живой workflow, и блокирует запись, если о нём не предупреждено явно. Раньше второго июня такого хука не было — теперь будет.
+    </div>
+
+    <p>Я рассказываю это <strong>не чтобы предостеречь</strong> в стиле «осторожно, страшная штука» — workflow полезный инструмент. Я рассказываю чтобы показать: <em>любой новый инструмент Claude имеет свои особенности, и без чтения документации перед первым запуском вы их поймаете на собственной коже</em>. Это нормально и неизбежно — мы поэтому и пишем этот урок: чтобы вы знали ловушку до того как её найти.</p>
+
+    <h2 id="stones">6. 3 камня — на чём чаще всего ломается</h2>
+
+    <div class="stone">
+      <div class="stone-title">Камень 1. «Запустил в фоне и пошёл заниматься другим»</div>
+      <p>Самая частая ошибка — воспринять workflow как «фоновую задачу, которая работает сама по себе». Это не так: workflow привязан к вашей сессии Claude Code. Пока сессия открыта — он работает. Закрыли — умер.</p>
+      <p><strong>Лечение:</strong> запускать workflow только когда есть 30-60 минут <em>остаться в той же сессии</em> до его завершения. Перед любым закрытием / <code class="inline">/clear</code> / перезаходом — проверить через <code class="inline">/workflows</code>, нет ли активных. Если есть и спешите — лучше явно прервать и запустить заново позже, чем оставить «авось доработает».</p>
+    </div>
+
+    <div class="stone">
+      <div class="stone-title">Камень 2. Workflow для задачи, которая не требует параллельности</div>
+      <p>Соблазн «о, новая штука, давайте применять всё через workflow» — приведёт к перерасходу токенов и замедлению. Workflow на 28 агентов = десятки вызовов модели. Если задача — «напиши пост в Telegram», на это нужен <em>один</em> агент за минуту, а не 28 за 30 минут. Workflow в таком случае только сжигает токены месячного лимита.</p>
+      <p><strong>Лечение:</strong> правило большого пальца — workflow стоит того, если задача <em>раскладывается на независимые куски</em> и кусков <em>больше 10</em>. Меньше — выйдет обычным диалогом дешевле и быстрее.</p>
+    </div>
+
+    <div class="stone">
+      <div class="stone-title">Камень 3. Запустить и не записать что запустили</div>
+      <p>Это наш живой случай. Workflow стартовал, вы переключились на другие задачи в той же сессии, забыли. Через 20 минут собираетесь перезайти или Claude сам предложит compact — и убьёте свою же работу, не вспомнив.</p>
+      <p><strong>Лечение:</strong> когда запускаете workflow — сразу записать (в Plane / в заметку / в handoff) что в сессии живой workflow и до какого времени он будет работать. Перед любым закрытием — проверить эту запись. Это правило мы добавляем в CLAUDE.md ниже.</p>
+    </div>
+
+    <h2 id="practice">7. Практика — 4 шага на 15 минут</h2>
+
+    <p>Это не «запусти прямо сейчас workflow на час» — рано. Сейчас задача — понять что есть и как с этим обращаться, без реального запуска. Реальный запуск — когда появится подходящая задача (а до этого может быть несколько недель).</p>
+
+    <div class="step">
+      <div class="num">ШАГ 1</div>
+      <div class="title">Посмотреть какие workflow доступны <span class="time">· 3 мин</span></div>
+      <p>В Claude Code запустить команду:</p>
+      <pre>/workflows</pre>
+      <p>Она покажет список доступных workflow в текущей версии Claude Code (на 1 июня 2026 — встроены <code class="inline">deep-research</code>, <code class="inline">code-review</code>, <code class="inline">verify</code> и ещё несколько). Если команды нет — у вас старая версия, обновите Claude Code Desktop. Если список короткий или пустой — это тоже нормально: набор workflow зависит от версии и появляется обновлениями.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 2</div>
+      <div class="title">Узнать про один из них подробно <span class="time">· 4 мин</span></div>
+      <p>Скажите агенту:</p>
+      <div class="ask">«Объясни простыми словами, что делает workflow deep-research. Какой вопрос можно ему задать. Сколько примерно займёт по времени и сколько токенов потратит. Что важно учесть перед запуском».</div>
+      <p>Цель — понять <em>назначение и стоимость</em>, чтобы потом самостоятельно решить, подходит ли он под вашу задачу.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 3</div>
+      <div class="title">Спланировать первый запуск, но не запускать <span class="time">· 3 мин</span></div>
+      <p>Подумайте, есть ли у вас в работе задача, для которой workflow реально окупается. Признаки: вопрос с 10+ источниками, нужны цитаты, нужна независимая проверка фактов. Если нашли — запишите в свой Plane / задачник: «когда будет свободный час — запустить deep-research workflow по теме X». Не запускайте сейчас на ходу — workflow требует, чтобы вы остались в сессии до его конца.</p>
+      <p>Если задачи под workflow в работе сейчас нет — это нормальный ответ. Большинство задач решается обычным диалогом.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 4</div>
+      <div class="title">Закрепить правило безопасной работы с workflow <span class="time">· 5 мин</span></div>
+      <p>См. блок ниже — туда уйдут ваши правила.</p>
+    </div>
+
+    <div class="claudemd-box">
+      <h3>✅ Закрепить в CLAUDE.md</h3>
+      <p><em>Правило ниже — это ровно та проверка, которой мне сегодня не хватило, когда workflow по VK Рекламе умер вместе с моей сессией.</em></p>
+      <p>Знание из урока становится правилом агента только когда записано в CLAUDE.md. Без этого шага следующий ваш workflow может умереть так же как мой сегодня — потому что в момент запуска вы будете помнить про привязку к сессии, а через 15 минут забудете.</p>
+      <p><strong>Действие на 2 минуты.</strong> Откройте своего агента и скажите:</p>
+      <div class="ask">«Я прошёл(ла) Урок 1 Блока 4 "Workflow в Claude Code". Допиши в CLAUDE.md два правила:<br>
+      <strong>(1)</strong> Перед командой <code class="inline">/clear</code>, перезаходом или закрытием Claude Code — обязательно проверь через <code class="inline">/workflows</code>, нет ли активного workflow в текущей сессии. Если есть со статусом «работает» или «приостановлен» — спроси меня: подождать завершения, явно прервать или зафиксировать в handoff как живой с предупреждением для следующей сессии. Не закрывай сессию по своей инициативе пока вопрос не закрыт.<br>
+      <strong>(2)</strong> При записи handoff — если в сессии был запущен workflow, явно отметь это в поле in_progress: "workflow такой-то, статус такой-то, идентификатор запуска (<code class="inline">runId</code>) такой-то. При закрытии сессии умрёт. Решение: …".»</div>
+      <p><strong>Проверка:</strong> откройте CLAUDE.md, убедитесь что оба правила добавлены. Если нет — повторите запрос конкретнее.</p>
+    </div>
+
+    <div class="summary-box" id="summary">
+      <h3>Шпаргалка</h3>
+      <ul>
+        <li><strong>Workflow</strong> — инструмент Claude Code для параллельного запуска десятков ИИ-агентов из одной сессии по единому сценарию. Анонсирован Anthropic 28 мая 2026.</li>
+        <li><strong>5 типичных фаз:</strong> Scope (раскладка задачи на куски) → Search (поиск по углам) → Fetch (чтение источников) → Verify (адверсариальная проверка) → Synthesize (сборка финала).</li>
+        <li><strong>Когда стоит:</strong> большие исследования (10+ источников), миграции, массовые правки, адверсариальная проверка решения. <strong>Когда не стоит:</strong> ежедневные задачи, короткие диалоги, любой запуск перед закрытием сессии.</li>
+        <li><strong>Главная ловушка — session-scoped:</strong> workflow живёт ровно столько, сколько живёт ваша сессия Claude Code. <code class="inline">/clear</code> или закрытие = «Workflow aborted». Это документированное поведение Anthropic.</li>
+        <li><strong>Наш живой кейс 01.06.2026:</strong> 38 минут работы и 1,77 миллиона токенов потеряны, потому что я не знала про привязку к сессии и предложила перезайти, пока workflow был жив.</li>
+        <li><strong>Правило для CLAUDE.md:</strong> перед <code class="inline">/clear</code> / перезаходом — проверить <code class="inline">/workflows</code>. При записи handoff — явно фиксировать активный workflow.</li>
+      </ul>
+      <p style="margin-top: 14px; margin-bottom: 0;"><strong>Метрика успеха:</strong> вы знаете что такое workflow, на какой класс задач он рассчитан, понимаете главную ловушку с session-scope, и в CLAUDE.md записаны два правила — про проверку <code class="inline">/workflows</code> перед закрытием и про фиксацию workflow в handoff.</p>
+      <p style="margin-top: 14px; margin-bottom: 0; font-size: 14px; opacity: 0.85;"><strong>Следующий урок Блока 4:</strong> Claude Design (<code class="inline">claude.ai/design</code>) — инструмент для презентаций, лендингов и брендового дизайна через ИИ. Выйдет позже, когда сами поработаем глубже и сможем поделиться живым опытом.</p>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Внедрение ИИ в Стардогс · Блок 4 · Урок 1 из 2 · 1 июня 2026
+  </div>
+</footer>
+
+</body>
+</html>
