@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 5 Блока 3. Подключение источника данных: коннектор iiko шаг за шагом</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --red-bg: #FFF2F0;
+    --green: #2E7D4F;
+    --green-bg: #E8F5E9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: var(--text); background: var(--white); line-height: 1.6; font-size: 16px; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  header { background: var(--navy); color: var(--white); padding: 20px 0; }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--white); padding: 60px 0 40px; text-align: center; }
+  .hero .label { color: var(--accent); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  .hero h1 { font-size: 30px; font-weight: 800; max-width: 680px; margin: 0 auto 12px; line-height: 1.18; }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+  .hero .meta strong { color: var(--accent); }
+  main { padding: 40px 0 80px; }
+  h2 { font-size: 22px; color: var(--navy); font-weight: 800; margin: 36px 0 14px; scroll-margin-top: 70px; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 16px; color: var(--navy); font-weight: 700; margin: 18px 0 8px; }
+  p { margin-bottom: 12px; }
+  p.lead { font-size: 16px; color: var(--text); padding: 16px 20px; background: var(--navy-bg); border-left: 4px solid var(--navy); border-radius: 6px; margin-bottom: 16px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  ul li, ol li { margin-bottom: 6px; }
+  strong { color: var(--navy); }
+  .do-it { background: var(--accent-bg); border-left: 4px solid var(--accent); border-radius: 6px; padding: 14px 18px; margin: 14px 0; }
+  .do-it .do-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 6px; }
+  .do-it .ask { background: var(--white); border-left: 3px solid var(--navy-light); padding: 10px 14px; border-radius: 4px; margin: 8px 0 0; font-style: italic; color: var(--navy); font-size: 14px; }
+  .step { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 6px; padding: 16px 20px; margin: 14px 0; }
+  .step .num { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .step .title { font-size: 17px; font-weight: 700; color: var(--navy); margin: 4px 0 10px; }
+  .step .time { color: var(--gray); font-size: 13px; font-weight: normal; }
+  .step ul, .step ol { margin-bottom: 0; }
+  .ask { background: var(--navy-bg); border-left: 3px solid var(--navy-light); padding: 10px 14px; border-radius: 4px; margin: 10px 0; font-style: italic; color: var(--navy); font-size: 14px; }
+  td code, code.inline { background: var(--navy-bg); padding: 2px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; color: var(--navy); }
+  .summary-box { background: var(--navy); color: var(--white); padding: 22px 26px; border-radius: 8px; margin: 28px 0; }
+  .summary-box h3 { color: var(--accent); margin-top: 0; font-size: 16px; }
+  .summary-box ul { padding-left: 18px; }
+  .summary-box ul li { margin-bottom: 6px; }
+  .summary-box strong { color: var(--white); }
+  .claudemd-box { background: var(--red-bg); border-left: 4px solid var(--red); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
+  .claudemd-box h3 { color: var(--red); margin-top: 0; font-size: 16px; }
+  .case { background: var(--navy-bg); border-radius: 6px; padding: 14px 18px; margin: 14px 0; font-size: 14px; }
+  .case strong { color: var(--navy); }
+  .stone { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: 6px; padding: 14px 18px; margin: 12px 0; }
+  .stone .stone-title { font-weight: 700; color: var(--red); margin-bottom: 6px; font-size: 15px; }
+  .red-warning { background: var(--red-bg); border-left: 4px solid var(--red); padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 15px; }
+  .red-warning strong { color: var(--red); }
+  .green-box { background: var(--green-bg); border-left: 4px solid var(--green); padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 14px; color: #1A3D27; }
+  .green-box strong { color: var(--green); }
+  .toc { background: var(--navy-bg); padding: 16px 22px; border-radius: 6px; margin: 18px 0 24px; }
+  .toc strong { display: block; margin-bottom: 8px; color: var(--navy); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+  .toc ol { padding-left: 22px; margin-bottom: 0; font-size: 14px; }
+  .toc ol li { margin-bottom: 4px; }
+  .toc a { color: var(--navy); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; color: var(--navy-light); }
+  footer { background: var(--navy-bg); padding: 24px 0; text-align: center; font-size: 13px; color: var(--gray); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Блок 3 · Урок 5 · Источник данных</div>
+    <h1>Подключение источника данных:<br>коннектор iiko шаг за шагом</h1>
+    <div class="meta"><strong>11 минут читать · 15 минут делать</strong></div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">Ваш агент уже общается через Telegram и читает файлы из Google. Теперь подключим к нему iiko — систему, где видна вся выручка, чеки и продажи по точкам. Сейчас, чтобы агент ответил «на сколько упала выручка в конкретной точке в марте», цифры нужно выгрузить из iiko и дать ему вручную — каждый раз чьё-то время. Этот урок — как подключить iiko напрямую, чтобы агент брал данные сам. 4 шага, делаете сами, без айтишника.</p>
+
+    <p style="font-size: 14px; color: var(--gray); margin-bottom: 24px;"><em>У iiko есть OLAP API (программный доступ к отчётам) — поэтому подключаем напрямую. Если у вашей системы такого доступа нет — остаётся ручной экспорт файлом; агент и так умеет работать с файлами.</em></p>
+
+    <div class="toc">
+      <strong>Что внутри</strong>
+      <ol>
+        <li><a href="#step1">Шаг 1. Доступ и ключи</a></li>
+        <li><a href="#step2">Шаг 2. Скрипт-коннектор</a></li>
+        <li><a href="#step3">Шаг 3. Проверка с эталоном</a></li>
+        <li><a href="#step4">Шаг 4. Задокументировать</a></li>
+        <li><a href="#result">Что агент теперь умеет</a></li>
+        <li><a href="#stones">4 камня</a></li>
+        <li><a href="#practice">Практика — 4 шага на 15 минут</a></li>
+        <li><a href="#claudemd">Закрепить в CLAUDE.md</a></li>
+        <li><a href="#summary">Шпаргалка</a></li>
+      </ol>
+    </div>
+
+    <h2 id="step1">Шаг 1. Доступ и ключи</h2>
+
+    <p>Логин и пароль от iiko у вас уже есть — те самые, которыми вы заходите в iiko на своём компьютере. Документацию тоже не нужно изучать самому: её читает агент.</p>
+
+    <div class="do-it">
+      <div class="do-label">Как это сделать — скажите агенту:</div>
+      <div class="ask">«Вот мой логин и пароль от iiko: [вставьте]. Сохрани их в файл .env, не в чат. Вот документация iiko — https://ru.iiko.help/articles/api-documentations/olap-otchety-v2 — разберись, как делать запрос за нужный период.»</div>
+    </div>
+
+    <p>Агент сохранит ключи в <code class="inline">.env</code> и разберёт документацию. Ключи в <code class="inline">.env</code> — правило для любой системы: файл живёт только на вашем компьютере, агент читает из него автоматически, в код и чат ключи не попадают.</p>
+
+    <h3>Если упрётесь в блокировку — решайте системно, не костылём</h3>
+
+    <div class="case">
+      <strong>Наш кейс.</strong> Агент работает через зарубежный VPN. iiko-сервер принимал подключения только с российских адресов, а VPN даёт зарубежный; плюс ТСПУ (технические фильтры на международных каналах) обрывали соединение. Первое «решение»: вручную выключать VPN перед каждой выгрузкой. Работало, но костыль — ручное действие каждый раз, легко забыть.
+      <br><br>
+      Поддержка iiko подтвердила: ТСПУ на маршруте до их дата-центра, повлиять не могут. Решили со стороны клиента: <strong>раздельный туннель (split tunnel)</strong> — трафик к адресам iiko идёт напрямую мимо VPN, остальной — через VPN. Настраивается один раз как фоновая служба. iiko видит российский адрес, VPN включён, выключать руками больше не нужно. Принцип: найти причину блокировки → закрыть класс проблем навсегда.
+    </div>
+
+    <div class="do-it">
+      <div class="do-label">Как это сделать — скажите агенту:</div>
+      <div class="ask">«iiko не пускает, потому что я под зарубежным VPN. Настрой раздельный туннель: трафик только к адресам iiko пусть идёт напрямую мимо VPN, остальное как есть. И закрепи фоновой службой, чтобы пережило перезагрузку.»</div>
+    </div>
+
+    <p>Агент предложит решение и нужные команды и выполнит основную работу. Но настройка сети может потребовать вашего пароля от компьютера и пары попыток — это единственный шаг урока, где иногда нужна рука технического человека. Если упрётесь — не страшно: один раз настроили, дальше работает само.</p>
+
+    <h2 id="step2">Шаг 2. Скрипт-коннектор</h2>
+
+    <p>Коннектор — небольшая программа-посредник: авторизуется в iiko по ключам из <code class="inline">.env</code>, отправляет запрос на нужный отчёт, возвращает данные агенту в читаемом виде. Агент пишет его сам по той документации, которую вы дали на шаге 1.</p>
+
+    <div class="do-it">
+      <div class="do-label">Как это сделать — скажите агенту:</div>
+      <div class="ask">«Напиши скрипт-коннектор к iiko: авторизуйся по логину/паролю из .env, отправь запрос на нужный отчёт, верни данные в читаемом виде.»</div>
+    </div>
+
+    <p>Ваша роль — дать команду и проверить результат. Код руками писать не нужно.</p>
+
+    <h2 id="step3">Шаг 3. Проверка — сверить с независимым эталоном</h2>
+
+    <p>Коннектор работает — не доверяйте цифрам сразу. Один раз сверьте ключевую цифру с источником, который уже знаете как достоверный: старый ручной отчёт, выгрузка через интерфейс системы, расчёт коллеги.</p>
+
+    <div class="do-it">
+      <div class="do-label">Как это сделать — скажите агенту:</div>
+      <div class="ask">«Сверь одну ключевую цифру из выгрузки с моим ручным отчётом за тот же период. Совпало — продолжаем, разошлось — ищем где.»</div>
+    </div>
+
+    <div class="case">
+      <strong>Как проверяли у нас.</strong> Запросили данные за январь 2026 и сравнили с ручным эталонным отчётом коллеги-аналитика. Делили на каналы «зал» и «доставка» по типу оплаты — в iiko именно это поле надёжно их различает. Результат коннектора: зал около 78%, доставка около 22%. Ручной эталон — те же цифры, точь-в-точь. Совпадение — можно доверять.
+    </div>
+
+    <h2 id="step4">Шаг 4. Задокументировать коннектор</h2>
+
+    <p>Сразу после проверки — записать, пока контекст свежий. Агент читает этот файл сам при следующем запуске — не начинает с нуля. Файл в репозитории → едет с бэкапом агента, знание не теряется при смене версии.</p>
+
+    <div class="do-it">
+      <div class="do-label">Как это сделать — скажите агенту:</div>
+      <div class="ask">«Запиши файл проекта iiko с тремя разделами: Доступы (логин/пароль, как подключиться), Режимы (как работает, обход VPN), Отчёты (что можно строить из этих данных).»</div>
+    </div>
+
+    <h2 id="result">Что агент теперь умеет</h2>
+
+    <div class="green-box">
+      <p style="margin: 0 0 6px;">Из данных iiko агент строит <strong>любой отчёт за любой период</strong>. Раньше — часы ручной выгрузки, теперь — минуты запроса. Например: <em>разбор конкретной точки (выручка, динамика по месяцам, продуктовый состав), ABC-анализ категорий, дашборд L4L (сравнение точек за сопоставимые периоды), срез зал/доставка</em> — и любой другой под вашу задачу.</p>
+    </div>
+
+    <p>Всё это стало доступно в первые несколько минут после того, как коннектор прошёл проверку с эталоном.</p>
+
+    <h2 id="stones">4 камня</h2>
+
+    <div class="stone">
+      <div class="stone-title">Камень 1. Ключи в коде или в чате</div>
+      <p>Ключ в коде рано или поздно уйдёт не туда. Ключ в чате агент упомянет в неожиданный момент. <strong>Только <code class="inline">.env</code>.</strong></p>
+    </div>
+
+    <div class="stone">
+      <div class="stone-title">Камень 2. Костыль вместо системного решения</div>
+      <p>Если через ваш VPN система не подключается — выключать VPN руками перед каждой выгрузкой не решение, а костыль: ручное действие каждый раз, легко забыть. Скажите агенту разобраться с причиной и закрыть навсегда (у нас — раздельный туннель, настроен один раз).</p>
+    </div>
+
+    <div class="stone">
+      <div class="stone-title">Камень 3. Не проверить с эталоном — доверять цифрам вслепую</div>
+      <p>Правдоподобность не равна правильности. Один раз сверьте до начала работы — иначе через месяц выяснится, что все решения строились на ошибочном разрезе.</p>
+    </div>
+
+    <div class="stone">
+      <div class="stone-title">Камень 4. Не задокументировать — следующая версия начнёт с нуля</div>
+      <p>Документация сразу после проверки, пока контекст свежий. Потом «некогда» превращается в утерянное знание.</p>
+    </div>
+
+    <h2 id="practice">Практика — 4 шага на 15 минут</h2>
+
+    <p>Делаете для своей системы прямо сейчас — каждый шаг это конкретная команда агенту.</p>
+
+    <div class="step">
+      <div class="num">ШАГ 1</div>
+      <div class="title">Назвать систему и передать доступ агенту <span class="time">· 3 мин</span></div>
+      <p>Скажите агенту:</p>
+      <div class="ask">«Моя система с рабочими данными — [название: iiko / 1С / Bitrix24 / AmoCRM / другое]. Вот мой логин и пароль: [вставьте]. Сохрани в .env. Найди документацию по API этой системы и разберись как делать запрос.»</div>
+      <p>Если API у системы нет — агент скажет об этом; данные пока передаёте файлом вручную.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 2</div>
+      <div class="title">Попросить написать коннектор <span class="time">· 4 мин</span></div>
+      <div class="ask">«Напиши скрипт-коннектор к [система]: авторизуйся по логину/паролю из .env, отправь запрос на выгрузку данных за последний месяц, верни в читаемом виде.»</div>
+      <p>Агент пишет скрипт — ваша задача проверить что он вернул данные.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 3</div>
+      <div class="title">Сверить с эталоном <span class="time">· 5 мин</span></div>
+      <div class="ask">«Сверь одну ключевую цифру из выгрузки с моим ручным отчётом за тот же период. Совпало — продолжаем, разошлось — ищем где.»</div>
+      <p>Подготовьте любой ручной отчёт за тот же период — выгрузку через интерфейс системы или прошлый расчёт.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">ШАГ 4</div>
+      <div class="title">Задокументировать и закрепить в CLAUDE.md <span class="time">· 3 мин</span></div>
+      <div class="ask">«Запиши файл проекта [система] с тремя разделами: Доступы, Режимы, Отчёты. Потом допиши в CLAUDE.md три правила из урока про коннекторы.»</div>
+      <p>Смотрите блок ниже — там готовый текст правил.</p>
+    </div>
+
+    <div class="claudemd-box" id="claudemd">
+      <h3>✅ Закрепить в CLAUDE.md</h3>
+      <p><strong>Три правила — применимы к любому коннектору, не только iiko.</strong> Скажите агенту:</p>
+      <div class="ask">«Я прошёл(ла) Урок 5 Блока 3 "Подключение источника данных". Допиши в CLAUDE.md три правила:
+      <br><strong>(1)</strong> Ключи доступа к любым внешним системам (API-ключи, логины, пароли) — только в файл .env. Никогда в код, никогда в чат.
+      <br><strong>(2)</strong> При препятствии с внешней системой — сначала найти причину, потом решать системно. Не предлагать костыль — ручное действие на каждый раз.
+      <br><strong>(3)</strong> После подключения нового источника данных — сверить хотя бы одну ключевую цифру с независимым эталоном до начала работы. Без эталона — не считается.»</div>
+      <p><strong>Проверка:</strong> откройте CLAUDE.md, убедитесь что три правила добавлены.</p>
+    </div>
+
+    <div class="summary-box" id="summary">
+      <h3>Шпаргалка</h3>
+      <ul>
+        <li><strong>Зачем.</strong> Агент мог работать с данными iiko и раньше — но только если их выгружали вручную. Коннектор убирает этот ручной труд: агент берёт данные сам по вашей команде.</li>
+        <li><strong>Шаг 1 — доступ.</strong> Скажите агенту: «Логин/пароль iiko — [данные]. Сохрани в .env. Вот документация — разберись как делать запросы.» Ключи только в <code class="inline">.env</code>. Если не коннектится через VPN — скажите агенту настроить раздельный туннель.</li>
+        <li><strong>Шаг 2 — коннектор.</strong> Скажите агенту: «Напиши скрипт-коннектор: авторизуйся из .env, запроси отчёт, верни данные.» Код пишет агент, не вы.</li>
+        <li><strong>Шаг 3 — проверка.</strong> Скажите агенту: «Сверь ключевую цифру с моим ручным отчётом за тот же период.» У нас зал ~78% / доставка ~22% совпали с ручным эталоном точь-в-точь.</li>
+        <li><strong>Шаг 4 — документация.</strong> Скажите агенту: «Запиши файл проекта: три раздела — доступы / режимы / отчёты.» Агент читает его сам при следующем запуске.</li>
+        <li><strong>4 камня:</strong> ключи не в <code class="inline">.env</code> / костыль вместо системного решения / цифры без эталонной сверки / нет документации.</li>
+        <li><strong>Метрика успеха:</strong> агент выгружает данные из вашей системы сам, цифры сверены с эталоном, файл проекта записан, три правила в CLAUDE.md.</li>
+      </ul>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Внедрение ИИ в Стардогс · Блок 3 · Урок 5 из 5 · 29 июня 2026
+  </div>
+</footer>
+
+</body>
+</html>
