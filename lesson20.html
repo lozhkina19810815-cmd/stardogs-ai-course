@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 3 Блока 4. Правила меняются — контекст-инжиниринг по-новому</title>
+<style>
+  :root {
+    --navy: #1E3A5F;
+    --navy-light: #426B99;
+    --navy-bg: #F2F4F8;
+    --accent: #E88B00;
+    --accent-bg: #FFF9EC;
+    --text: #1A1A1A;
+    --gray: #5A5A5A;
+    --white: #FFFFFF;
+    --border: #E1E5EC;
+    --red: #C8392A;
+    --red-bg: #FFF2F0;
+    --green: #2E7D4F;
+    --green-bg: #E8F5E9;
+    --yellow: #B07900;
+    --yellow-bg: #FFF7E0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: var(--text); background: var(--white); line-height: 1.6; font-size: 16px; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  header { background: var(--navy); color: var(--white); padding: 20px 0; }
+  header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; }
+  header .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header .back { color: var(--white); text-decoration: none; font-size: 14px; opacity: 0.85; }
+  header .back:hover { opacity: 1; }
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--white); padding: 60px 0 40px; text-align: center; }
+  .hero .label { color: var(--accent); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  .hero h1 { font-size: 32px; font-weight: 800; max-width: 680px; margin: 0 auto 12px; line-height: 1.15; }
+  .hero .meta { opacity: 0.85; font-size: 14px; }
+  .hero .meta strong { color: var(--accent); }
+  main { padding: 40px 0 80px; }
+  h2 { font-size: 22px; color: var(--navy); font-weight: 800; margin: 36px 0 14px; scroll-margin-top: 70px; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 16px; color: var(--navy); font-weight: 700; margin: 18px 0 8px; }
+  p { margin-bottom: 12px; }
+  p.lead { font-size: 16px; color: var(--text); padding: 16px 20px; background: var(--navy-bg); border-left: 4px solid var(--navy); border-radius: 6px; margin-bottom: 16px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  ul li, ol li { margin-bottom: 6px; }
+  strong { color: var(--navy); }
+  .toc { background: var(--navy-bg); padding: 16px 22px; border-radius: 6px; margin: 18px 0 24px; }
+  .toc strong { display: block; margin-bottom: 8px; color: var(--navy); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+  .toc ol { padding-left: 22px; margin-bottom: 0; font-size: 14px; }
+  .toc ol li { margin-bottom: 4px; }
+  .toc a { color: var(--navy); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; color: var(--navy-light); }
+  .ref { color: var(--gray); font-size: 13px; font-style: italic; display: block; margin-top: 8px; }
+  .step { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 6px; padding: 16px 20px; margin: 14px 0; }
+  .step .num { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .step .title { font-size: 17px; font-weight: 700; color: var(--navy); margin: 4px 0 10px; }
+  .step .time { color: var(--gray); font-size: 13px; font-weight: normal; }
+  .ask { background: var(--navy-bg); border-left: 3px solid var(--navy-light); padding: 10px 14px; border-radius: 4px; margin: 10px 0; font-style: italic; color: var(--navy); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--navy-bg); color: var(--navy); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td code { background: var(--navy-bg); padding: 2px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; color: var(--navy); }
+  code.inline { background: var(--navy-bg); padding: 2px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 14px; color: var(--navy); }
+  pre { background: var(--navy); color: var(--white); padding: 14px 18px; border-radius: 6px; overflow-x: auto; margin: 12px 0; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; line-height: 1.5; }
+  .summary-box { background: var(--navy); color: var(--white); padding: 22px 26px; border-radius: 8px; margin: 28px 0; }
+  .summary-box h3 { color: var(--accent); margin-top: 0; font-size: 16px; }
+  .summary-box ul { padding-left: 18px; }
+  .summary-box ul li { margin-bottom: 6px; }
+  .summary-box strong { color: var(--white); }
+  .claudemd-box { background: var(--red-bg); border-left: 4px solid var(--red); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
+  .claudemd-box h3 { color: var(--red); margin-top: 0; font-size: 16px; }
+  .case { background: var(--navy-bg); border-radius: 6px; padding: 14px 18px; margin: 14px 0; font-size: 14px; }
+  .case strong { color: var(--navy); }
+  .stone { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: 6px; padding: 14px 18px; margin: 12px 0; }
+  .stone .stone-title { font-weight: 700; color: var(--red); margin-bottom: 6px; font-size: 15px; }
+  .red-warning { background: var(--red-bg); border-left: 4px solid var(--red); padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 15px; }
+  .red-warning strong { color: var(--red); }
+  .green-box { background: var(--green-bg); border-left: 4px solid var(--green); border-radius: 6px; padding: 14px 18px; margin: 14px 0; font-size: 14px; color: #1A3D27; }
+  .green-box strong { color: var(--green); }
+  .tool-card { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--green); border-radius: 6px; padding: 18px 22px; margin: 16px 0; }
+  .tool-card .tool-tag { color: var(--green); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .tool-card .tool-title { font-size: 17px; font-weight: 800; color: var(--navy); margin: 6px 0 8px; }
+  .method-card { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: 6px; padding: 18px 22px; margin: 16px 0; }
+  .method-card .method-tag { color: var(--red); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .method-card .method-title { font-size: 17px; font-weight: 800; color: var(--navy); margin: 6px 0 8px; }
+  .no-tool { display: inline-block; background: var(--yellow-bg); color: var(--yellow); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; }
+  .yes-tool { display: inline-block; background: var(--green-bg); color: var(--green); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; }
+  .keep-tool { display: inline-block; background: var(--green-bg); color: var(--green); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; }
+  .cut-tool { display: inline-block; background: var(--red-bg); color: var(--red); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; }
+  .do-box { background: var(--green-bg); border: 1px solid #BFE3CB; border-radius: 8px; padding: 6px 24px 18px; margin: 24px 0; }
+  footer { background: var(--navy-bg); padding: 24px 0; text-align: center; font-size: 13px; color: var(--gray); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">ВНЕДРЕНИЕ ИИ В СТАРДОГС</div>
+    <a href="index.html" class="back">← к курсу</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Блок 4 · Урок 3 · Новые правила</div>
+    <h1>Правила меняются — как не отстать.<br>Контекст-инжиниринг по-новому</h1>
+    <div class="meta"><strong>10 минут читать · 15 минут делать</strong></div>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <p class="lead">В <a href="lesson1.html" style="color: var(--navy-light);">Уроке 1</a> вы написали свой первый CLAUDE.md по правилам, которые тогда считались лучшей практикой: подробно расписывать всё, что агент должен знать и делать. 24 июля 2026 Anthropic опубликовали статью, которая эти правила меняет — для нового поколения моделей часть подробных инструкций стала не подмогой, а шумом. Этот урок — не про то, что вы делали неправильно. Он про то, как реагировать, когда вендор меняет фундамент под ногами, и не тратить на это нервы.</p>
+
+    <div class="red-warning">
+      <p><strong>Честный контракт урока.</strong> Ниже — два слоя. (1) Факты из статьи Anthropic — с точными цифрами и ссылкой, проверено дважды. (2) Наш перевод этих фактов на язык нетехнической команды — это уже наша трактовка, не дословная цитата Anthropic. Помечено явно, где что.</p>
+    </div>
+
+    <div class="toc">
+      <strong>Что внутри</strong>
+      <ol>
+        <li><a href="#why">Зачем этот урок</a></li>
+        <li><a href="#shift">Что сдвинулось — 6 перемен от Anthropic</a></li>
+        <li><a href="#test">Тест «Догадается ли сама?»</a></li>
+        <li><a href="#loop">Петля из 3 вопросов после каждого апдейта модели</a></li>
+        <li><a href="#burnout">Как успевать, не выгорая</a></li>
+        <li><a href="#practice">Практика — 15 минут</a></li>
+        <li><a href="#claudemd">Закрепить в CLAUDE.md</a></li>
+        <li><a href="#summary">Шпаргалка</a></li>
+      </ol>
+    </div>
+
+    <h2 id="why">1. Зачем этот урок</h2>
+
+    <p>Источник этого урока — статья Thariq Shihipar (сотрудник Anthropic), <a href="https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models" target="_blank" style="color: var(--navy-light);">«The new rules of context engineering for Claude 5 generation models»</a>, опубликована на официальном блоге Claude около 24-25 июля 2026 — почти одновременно с выходом моделей Claude Opus 5 и Claude Fable 5. Главный факт статьи: <strong>Anthropic убрали больше 80% системного промпта Claude Code</strong> (встроенной «инструкции по умолчанию», которую агент получает при старте) для этих новых моделей — и результаты на кодинговых тестах при этом не ухудшились.</p>
+
+    <p>Если совсем просто, наша трактовка звучит так: <strong>не поменялись принципы, поменялся баланс.</strong> Раньше выигрывала подробность — чем больше вы расписали агенту, тем меньше он ошибался. Теперь модель научилась многое понимать сама, и лишняя подробность начала мешать — забивать контекст вещами, которые агент и так бы понял.</p>
+
+    <p>Это касается вас напрямую: у каждого агента Стардогс/Ура!Шаурма есть CLAUDE.md, написанный по «старым» правилам. Он не сломался — он просто устарел местами. Это нормально для быстро развивающейся технологии, а не провал вашей работы в Уроке 1.</p>
+
+    <div class="green-box">
+      <p style="margin: 0;"><strong>Снимаем тревогу сразу:</strong> вам не нужно всё переписывать сегодня. Этот урок даёт тест и процесс — вы примените их спокойно, в своём темпе, на своём CLAUDE.md.</p>
+    </div>
+
+    <h2 id="shift">2. Что сдвинулось — 6 перемен от Anthropic</h2>
+
+    <p>В статье шесть пар «тогда → теперь». Слева — точный перевод формулировки Anthropic, справа — что это значит на нашем материале (наш перевод, не цитата).</p>
+
+    <table>
+      <tr><th>Тогда</th><th>Теперь</th><th>Что это значит для нас</th></tr>
+      <tr>
+        <td><strong>Давать правила</strong></td>
+        <td><strong>Довериться суждению модели</strong></td>
+        <td>Не расписывать каждый частный случай — модель выводит общий принцип и применяет его сама к новым ситуациям, которых в правилах не было.</td>
+      </tr>
+      <tr>
+        <td><strong>Давать примеры</strong></td>
+        <td><strong>Проектировать интерфейс</strong></td>
+        <td>Не 10 образцов «как ответить на отзыв», а один чёткий шаблон-скилл с явными категориями — сам формат ведёт к правильному ответу.</td>
+      </tr>
+      <tr>
+        <td><strong>Всё сразу, наперёд</strong></td>
+        <td><strong>Подгружать по ходу дела</strong></td>
+        <td>Не заливать в CLAUDE.md все правила про все процессы разом — держать карту, откуда что подгрузить, когда реально понадобилось.</td>
+      </tr>
+      <tr>
+        <td><strong>Повторять инструкцию везде</strong></td>
+        <td><strong>Простое описание у самого инструмента</strong></td>
+        <td>Инструкция «как пользоваться» живёт в одном месте — в описании самого скрипта/коннектора, а не дублируется в общих правилах и в каждом отдельном напоминании.</td>
+      </tr>
+      <tr>
+        <td><strong>Память руками в CLAUDE.md</strong></td>
+        <td><strong>Автопамять</strong></td>
+        <td>Модель сама сохраняет то, что заметила о вас и вашей работе, без того чтобы вы вписывали это руками в файл.</td>
+      </tr>
+      <tr>
+        <td><strong>Простое текстовое задание</strong></td>
+        <td><strong>Богатый эталон</strong></td>
+        <td>Вместо «сделай красиво, как обычно» — дать готовый пример: файл-образец, тестовый набор, реальный кусок работы, на который равняться.</td>
+      </tr>
+    </table>
+
+    <p style="font-size: 14px; color: var(--gray);"><em>Источник цифры 80% и таблицы шести пар: статья выше, раздел о сокращении системного промпта Claude Code и раздел «Then → Now». Проверено двумя независимыми запросами к первоисточнику.</em></p>
+
+    <div class="tool-card">
+      <span class="yes-tool">✓ У НАС ЭТО УЖЕ ЕСТЬ</span>
+      <div class="tool-title">Приятное совпадение: два сдвига мы уже сделали раньше Anthropic</div>
+      <p>Сдвиг №3 («подгружать по ходу дела») — это ровно то, что мы построили в <a href="lesson5plus.html" style="color: var(--navy-light);">Уроке 5+</a> под именем <code class="inline">on_demand_rules.md</code>: карта «тип задачи → какой файл читать», а не всё сразу в CLAUDE.md. Сдвиг №5 («автопамять») — это Auto-memory, тоже разобранная в Уроке 5+. Мы не подгоняли архитектуру под эту статью задним числом — оказалось, что интуитивно шли туда же. Это не хвастовство, а сигнал: направление сдвига совпадает с тем, что реально работает на практике.</p>
+    </div>
+
+    <h2 id="test">3. Тест «Догадается ли сама?» — ядро урока</h2>
+
+    <p>В оригинале статьи инженерам предлагают спрашивать себя: «сможет ли модель вывести это из самого кода?» Мы не пишем код — у нас другой материал: процессы Стардогс, регламенты, рецептуры, тон общения. Поэтому мы переводим вопрос на свой язык:</p>
+
+    <div class="red-warning" style="background: var(--accent-bg); border-left-color: var(--accent);">
+      <p style="margin-bottom: 0; color: var(--text);"><strong style="color: var(--accent);">Главный вопрос теста:</strong> «Может ли модель догадаться сама, из общих знаний о мире и здравого смысла?» Если <strong>да</strong> — правило в CLAUDE.md не нужно, это шум, который отвлекает от реально важного. Если <strong>нет</strong> — это наша специфика, наш подводный камень, и его нужно оставить.</p>
+    </div>
+
+    <p>Разберём на примерах — не абстрактных, а из наших же CLAUDE.md и правил.</p>
+
+    <div class="method-card" style="border-left-color: var(--red);">
+      <span class="cut-tool">✂ ВЫКИНУТЬ — модель догадается сама</span>
+      <div class="method-title">«Пиши по-русски»</div>
+      <p>Задача на русском языке, вся переписка на русском — модель поймёт язык ответа без явного правила. Строчка занимает место и не защищает ни от чего.</p>
+    </div>
+
+    <div class="method-card" style="border-left-color: var(--red);">
+      <span class="cut-tool">✂ ВЫКИНУТЬ — модель догадается сама</span>
+      <div class="method-title">«Будь вежливым в ответе на отзыв»</div>
+      <p>Вежливость в ответе клиенту — это то, что любая современная модель знает и применяет по умолчанию, без специальной инструкции. Общий кейс, не наш подводный камень.</p>
+    </div>
+
+    <div class="method-card" style="border-left-color: var(--green);">
+      <span class="keep-tool">✓ ОСТАВИТЬ — наша специфика, модель не догадается</span>
+      <div class="method-title">«Соус НАМ = растительное масло + сметана + чеснок»</div>
+      <p>Это не общее знание — это конкретная рецептура конкретного бренда. Ни одна модель не выведет состав нашего соуса из здравого смысла. Без этой строчки агент либо промолчит, либо (хуже) придумает состав правдоподобно и неверно.</p>
+    </div>
+
+    <div class="method-card" style="border-left-color: var(--green);">
+      <span class="keep-tool">✓ ОСТАВИТЬ — наша специфика, модель не догадается</span>
+      <div class="method-title">«Цены указывать с НДС» / «Не упоминать руководителей в ответах на отзывы»</div>
+      <p>Обе вещи — конкретные решения именно нашей компании, не общее правило рынка. Модель без источника легко ошибётся в НДС (ставки менялись, 20%→22% с 2026 года) и не будет знать, что именно у нас в ответах на отзывы нельзя называть руководителей. Это ровно те «ловушки в коде», о которых говорит Anthropic — только у нас ловушки не в коде, а в процессах и данных.</p>
+    </div>
+
+    <div class="green-box">
+      <p style="margin: 0;"><strong>Короткая формула теста:</strong> общее знание о мире → выкинуть. Наша цифра, наш процесс, наше правило, которое со стороны не очевидно → оставить. Anthropic называет это «gotchas» (подводные камни) — ровно то же слово, что мы уже используем в наших guards.md.</p>
+    </div>
+
+    <h2 id="loop">4. Петля из 3 вопросов после каждого апдейта модели</h2>
+
+    <p>Anthropic обязательно выпустит следующее поколение моделей — и снова что-то сдвинется. Вместо того чтобы каждый раз читать статью с нуля, держите одну и ту же короткую петлю проверки.</p>
+
+    <div class="do-box">
+      <div class="step">
+        <div class="num">ВОПРОС 1</div>
+        <div class="title">Что можно удалить?</div>
+        <p>Пройтись по CLAUDE.md тестом «догадается ли сама» — что за это время модель научилась понимать без явного правила.</p>
+      </div>
+
+      <div class="step">
+        <div class="num">ВОПРОС 2</div>
+        <div class="title">Что перенести из текста правила в инструмент/файл/память?</div>
+        <p>Если правило можно зашить в скрипт, хук, шаблон-скилл или отдать автопамяти — там оно надёжнее, чем строчка текста, которую модель может не заметить в длинной сессии.</p>
+      </div>
+
+      <div class="step">
+        <div class="num">ВОПРОС 3</div>
+        <div class="title">Как агент проверит себя сам?</div>
+        <p>Вместо длинного списка «не делай так» — можно ли встроить самопроверку (хук, чек-лист перед показом результата), которая ловит ошибку автоматически, а не полагается на память модели.</p>
+      </div>
+    </div>
+
+    <p>Эта петля — не разовое действие, а привычка, которую вы повторяете при каждом заметном обновлении модели. Она короче, чем «прочитать всю новую статью», и достаточна для 90% случаев.</p>
+
+    <h2 id="burnout">5. Как успевать за изменениями, не выгорая</h2>
+
+    <p>Технология обновляется быстрее, чем команда может её перепроверять. Если гнаться за каждым релизом — выгорите раньше, чем это принесёт пользу. Вот как держать баланс.</p>
+
+    <div class="case">
+      <strong>1. Не гнаться за каждым релизом.</strong> Модели обновляются часто, но не каждое обновление требует правки CLAUDE.md. Ждите заметных изменений — таких как выход нового поколения (например, Claude 5) или прямое заявление вендора о смене подхода, как в этой статье.
+    </div>
+
+    <div class="case">
+      <strong>2. Следить только за официальными источниками.</strong> Блог Anthropic (claude.com/blog), их же инженерный блог (anthropic.com/engineering) — и всё. Не гоняться за каждым мнением в соцсетях о том, «как теперь правильно».
+    </div>
+
+    <div class="case">
+      <strong>3. Держать свой мини-набор проверок на реальных задачах.</strong> 3-5 типичных задач вашей зоны (например: ответ на отзыв, расчёт маржи, подключение коннектора). После обновления — прогнать их и посмотреть, что изменилось в качестве ответа, а не читать теорию абстрактно.
+    </div>
+
+    <div class="case">
+      <strong>4. Ревью раз в месяц/квартал, а не после каждого релиза.</strong> Заведите себе регулярную точку — например, во время <a href="lesson13.html" style="color: var(--navy-light);">еженедельной пятиминутки</a> раз в месяц спросить: «что изменилось у Anthropic за это время и стоит ли применять?»
+    </div>
+
+    <div class="case">
+      <strong>5. Принять отставание на 2-4 недели как норму.</strong> Не обязательно быть на переднем крае в день выхода. Дать новому поколению модели «устояться», посмотреть на чужой опыт, и только потом переносить в свои правила.
+    </div>
+
+    <div class="case">
+      <strong>6. Централизовать слежение.</strong> Не нужно, чтобы весь отдел лично читал блог Anthropic. Один человек (или агент — как это делает Ли для команды Стардогс через канал ИИ-Энтузиастов) следит и раздаёт остальным короткое «что изменилось для нас», а не пересылает сырую статью.
+    </div>
+
+    <div class="green-box">
+      <p style="margin: 0;"><strong>Главный посыл-якорь этого урока:</strong> ваш настоящий навык — не «знать текущие правила», а <strong>скорость их пересборки</strong>, когда что-то поменялось. Мы учим ловить рыбу, а не запоминать, где сегодня стоит рыба.</p>
+    </div>
+
+    <h2 id="practice">6. Практика — домашка на 15 минут</h2>
+
+    <div class="do-box">
+      <div class="step">
+        <div class="num">ШАГ 1</div>
+        <div class="title">Прогнать свой CLAUDE.md тестом «догадается ли сама» <span class="time">· 8 мин</span></div>
+        <p>Скажите агенту:</p>
+        <div class="ask">«Прочитай мой CLAUDE.md. По каждому правилу ответь на вопрос: догадается ли современная модель об этом сама, из общих знаний, без этой строчки? Если да — предложи убрать. Если нет — почему это наша специфика. Покажи список: убрать / оставить с причиной.»</div>
+      </div>
+
+      <div class="step">
+        <div class="num">ШАГ 2</div>
+        <div class="title">Проверить предложенное сокращение и решить <span class="time">· 4 мин</span></div>
+        <p>Не соглашайтесь автоматически — прочитайте список «убрать» глазами: там правда нет наших ловушек? Решение по каждому пункту — за вами, не за агентом.</p>
+      </div>
+
+      <div class="step">
+        <div class="num">ШАГ 3</div>
+        <div class="title">Выписать 3 настоящих подводных камня своей работы <span class="time">· 3 мин</span></div>
+        <div class="ask">«Из того что мы оставили — назови 3 самых важных подводных камня моей зоны: то, что чаще всего приводит к ошибке, если агент об этом не знает.»</div>
+        <p>Это и есть то, ради чего вообще нужен CLAUDE.md после сокращения — не общие слова, а именно эти 3 камня.</p>
+      </div>
+    </div>
+
+    <div class="claudemd-box" id="claudemd">
+      <h3>✅ Закрепить в CLAUDE.md</h3>
+      <p><strong>Правило про сам процесс правил — применимо к любому будущему обновлению модели.</strong> Скажите агенту:</p>
+      <div class="ask">«Я прошёл(ла) Урок 3 Блока 4 "Правила меняются". Допиши в CLAUDE.md правило: после каждого заметного обновления модели Anthropic — прогнать все правила через тест "догадается ли модель сама, без этой строчки". Если да — убрать. Если нет — оставить, это наш подводный камень. Также используй команду /doctor как первую проверку — Anthropic сама подсказывает, что можно упростить.»</div>
+      <p><strong>Проверка:</strong> откройте CLAUDE.md, убедитесь что правило добавлено.</p>
+    </div>
+
+    <h2 id="stones-h">3 камня — на чём срываются с этим уроком</h2>
+
+    <div class="stone">
+      <div class="stone-title">Камень 1. Переписать всё и сразу из паники</div>
+      <p>Прочитали, что «80% промпта убрали» — и бросились стирать половину своего CLAUDE.md без проверки. Тест «догадается ли сама» — не про агрессивное сокращение, а про честную проверку каждой строчки. Наша специфика (соус, НДС, тон ответов) остаётся всегда.</p>
+    </div>
+
+    <div class="stone">
+      <div class="stone-title">Камень 2. Спутать инженерный контекст со своим</div>
+      <p>Статья написана для разработчиков, которые пишут код. У них «вывести из кода» — у нас «догадаться из общих знаний». Если применять оригинальный вопрос буквально («выведет ли модель это из кода?») — для нашей команды он просто не имеет смысла, мы код не пишем.</p>
+    </div>
+
+    <div class="stone">
+      <div class="stone-title">Камень 3. Гнаться за каждым релизом</div>
+      <p>Anthropic будет выпускать обновления часто. Если разбирать каждое — не останется времени на саму работу. Ревью раз в месяц/квартал + собственный мини-набор проверок достаточны почти всегда.</p>
+    </div>
+
+    <div class="summary-box" id="summary">
+      <h3>Шпаргалка</h3>
+      <ul>
+        <li><strong>Факт.</strong> 24-25 июля 2026 Anthropic (Thariq Shihipar) опубликовали «The new rules of context engineering for Claude 5 generation models». Для Claude Opus 5 и Claude Fable 5 убрали больше 80% системного промпта Claude Code без потери качества на кодинговых тестах.</li>
+        <li><strong>6 сдвигов Тогда → Теперь:</strong> правила → суждение модели; примеры → интерфейсы; всё сразу → подгрузка по ходу дела; повторение → простое описание у инструмента; память руками → автопамять; текстовое задание → богатый эталон.</li>
+        <li><strong>Наш тест:</strong> «Догадается ли модель сама, из общих знаний?» Да → убрать (шум). Нет → оставить (наш подводный камень: соус, НДС, тон ответов).</li>
+        <li><strong>Петля после каждого апдейта:</strong> что удалить / что перенести в инструмент-файл-память / как агент проверит себя сам.</li>
+        <li><strong>Не выгорать:</strong> не гнаться за каждым релизом, следить только за официальными источниками, свой мини-набор проверок, ревью раз в месяц/квартал, отставание 2-4 недели — норма, слежение централизовано.</li>
+        <li><strong>Главное:</strong> навык — не знание текущих правил, а скорость их пересборки, когда правила снова поменяются.</li>
+      </ul>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Внедрение ИИ в Стардогс · Блок 4 · Урок 3 · 25 июля 2026
+  </div>
+</footer>
+
+</body>
+</html>
